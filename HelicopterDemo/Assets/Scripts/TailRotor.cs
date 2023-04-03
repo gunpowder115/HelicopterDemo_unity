@@ -13,7 +13,15 @@ public class TailRotor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RotateTailRotor();
+        ProcessInput();
+    }
+
+    void ProcessInput()
+    {
+        if (Input.GetKey(KeyCode.R))
+        {
+            RotateTailRotor();
+        }
     }
 
     void RotateTailRotor()
