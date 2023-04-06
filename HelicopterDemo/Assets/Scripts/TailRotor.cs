@@ -18,14 +18,11 @@ public class TailRotor : MonoBehaviour
 
     void ProcessInput()
     {
-        if (Input.GetKey(KeyCode.R))
-        {
-            RotateTailRotor();
-        }
+        RotateTailRotor();
     }
 
     void RotateTailRotor()
     {
-        transform.Rotate(Vector3.right);
+        transform.Rotate(new Vector3(10, 0, 0));
     }
 }

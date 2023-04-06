@@ -19,20 +19,13 @@ public class MainRotor : MonoBehaviour
 
     void ProcessInput()
     {
-        if (Input.GetKey(KeyCode.R))
-        {
-            RotateMainRotor();
-            if (!audioSource.isPlaying)
-                audioSource.Play();
-        }
-        else
-        {
-            audioSource.Stop();
-        }
+        RotateMainRotor();
+        if (!audioSource.isPlaying)
+            audioSource.Play();
     }
 
     void RotateMainRotor()
     {
-        transform.Rotate(Vector3.up);
+        transform.Rotate(new Vector3(0, 10, 0));
     }
 }

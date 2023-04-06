@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 677139646509892390}
   - component: {fileID: 764106533}
+  - component: {fileID: 1395804802}
   m_Layer: 0
   m_Name: Helicopter
   m_TagString: Untagged
@@ -47,7 +48,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 677139646509892391}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 0.1
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -55,6 +56,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1395804802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677139646509892391}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2622bab0a73437642b4716a9f765e280, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &671653268
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -209,7 +222,7 @@ AudioSource:
   m_audioClip: {fileID: 8300000, guid: c1e9be19fb10eaa44b6c3b203da5d3a0, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
-  m_Pitch: 0.35
+  m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
