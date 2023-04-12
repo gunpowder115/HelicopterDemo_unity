@@ -55,8 +55,6 @@ public class Helicopter : MonoBehaviour
 
     void SimplePitchRotation()
     {
-        print("X angle = " + transform.localEulerAngles.x);
-
         bool pitchUp = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
         bool pitchDown = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
 
@@ -68,8 +66,6 @@ public class Helicopter : MonoBehaviour
 
     void SimpleRollRotation()
     {
-        print("Z angle = " + transform.localEulerAngles.z);
-
         bool rollLeft = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
         bool rollRight = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
 
@@ -81,8 +77,6 @@ public class Helicopter : MonoBehaviour
 
     void SimpleYawRotation()
     {
-        print("Y angle = " + transform.localEulerAngles.y);
-
         bool yawLeft = Input.GetKey(KeyCode.Q);
         bool yawRight = Input.GetKey(KeyCode.E);
 
@@ -147,6 +141,23 @@ public class Helicopter : MonoBehaviour
         {
             transform.localEulerAngles = newLocalEuler;
             if (onGround) onGround = false;
+        }
+    }
+
+    //вызывается при столкновении двух collider box (в параметре - collider объекта, с которым столкнулись)
+    void OnCollisionEnter(Collision collision)
+    {
+        switch(collision.gameObject.tag)
+        {
+            case "Friendly":
+                print("On platform!");
+                break;
+            case "Fuel":
+                print("Plus fuel!");
+                break;
+            default:
+                print("MAZAFAKA!!!");
+                break;
         }
     }
 
