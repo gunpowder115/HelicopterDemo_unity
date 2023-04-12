@@ -11,24 +11,35 @@ public class Helicopter : MonoBehaviour
     Rigidbody rigidBody;
     Vector3 vectorPitchRotation, vectorRollRotation, vectorYawRotation;
     float rotationSpeed;
+    bool onGround;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
+        vectorPitchRotation = -Vector3.right;
+        onGround = true;
     }
 
     // Update is called once per frame
     void Update()
     {
         SimpleTakeoff();
-        SimpleRotation();
+        if (!onGround)
+            SimpleRotation();
     }
 
     void SimpleTakeoff()
     {
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.Space))
+        {
             rigidBody.AddRelativeForce(Vector3.up * takeSpeed * Time.deltaTime);
+            if (onGround)
+            {
+                rotationSpeed = rotSpeed * Time.deltaTime;
+                Stabilization(LocalAxes.Pitch);
+            }
+        }
     }
 
     void SimpleRotation()
@@ -50,7 +61,7 @@ public class Helicopter : MonoBehaviour
         bool pitchDown = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
 
         if (pitchUp || pitchDown)
-            Rotation(LocalAxes.Pitch, pitchDown, pitchUp);
+            Rotation(LocalAxes.Pitch, pitchDown, pitchUp);                
         else
             Stabilization(LocalAxes.Pitch);
     }
@@ -133,7 +144,10 @@ public class Helicopter : MonoBehaviour
         if (localEulerAngle > stabilizeDeltaAngle && localEulerAngle < 360 - stabilizeDeltaAngle)
             transform.Rotate(stabVectorRotation * rotationSpeed * stabilizationKoef);
         else
+        {
             transform.localEulerAngles = newLocalEuler;
+            if (onGround) onGround = false;
+        }
     }
 
     enum LocalAxes
