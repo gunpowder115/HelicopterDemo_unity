@@ -18,7 +18,7 @@ public class Helicopter : MonoBehaviour
     {
         rigidBody = GetComponent<Rigidbody>();
         vectorPitchRotation = -Vector3.right;
-        onGround = true;
+        onGround = false;
     }
 
     // Update is called once per frame
@@ -27,6 +27,7 @@ public class Helicopter : MonoBehaviour
         SimpleTakeoff();
         if (!onGround)
             SimpleRotation();
+        SimpleMove();
     }
 
     void SimpleTakeoff()
@@ -84,16 +85,23 @@ public class Helicopter : MonoBehaviour
             Rotation(LocalAxes.Yaw, yawLeft, yawRight);
     }
 
+    void SimpleMove()
+    {
+        rigidBody.AddRelativeForce(Vector3.up * takeSpeed * Time.deltaTime);
+    }
+
     void Rotation(LocalAxes localAxis, bool counterClockwise, bool clockwise)
     {
         Vector3 vectorRotation = new Vector3(0, 0, 0);
         switch(localAxis)
         {
             case LocalAxes.Pitch:
-                if (counterClockwise && !clockwise)
+                if (counterClockwise && !clockwise && (transform.localEulerAngles.x < 30 || transform.localEulerAngles.x > 330))
                     vectorPitchRotation = Vector3.right;
-                else if (clockwise && !counterClockwise)
+                else if (clockwise && !counterClockwise && (transform.localEulerAngles.x < 30 || transform.localEulerAngles.x > 330))
                     vectorPitchRotation = -Vector3.right;
+                else
+                    vectorPitchRotation = new Vector3(0, 0, 0);
                 vectorRotation = vectorPitchRotation;
                 break;
             case LocalAxes.Roll:
