@@ -6,8 +6,7 @@ using UnityEngine;
 
 public class TranslationInput : MonoBehaviour
 {
-    [SerializeField] float speed = 6.0f;
-    [SerializeField] float deltaAngle = 0.5f;
+    [SerializeField] float speed = 6.0f;    
 
     private CharacterController characterContoller;
     private float pitchAngle, rollAngle;
@@ -28,20 +27,8 @@ public class TranslationInput : MonoBehaviour
         float deltaY = Input.GetAxis("Jump") * speed;
         float deltaZ = Input.GetAxis("Vertical") * speed;
 
-        if (deltaX > 0f)
-        {
-            rollTarget = EulerAngleTarget.Max;
-        }
-        else if (deltaX < 0f)
-        {
-            rollTarget = EulerAngleTarget.Min;
-        }
-        else
-        {
-            rollTarget = EulerAngleTarget.Zero;
-        }
-
-        rollAngle += deltaAngle * GetDeltaAngleSign(rollTarget, rollAngle);
+        rollTarget = GetAngleTarget(deltaX);
+        pitchTarget = GetAngleTarget(-deltaZ);
 
         Vector3 movement = new Vector3(deltaX, deltaY, deltaZ);
         movement = Vector3.ClampMagnitude(movement, speed);
@@ -52,6 +39,10 @@ public class TranslationInput : MonoBehaviour
         Rotation rotation = this.transform.gameObject.GetComponentInChildren<Rotation>();
         if (rotation != null)
         {
+            rotation.IncreaseAngle(ref rollAngle, GetDeltaAngleSign(rollTarget, rollAngle));
+            rotation.IncreaseAngle(ref pitchAngle, GetDeltaAngleSign(pitchTarget, pitchAngle));
+            rotation.CropAngle(ref rollAngle);
+            rotation.CropAngle(ref pitchAngle);
             rotation.Rotate(pitchAngle, rollAngle);
         }
     }
@@ -60,16 +51,22 @@ public class TranslationInput : MonoBehaviour
     {
         if (angleTarget == EulerAngleTarget.Max ||
             angleTarget == EulerAngleTarget.Zero && currentAngle < 0f)
-        {
             return 1;
-        }
         else if (angleTarget == EulerAngleTarget.Min ||
             angleTarget == EulerAngleTarget.Zero && currentAngle > 0f)
-        {
             return -1;
-        }
         else
             return 0;
+    }
+
+    private EulerAngleTarget GetAngleTarget(float deltaAngle)
+    {
+        if (deltaAngle > 3f)
+            return EulerAngleTarget.Min;
+        else if (deltaAngle < -3f)
+            return EulerAngleTarget.Max;
+        else
+            return EulerAngleTarget.Zero;
     }
 
     enum EulerAnglePos
