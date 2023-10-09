@@ -39,11 +39,13 @@ public class TranslationInput : MonoBehaviour
         Rotation rotation = this.transform.gameObject.GetComponentInChildren<Rotation>();
         if (rotation != null)
         {
-            rotation.IncreaseAngle(ref rollAngle, GetDeltaAngleSign(rollTarget, rollAngle));
-            rotation.IncreaseAngle(ref pitchAngle, GetDeltaAngleSign(pitchTarget, pitchAngle));
-            rotation.CropAngle(ref rollAngle);
-            rotation.CropAngle(ref pitchAngle);
-            rotation.Rotate(pitchAngle, rollAngle);
+            //rotation.IncreaseAngle(ref rollAngle, GetDeltaAngleSign(rollTarget, rollAngle));
+            //rotation.IncreaseAngle(ref pitchAngle, GetDeltaAngleSign(pitchTarget, pitchAngle));
+            //rotation.CropAngle(ref rollAngle);
+            //rotation.CropAngle(ref pitchAngle);
+            //rotation.Rotate(pitchAngle, rollAngle);
+
+            rotation.Rotate(deltaZ);
         }
     }
 

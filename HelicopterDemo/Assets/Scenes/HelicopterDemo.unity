@@ -706,7 +706,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxAbsOfXandZ: 45
-  deltaAngle: 2
+  minDeltaAngle: 0.1
+  maxDeltaAngle: 1.5
+  angleKoef: 0.11
+  limitAngleKoef: 1
+  angleAliasing: 15
 --- !u!1 &1600831526
 GameObject:
   m_ObjectHideFlags: 0
@@ -754,7 +758,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28254481e69cd0e4f99568746e3039b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 6
+  speed: 12
 --- !u!143 &1600831529
 CharacterController:
   m_ObjectHideFlags: 0
