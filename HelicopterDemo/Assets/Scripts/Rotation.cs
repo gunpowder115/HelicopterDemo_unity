@@ -2,14 +2,13 @@ using UnityEngine;
 
 public class Rotation : MonoBehaviour
 {
-    [SerializeField] float maxAbsOfXandZ = 45.0f;
-    [SerializeField] float minDeltaAngle = 0.1f;
-    [SerializeField] float angleKoef = 0.1f;
-    [SerializeField] float limitAngleKoef = 0.8f;
-    [SerializeField] float angleAliasing = 15f;
+    [SerializeField] float maxAngleValue = 30.0f; //модуль максимального угла отклонения
+    [SerializeField] float angleEpsilon = 0.1f; //модуль окрестности нулевого угла
+    [SerializeField] float increaseAngleKoef = 1.0f; //коэф-т зависимости изменения угла от входного воздействия
+    [SerializeField] float decreaseAngleKoef = 0.1f; //коэф-т сглаживания околонулевого угла
 
     private float[] angles;
-    private float[] prevDeltas;
+    private float[] prevInputs;
 
     // Start is called before the first frame update
     void Start()
@@ -18,56 +17,59 @@ public class Rotation : MonoBehaviour
         if (rigidBody)
             rigidBody.freezeRotation = true;
 
-        angles = new float[3] { 0f, 0f, 0f };
-        prevDeltas = new float[3] { 0f, 0f, 0f };
+        angles = new float[3] { transform.localEulerAngles.x, transform.localEulerAngles.y, transform.localEulerAngles.z };
+        prevInputs = new float[3] { 0f, 0f, 0f };
     }
 
     // Update is called once per frame
     void Update()
     {
         Vector3 rotateVector = new Vector3(angles[(int)Axis.X],
-                                            0,
+                                            angles[(int)Axis.Y],
                                             angles[(int)Axis.Z]);
         transform.localEulerAngles = rotateVector;
     }
 
-    public void Rotate(Axis axis, float delta)
+    public void RotateWithLimits(Axis axis, float input)
     {
         int index = (int)axis;
 
-        float deltaAngle = delta * angleKoef;
+        float deltaAngle = input * increaseAngleKoef;
         float angle = angles[index];
-        float prevDelta = prevDeltas[index];
+        float prevInput = prevInputs[index];
+        float signInput = Mathf.Sign(input);
+        float signPrevInput = Mathf.Sign(prevInput);
+        float signAngle = Mathf.Sign(angle);
+        float absAngle = Mathf.Abs(angle);
+        float absInput = Mathf.Abs(input);
+        float absPrevInput = Mathf.Abs(prevInput);
 
-        float signDelta = Mathf.Sign(delta);
-        float signPrevDelta = Mathf.Sign(prevDelta);
-        float absDelta = Mathf.Abs(delta);
-        float absPrevDelta = Mathf.Abs(prevDelta);
-
-        if (signDelta == signPrevDelta && absDelta - absPrevDelta < 0 ||
-            signDelta != signPrevDelta)
+        if (signInput == signPrevInput && absInput - absPrevInput < 0 ||
+            signInput != signPrevInput)
             deltaAngle = -deltaAngle;
 
-        //кнопка не нажата, уход вертолёта из крайнего положения
-        if (maxAbsOfXandZ - Mathf.Abs(angle) < angleAliasing && absDelta < 5)
-            angle -= Mathf.Sign(angle) * minDeltaAngle * (maxAbsOfXandZ - Mathf.Abs(angle)) * limitAngleKoef;
-        //кнопка нажата, приход вертолёта в крайнее положение
-        else if (maxAbsOfXandZ - Mathf.Abs(angle) < angleAliasing && absDelta > 7 && Mathf.Sign(angle) == signDelta)
-            angle += Mathf.Sign(angle) * minDeltaAngle * (maxAbsOfXandZ - Mathf.Abs(angle)) * limitAngleKoef;
-        //кнопка не нажата, возврат вертолёта к нулевому углу
-        else if (absDelta < 7 && Mathf.Abs(angle) > minDeltaAngle * 2)
-        {
-            angle += deltaAngle;
-            angle -= Mathf.Sign(angle) * minDeltaAngle * Mathf.Abs(angle) * angleKoef * 3.5f;
-        }
-        //остальные случаи
-        else
-            angle += deltaAngle;
+        angle += deltaAngle;
 
-        angle = Mathf.Clamp(angle, -maxAbsOfXandZ, maxAbsOfXandZ);
+        //если кнопка не нажата, то возврат вертолёта к нулевому углу
+        if (absInput < 0.5f && absAngle > angleEpsilon * 2f)
+            angle -= signAngle * absAngle * decreaseAngleKoef;
+
+        angle = Mathf.Clamp(angle, -maxAngleValue, maxAngleValue);
+
         angles[index] = angle;
+        prevInputs[index] = input;
+    }
 
-        prevDeltas[index] = delta;
+    public void RotateNoLimits(Axis axis, float input)
+    {
+        int index = (int)axis;
+
+        float deltaAngle = input * increaseAngleKoef;
+        float angle = angles[index];
+
+        angle += deltaAngle;
+
+        angles[index] = angle;
     }
 
     public enum Axis
