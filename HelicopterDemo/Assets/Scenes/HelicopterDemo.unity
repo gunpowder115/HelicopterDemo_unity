@@ -571,8 +571,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1101927626}
   - component: {fileID: 1101927628}
-  - component: {fileID: 1101927627}
   - component: {fileID: 1101927629}
+  - component: {fileID: 1101927630}
   m_Layer: 0
   m_Name: CameraContainer
   m_TagString: Untagged
@@ -596,31 +596,6 @@ Transform:
   m_Father: {fileID: 1600831527}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1101927627
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1101927625}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28254481e69cd0e4f99568746e3039b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 6
-  translationX: 0
-  invertTranslationX: 0
-  translationY: 0
-  invertTranslationY: 0
-  translationZ: 0
-  invertTranslationZ: 0
-  rotationX: 0
-  invertRotationX: 0
-  rotationY: 1
-  invertRotationY: 1
-  rotationZ: 0
-  invertRotationZ: 0
 --- !u!143 &1101927628
 CharacterController:
   m_ObjectHideFlags: 0
@@ -655,6 +630,30 @@ MonoBehaviour:
   angleEpsilon: 0.1
   increaseAngleKoef: 1
   decreaseAngleKoef: 0.1
+--- !u!114 &1101927630
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101927625}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16e58ae74910ad64781970968d8c5983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationX: 0
+  invertTranslationX: 0
+  translationY: 0
+  invertTranslationY: 0
+  translationZ: 0
+  invertTranslationZ: 0
+  rotationX: 0
+  invertRotationX: 0
+  rotationY: 1
+  invertRotationY: 1
+  rotationZ: 0
+  invertRotationZ: 0
 --- !u!1001 &1407632588
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -692,15 +691,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 677139646509892390, guid: 775eff7331a50634b9f968a750fda5fa, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 677139646509892390, guid: 775eff7331a50634b9f968a750fda5fa, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 677139646509892390, guid: 775eff7331a50634b9f968a750fda5fa, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 677139646509892390, guid: 775eff7331a50634b9f968a750fda5fa, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -803,7 +802,7 @@ MonoBehaviour:
   angleEpsilon: 0.1
   increaseAngleKoef: 1
   decreaseAngleKoef: 0.1
---- !u!114 &1562350275
+--- !u!114 &1562350277
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -812,10 +811,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1562350268}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28254481e69cd0e4f99568746e3039b9, type: 3}
+  m_Script: {fileID: 11500000, guid: 16e58ae74910ad64781970968d8c5983, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 6
   translationX: 0
   invertTranslationX: 0
   translationY: 0
@@ -828,24 +826,6 @@ MonoBehaviour:
   invertRotationY: 0
   rotationZ: 1
   invertRotationZ: 1
---- !u!143 &1562350276
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1562350268}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 2
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1600831526
 GameObject:
   m_ObjectHideFlags: 0
@@ -858,6 +838,7 @@ GameObject:
   - component: {fileID: 1600831529}
   - component: {fileID: 1600831528}
   - component: {fileID: 1600831530}
+  - component: {fileID: 1600831531}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -895,18 +876,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 12
-  translationX: 1
-  invertTranslationX: 0
-  translationY: 1
-  invertTranslationY: 0
-  translationZ: 1
-  invertTranslationZ: 0
-  rotationX: 0
-  invertRotationX: 0
-  rotationY: 1
-  invertRotationY: 0
-  rotationZ: 0
-  invertRotationZ: 0
 --- !u!143 &1600831529
 CharacterController:
   m_ObjectHideFlags: 0
@@ -941,6 +910,30 @@ MonoBehaviour:
   angleEpsilon: 0.1
   increaseAngleKoef: 1
   decreaseAngleKoef: 0.1
+--- !u!114 &1600831531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600831526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16e58ae74910ad64781970968d8c5983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationX: 1
+  invertTranslationX: 0
+  translationY: 1
+  invertTranslationY: 0
+  translationZ: 1
+  invertTranslationZ: 0
+  rotationX: 0
+  invertRotationX: 0
+  rotationY: 1
+  invertRotationY: 0
+  rotationZ: 0
+  invertRotationZ: 0
 --- !u!1001 &1610671863
 PrefabInstance:
   m_ObjectHideFlags: 0

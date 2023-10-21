@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Rotation : MonoBehaviour
+public class RotationInput : MonoBehaviour
 {
     [SerializeField] float maxAngleValue = 30.0f; //модуль максимального угла отклонения
     [SerializeField] float angleEpsilon = 0.1f; //модуль окрестности нулевого угла
@@ -24,13 +24,13 @@ public class Rotation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 rotateVector = new Vector3(angles[(int)Axis.X],
-                                            angles[(int)Axis.Y],
-                                            angles[(int)Axis.Z]);
+        Vector3 rotateVector = new Vector3(angles[(int)InputManager.Axis.X],
+                                            angles[(int)InputManager.Axis.Y],
+                                            angles[(int)InputManager.Axis.Z]);
         transform.localEulerAngles = rotateVector;
     }
 
-    public void RotateWithLimits(Axis axis, float input)
+    public void RotateWithLimits(InputManager.Axis axis, float input)
     {
         int index = (int)axis;
 
@@ -60,7 +60,7 @@ public class Rotation : MonoBehaviour
         prevInputs[index] = input;
     }
 
-    public void RotateNoLimits(Axis axis, float input)
+    public void RotateNoLimits(InputManager.Axis axis, float input)
     {
         int index = (int)axis;
 
@@ -70,10 +70,5 @@ public class Rotation : MonoBehaviour
         angle += deltaAngle;
 
         angles[index] = angle;
-    }
-
-    public enum Axis
-    {
-        X, Y, Z
     }
 }
