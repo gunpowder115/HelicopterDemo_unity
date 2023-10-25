@@ -32,9 +32,17 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //movement around X, Y, Z and rotatin around X, Z
         float inputX = Input.GetAxis("Horizontal");
         float inputY = Input.GetAxis("Jump");
         float inputZ = Input.GetAxis("Vertical");
+
+        //rotation around Y
+        float headingInput = 0.0f;
+        bool keyQ = Input.GetKey(KeyCode.Q);
+        bool keyE = Input.GetKey(KeyCode.E);
+        if (keyQ && !keyE) headingInput = -1.0f;
+        else if (!keyQ && keyE) headingInput = 1.0f;
 
         if (translationInput != null)
         {
@@ -46,7 +54,7 @@ public class InputManager : MonoBehaviour
         if (rotationInput != null)
         {
             if (rotationX) rotationInput.RotateWithLimits(Axis.X, inputZ * GetSignAxis(invertRotationX));
-            if (rotationY) rotationInput.RotateNoLimits(Axis.Y, inputY * GetSignAxis(invertRotationY));
+            if (rotationY) rotationInput.RotateNoLimits(Axis.Y, headingInput * GetSignAxis(invertRotationY));
             if (rotationZ) rotationInput.RotateWithLimits(Axis.Z, inputX * GetSignAxis(invertRotationZ));
         }
     }
