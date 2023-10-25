@@ -27,6 +27,10 @@ public class InputManager : MonoBehaviour
     {
         translationInput = GetComponent<TranslationInput>();
         rotationInput = GetComponent<RotationInput>();
+
+        //hide cursor in center of screen
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     // Update is called once per frame
