@@ -14,6 +14,17 @@ public class TowerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        CreateTowers();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    private void CreateTowers()
+    {
         towers = new GameObject[towerCount];
         float deltaAngle = 360 / towerCount;
 
@@ -26,11 +37,5 @@ public class TowerController : MonoBehaviour
             towers[i].transform.Rotate(0, deltaAngle * i, 0);
             towers[i].transform.Translate(towerDistance, 0, 0);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

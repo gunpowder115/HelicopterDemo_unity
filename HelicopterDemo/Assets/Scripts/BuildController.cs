@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -46,12 +45,13 @@ public class BuildController : MonoBehaviour
 
         for (int i = 0; i < buildCount; i++)
         {
-            builds[i] = Instantiate(prefabs[Random.Range(0, prefabCount)]);
-
             int unusedPlatformIndex = Random.Range(0, unusedPlatforms.Count);
-            int platformIndex = unusedPlatforms[unusedPlatformIndex];            
-            builds[i].transform.position = platforms[platformIndex].transform.position;
-            builds[i].transform.rotation = platforms[platformIndex].transform.rotation;
+            int platformIndex = unusedPlatforms[unusedPlatformIndex];
+
+            Platform platform = platforms[platformIndex].GetComponent<Platform>();
+            if (platform != null)
+                builds[i] = platform.CreateBuild(prefabs[Random.Range(0, prefabCount)]);
+
             unusedPlatforms.Remove(platformIndex);
         }
     }
@@ -59,7 +59,7 @@ public class BuildController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private int AddPrefabs()
