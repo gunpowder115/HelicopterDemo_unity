@@ -1018,7 +1018,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8546363006314417002, guid: 510a1a5340a8924488f3bed6dc4ba7bc, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8546363006413516932, guid: 510a1a5340a8924488f3bed6dc4ba7bc, type: 3}
       propertyPath: m_LocalRotation.w
