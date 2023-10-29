@@ -36,11 +36,11 @@ public class BuildController : MonoBehaviour
         {
             platforms[i] = Instantiate(platformPrefab);
 
-            platforms[i].transform.Rotate(0, deltaAngle * i + this.transform.position.y, 0);
+            platforms[i].transform.Rotate(0, deltaAngle * i, 0);
 
             float platformDistance = Random.Range(minDistance, maxDistance);
             platforms[i].transform.position = new Vector3();
-            platforms[i].transform.Translate(platformDistance, 0, 0);
+            platforms[i].transform.Translate(0, 0, platformDistance);
             platforms[i].transform.position += this.transform.position;
         }
 
