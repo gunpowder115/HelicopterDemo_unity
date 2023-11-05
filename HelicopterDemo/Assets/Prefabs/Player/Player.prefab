@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8546363007158415138}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -224,6 +224,30 @@ PrefabInstance:
     - target: {fileID: 839615389896420254, guid: 37a610156757e134ea8dfdbababab7f6, type: 3}
       propertyPath: m_Name
       value: Camera_NoPlayerRotation
+      objectReference: {fileID: 0}
+    - target: {fileID: 839615390548533465, guid: 37a610156757e134ea8dfdbababab7f6, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 839615390548533466, guid: 37a610156757e134ea8dfdbababab7f6, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 839615390548533466, guid: 37a610156757e134ea8dfdbababab7f6, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839615390548533466, guid: 37a610156757e134ea8dfdbababab7f6, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839615390548533466, guid: 37a610156757e134ea8dfdbababab7f6, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 839615390548533466, guid: 37a610156757e134ea8dfdbababab7f6, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 37a610156757e134ea8dfdbababab7f6, type: 3}

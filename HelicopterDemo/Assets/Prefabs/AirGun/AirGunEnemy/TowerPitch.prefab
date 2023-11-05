@@ -107,6 +107,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1720928462030192909}
+  - component: {fileID: 1770059304}
   m_Layer: 0
   m_Name: TowerPitch
   m_TagString: Untagged
@@ -134,6 +135,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1770059304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1720928462030192898}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01cb232c251b5a147ae7fa9cf5a6e524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axes: 0
+  target: {fileID: 0}
+  speed: 5
+  minLookDistance: 30
+  maxLookDistance: 50
 --- !u!1001 &1495037837942826909
 PrefabInstance:
   m_ObjectHideFlags: 0

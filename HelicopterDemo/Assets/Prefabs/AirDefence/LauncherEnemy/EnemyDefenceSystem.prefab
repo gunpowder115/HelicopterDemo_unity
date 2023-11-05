@@ -141,19 +141,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7923777081500544673, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.924801
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7923777081500544673, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7923777081500544673, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.38045138
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7923777081500544673, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7923777081500544673, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -161,7 +161,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7923777081500544673, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 44.723
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7923777081500544673, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -169,28 +169,70 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7923777082769523181, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9710815
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7923777082769523181, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.23874831
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7923777082769523181, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000029802319
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7923777082769523181, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.00000002235174
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7923777082769523181, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -27.625
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
+--- !u!1 &1182577046933194891 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7923777082769523180, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
+  m_PrefabInstance: {fileID: 9052150353874651495}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5956109276590010613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1182577046933194891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01cb232c251b5a147ae7fa9cf5a6e524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axes: 0
+  speed: 1
+  minLookDistance: 30
+  maxLookDistance: 50
 --- !u!4 &1182577048344373190 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7923777081500544673, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
   m_PrefabInstance: {fileID: 9052150353874651495}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1182577048344373191 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7923777081500544672, guid: 34c60daa40fefd94888caa06dfdb8283, type: 3}
+  m_PrefabInstance: {fileID: 9052150353874651495}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2654804084388229394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1182577048344373191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01cb232c251b5a147ae7fa9cf5a6e524, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  axes: 1
+  speed: 1
+  minLookDistance: 30
+  maxLookDistance: 50
