@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class RotationInput : MonoBehaviour
 {
-    [SerializeField] float maxAngleValue = 30.0f; //модуль максимального угла отклонения
-    [SerializeField] float angleEpsilon = 0.1f; //модуль окрестности нулевого угла
-    [SerializeField] float increaseAngleKoef = 1.0f; //коэф-т зависимости изменения угла от входного воздействия
-    [SerializeField] float decreaseAngleKoef = 0.1f; //коэф-т сглаживания околонулевого угла
+    [SerializeField] float maxAngleValue = 30.0f; //abs of max angle value
+    [SerializeField] float angleEpsilon = 0.1f; //epsilon-abs of zero-angle
+    [SerializeField] float increaseAngleKoef = 1.0f; //dependence coefficient angle changing from input
+    [SerializeField] float decreaseAngleKoef = 0.1f; //smoothing factor for angle near zero
 
     private float[] angles;
     private float[] prevInputs;
@@ -50,7 +50,7 @@ public class RotationInput : MonoBehaviour
 
         angle += deltaAngle;
 
-        //если кнопка не нажата, то возврат вертолёта к нулевому углу
+        //if button not pressed, helicopter returns to zero-angle
         if (absInput < 0.5f && absAngle > angleEpsilon * 2f)
             angle -= signAngle * absAngle * decreaseAngleKoef;
 
