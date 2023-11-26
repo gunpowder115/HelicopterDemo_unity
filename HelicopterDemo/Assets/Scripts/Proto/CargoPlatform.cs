@@ -11,6 +11,7 @@ public class CargoPlatform : MonoBehaviour
     private GameObject cargoHelicopterItem;
     private GameObject helicopterItem;
     private CargoHelicopter cargoHelicopter;
+    private HelicopterAI helicopter;
     private CargoPlatformState cargoPlatformState;
 
     // Start is called before the first frame update
@@ -40,8 +41,10 @@ public class CargoPlatform : MonoBehaviour
                 break;
             case CargoPlatformState.cargoDelivered:
                 helicopterItem = Instantiate(helicopterPrefab);
+                helicopter = helicopterItem.GetComponent<HelicopterAI>();
+                helicopter.StartFlight();
                 cargoPlatformState = CargoPlatformState.helicopterIsOk;
-                StartCoroutine(DestroyHelicopter());
+                //StartCoroutine(DestroyHelicopter());
                 break;
         }
     }

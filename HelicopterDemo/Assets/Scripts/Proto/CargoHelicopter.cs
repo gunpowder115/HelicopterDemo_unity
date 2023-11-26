@@ -86,9 +86,10 @@ public class CargoHelicopter : MonoBehaviour
         this.gameObject.transform.LookAt(targetDirection);
 
         targetPosition = new Vector3(cargoPlatformPosition.x, targetHeight + cargoPlatformPosition.y, cargoPlatformPosition.z);
-        translation = targetPosition - this.gameObject.transform.position;
+        translation = targetPosition - this.gameObject.transform.position;        
         beginPosition = this.gameObject.transform.position;
         beginDistance = translation.magnitude;
+        translation = translation.normalized;
 
         InitCargo();
 
