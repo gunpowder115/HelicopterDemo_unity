@@ -10,8 +10,9 @@ public class BuildController : MonoBehaviour
     [SerializeField] float maxDistance = 80;
     [Header("Build Prefabs")]
     [SerializeField] GameObject platformPrefab;
-    [SerializeField] GameObject buildPrefab1;
-    [SerializeField] GameObject buildPrefab2;
+    [SerializeField] GameObject airGunPrefab;
+    [SerializeField] GameObject defenceSystemPrefab;
+    [SerializeField] GameObject helipadPrefab;
 
     private GameObject[] builds;
     private GameObject[] platforms;
@@ -65,8 +66,9 @@ public class BuildController : MonoBehaviour
     private int AddPrefabs()
     {
         prefabs = new List<GameObject>();
-        prefabs.Add(buildPrefab1);
-        prefabs.Add(buildPrefab2);
+        prefabs.Add(airGunPrefab);
+        prefabs.Add(defenceSystemPrefab);
+        prefabs.Add(helipadPrefab);
         return prefabs.Count;
     }
 }
