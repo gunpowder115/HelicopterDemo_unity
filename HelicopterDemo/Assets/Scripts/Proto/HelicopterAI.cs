@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HelicopterAI : MonoBehaviour
@@ -10,10 +8,13 @@ public class HelicopterAI : MonoBehaviour
     [SerializeField] private float maxHeight = 50f;
     [SerializeField] private float minDistance = 15f;
     [SerializeField] private float maxDistance = 50f;
+    [SerializeField] private float absBorderX = 200f;
+    [SerializeField] private float absBorderZ = 200f;
 
     private FlightPhase flightPhase;
     private Vector3 translation;
-    private Vector3 targetPosition;
+    private Vector3 prevPosition;
+    private float distance;
     private bool flight;
 
     private const float DELTA = 1f;
@@ -21,12 +22,13 @@ public class HelicopterAI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(this.gameObject.transform.position);
         if (flight)
         {
             switch (flightPhase)
@@ -41,10 +43,15 @@ public class HelicopterAI : MonoBehaviour
                     }
                     break;
                 case FlightPhase.Flight:
-                    float currDistance = (this.transform.localPosition - targetPosition).magnitude;
-                    if (currDistance < DELTA)
+                    float currDistance = (this.transform.position - prevPosition).magnitude;
+                    bool inBorder = this.transform.position.x < absBorderX &&
+                                    this.transform.position.x > -absBorderX &&
+                                    this.transform.position.z < absBorderZ &&
+                                    this.transform.position.z > -absBorderZ;
+                    //inBorder checking not working correctly yet
+                    if (currDistance > distance/* || !inBorder*/)
                         SelectTranslation();
-                    this.gameObject.transform.Translate(translation * speed * Time.deltaTime, Space.World);
+                    this.gameObject.transform.Translate(translation * speed * Time.deltaTime);
                     break;
             }
         }
@@ -53,22 +60,22 @@ public class HelicopterAI : MonoBehaviour
     public void StartFlight()
     {
         flightPhase = FlightPhase.Takeoff;
-        flight = true;        
+        prevPosition = this.gameObject.transform.position;
+        flight = true;
     }
 
     private void SelectTranslation()
     {
-        float distanceX = Random.Range(minDistance, maxDistance);
-        float distanceZ = Random.Range(minDistance, maxDistance);
-        float angle = Random.Range(0f, 360f);
-        float height = Random.Range(minHeight, maxHeight);
+        float angle = Random.Range(-110f, 110f);
+        this.gameObject.transform.Rotate(new Vector3(0, angle, 0));
 
-        Vector3 targetDirection = new Vector3(distanceX, this.gameObject.transform.localPosition.y, distanceZ);
-        targetDirection = Vector3.ClampMagnitude(targetDirection, maxDistance);
-        this.gameObject.transform.LookAt(targetDirection);
-        targetPosition = new Vector3(targetDirection.x, height, targetDirection.z);
+        prevPosition = this.gameObject.transform.position;
 
-        translation = (targetPosition - this.gameObject.transform.localPosition).normalized;
+        distance = Random.Range(minDistance, maxDistance);
+        float deltaHeight = Random.Range(minHeight, maxHeight) - this.gameObject.transform.position.y;
+        float vertSpeed = deltaHeight / distance * speed;
+        Vector3 targetDirection = speed * Vector3.forward + vertSpeed * Vector3.up;
+        translation = targetDirection.normalized;
     }
 
     public enum FlightPhase
