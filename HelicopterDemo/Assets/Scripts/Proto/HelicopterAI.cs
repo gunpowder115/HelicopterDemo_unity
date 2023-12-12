@@ -13,11 +13,8 @@ public class HelicopterAI : MonoBehaviour
 
     private FlightPhase flightPhase;
     private Vector3 translation;
-    private Vector3 prevPosition;
     private float distance;
     private bool flight;
-
-    private const float DELTA = 1f;
 
     // Start is called before the first frame update
     void Start()
@@ -43,34 +40,47 @@ public class HelicopterAI : MonoBehaviour
                     }
                     break;
                 case FlightPhase.Flight:
-                    float currDistance = (this.transform.position - prevPosition).magnitude;
-                    bool inBorder = this.transform.position.x < absBorderX &&
-                                    this.transform.position.x > -absBorderX &&
-                                    this.transform.position.z < absBorderZ &&
-                                    this.transform.position.z > -absBorderZ;
-                    //inBorder checking not working correctly yet
-                    if (currDistance > distance/* || !inBorder*/)
-                        SelectTranslation();
                     this.gameObject.transform.Translate(translation * speed * Time.deltaTime);
+
+                    if (this.gameObject.transform.position.y >= maxHeight ||
+                        this.gameObject.transform.position.y <= minHeight)
+                        SelectHeight();
+
+                    Ray ray = new Ray(this.gameObject.transform.position, this.gameObject.transform.forward);
+                    RaycastHit hit;
+                    if (Physics.SphereCast(ray, 5.0f, out hit))
+                    {
+                        GameObject hitObject = hit.transform.gameObject;
+                        if (hitObject.CompareTag("Obstacle") && hit.distance < 15.0f)
+                            SelectTranslation();
+                    }
                     break;
             }
         }
     }
 
-    public void StartFlight()
+    public void StartFlight(Transform platformTransform)
     {
+        this.gameObject.transform.position = platformTransform.position;
+        this.gameObject.transform.rotation = platformTransform.rotation;
         flightPhase = FlightPhase.Takeoff;
-        prevPosition = this.gameObject.transform.position;
         flight = true;
     }
 
     private void SelectTranslation()
     {
-        float angle = Random.Range(-110f, 110f);
+        float angle = Random.Range(-110, 110);
         this.gameObject.transform.Rotate(new Vector3(0, angle, 0));
 
-        prevPosition = this.gameObject.transform.position;
+        distance = Random.Range(minDistance, maxDistance);
+        float deltaHeight = Random.Range(minHeight, maxHeight) - this.gameObject.transform.position.y;
+        float vertSpeed = deltaHeight / distance * speed;
+        Vector3 targetDirection = speed * Vector3.forward + vertSpeed * Vector3.up;
+        translation = targetDirection.normalized;
+    }
 
+    private void SelectHeight()
+    {
         distance = Random.Range(minDistance, maxDistance);
         float deltaHeight = Random.Range(minHeight, maxHeight) - this.gameObject.transform.position.y;
         float vertSpeed = deltaHeight / distance * speed;
