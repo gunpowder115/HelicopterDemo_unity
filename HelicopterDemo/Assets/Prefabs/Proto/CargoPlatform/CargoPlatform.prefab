@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f162875f48d6bb438fcc99b210c5c62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cargoHelicopterPrefab: {fileID: 0}
-  helicopterPrefab: {fileID: 0}
+  cargoHelicopterPrefab: {fileID: 5709780919029235193, guid: ba5a6ea4f7885384bb620e1c27d13828, type: 3}
+  helicopterPrefab: {fileID: 5817739379426018126, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
   cargoType: 0
 --- !u!1001 &2025572322051032513
 PrefabInstance:
