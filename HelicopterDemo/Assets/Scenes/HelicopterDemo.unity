@@ -688,6 +688,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5525379685406505715, guid: 8af4f464602cc04418fd599869d59af9, type: 3}
+      propertyPath: shotDelay
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 8958542072398395810, guid: 8af4f464602cc04418fd599869d59af9, type: 3}
       propertyPath: m_Name
       value: AntiAircraftGun
@@ -3172,7 +3176,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4003434706837008606, guid: 46f021118b7ad124cad0219ccd08f805, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.566
+      value: 7.45
       objectReference: {fileID: 0}
     - target: {fileID: 4003434706837008606, guid: 46f021118b7ad124cad0219ccd08f805, type: 3}
       propertyPath: m_LocalPosition.z
