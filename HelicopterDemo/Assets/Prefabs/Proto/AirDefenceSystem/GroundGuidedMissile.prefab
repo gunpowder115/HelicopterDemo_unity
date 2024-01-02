@@ -240,4 +240,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ada153dc9a85de4fb13bccd874ad672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shotDelay: 1
+  projectileStartCoef: 0

@@ -12,6 +12,7 @@ public class CargoHelicopter : MonoBehaviour
     [SerializeField] private float targetHeight = 15f;
     [SerializeField] private float minHeightRange = 2f;
     [SerializeField] private float maxHeightRange = 3f;
+    [SerializeField] private float leavingTime = 10.0f;
 
     public bool CargoIsDelivered { get; private set; }
 
@@ -23,13 +24,14 @@ public class CargoHelicopter : MonoBehaviour
     private bool isDelivering, isLeaving;
     private float beginDistance;
     private bool slow;
+    private float currLeavingTime;
 
     private const float DELTA = 1f;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        currLeavingTime = 0;
     }
 
     // Update is called once per frame
@@ -49,24 +51,26 @@ public class CargoHelicopter : MonoBehaviour
             slow = false;
         }
 
-        if (currDistance < DELTA)
+        if (isDelivering)
         {
-            if (isDelivering)
+            if (currDistance < DELTA)
             {
-                isDelivering = false;               
+                isDelivering = false;
                 StartCoroutine(CargoDrop());
             }
-            if (isLeaving)
+            Translate(translation, speed);
+        }
+        else if (isLeaving)
+        {
+            if (currLeavingTime >= leavingTime)
             {
                 isLeaving = false;
+                currLeavingTime = 0f;
                 Destroy(this.gameObject);
             }
-        }
-
-        if (isDelivering)
-            Translate(translation, speed);
-        else if (isLeaving)
+            currLeavingTime += Time.deltaTime;
             Translate(translation, speed, false);
+        }
     }
 
     public void Init(Vector3 cargoPlatformPosition)

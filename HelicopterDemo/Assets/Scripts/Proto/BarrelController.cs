@@ -2,11 +2,10 @@ using UnityEngine;
 
 public class BarrelController : MonoBehaviour
 {
-    //[SerializeField] private float shotDelay = 0.5f;
+    [SerializeField] private float projectileStartCoef = 2.0f;
 
     private GameObject[] projectileItems;
     private int lastProjectileIndex;
-    private float currentShotDelay;
 
     private int _projectileCount;
     public int ProjectileCount
@@ -24,7 +23,6 @@ public class BarrelController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currentShotDelay = 0.0f;
         lastProjectileIndex = 0;
     }
 
@@ -36,15 +34,14 @@ public class BarrelController : MonoBehaviour
 
     public void CreateProjectile()
     {
-        currentShotDelay += Time.deltaTime;
-        if (ProjectilePrefab != null && projectileItems[lastProjectileIndex] == null/* && currentShotDelay >= shotDelay*/)
+        if (ProjectilePrefab != null && projectileItems[lastProjectileIndex] == null)
         {
             projectileItems[lastProjectileIndex] = Instantiate(ProjectilePrefab);
-            projectileItems[lastProjectileIndex].transform.position = this.transform.TransformPoint(Vector3.forward * 2.0f);
+            projectileItems[lastProjectileIndex].transform.position = 
+                this.transform.TransformPoint(Vector3.forward * projectileStartCoef);
             projectileItems[lastProjectileIndex].transform.rotation = this.transform.rotation;
 
             lastProjectileIndex++;
-            currentShotDelay = 0.0f;
 
             if (lastProjectileIndex >= ProjectileCount)
                 lastProjectileIndex = 0;

@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ada153dc9a85de4fb13bccd874ad672, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectileStartCoef: 3
 --- !u!1 &946297776371637855
 GameObject:
   m_ObjectHideFlags: 0
