@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4946029451874697791}
   - component: {fileID: 1231538618}
   m_Layer: 0
-  m_Name: CargoPlatform
+  m_Name: Helicopter_CargoPlatform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
