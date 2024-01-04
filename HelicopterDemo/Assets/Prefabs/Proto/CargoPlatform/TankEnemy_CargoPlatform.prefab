@@ -8,6 +8,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1231538618, guid: 5951cff0d292eda49ae209d2b0fe21b9, type: 3}
+      propertyPath: cargoPrefab
+      value: 
+      objectReference: {fileID: 312384580812019912, guid: 599b79ac16123004faaea83e51626b15, type: 3}
+    - target: {fileID: 1231538618, guid: 5951cff0d292eda49ae209d2b0fe21b9, type: 3}
       propertyPath: helicopterPrefab
       value: 
       objectReference: {fileID: 312384580812019912, guid: 599b79ac16123004faaea83e51626b15, type: 3}

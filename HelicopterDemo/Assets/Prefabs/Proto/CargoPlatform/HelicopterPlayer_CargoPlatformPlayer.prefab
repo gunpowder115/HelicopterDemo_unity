@@ -8,6 +8,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1231538618, guid: c2e88146d7dcaec4892f4f2f3902f031, type: 3}
+      propertyPath: cargoPrefab
+      value: 
+      objectReference: {fileID: 4003434706837008607, guid: 46f021118b7ad124cad0219ccd08f805, type: 3}
+    - target: {fileID: 1231538618, guid: c2e88146d7dcaec4892f4f2f3902f031, type: 3}
       propertyPath: helicopterPrefab
       value: 
       objectReference: {fileID: 4003434706837008607, guid: 46f021118b7ad124cad0219ccd08f805, type: 3}
@@ -21,7 +25,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: a882fc75ccd87084795ab46db1faf895, type: 2}
     - target: {fileID: 4946029451874697790, guid: c2e88146d7dcaec4892f4f2f3902f031, type: 3}
       propertyPath: m_Name
-      value: CargoPlatformPlayer
+      value: HelicopterPlayer_CargoPlatformPlayer
       objectReference: {fileID: 0}
     - target: {fileID: 4946029451874697791, guid: c2e88146d7dcaec4892f4f2f3902f031, type: 3}
       propertyPath: m_RootOrder

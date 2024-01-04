@@ -5,11 +5,11 @@ using UnityEngine;
 public class CargoPlatform : MonoBehaviour
 {
     [SerializeField] private GameObject cargoHelicopterPrefab;
-    [SerializeField] private GameObject helicopterPrefab;
+    [SerializeField] private GameObject cargoPrefab;
     [SerializeField] private CargoType cargoType = CargoType.helicopter;
 
     private GameObject cargoHelicopterItem;
-    private GameObject helicopterItem;
+    private GameObject cargoItem;
     private CargoHelicopter cargoHelicopter;
     private HelicopterAI helicopter;
     private CargoPlatformState cargoPlatformState;
@@ -17,7 +17,7 @@ public class CargoPlatform : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        cargoPlatformState = CargoPlatformState.helicopterIsLost;
+        cargoPlatformState = CargoPlatformState.cargoIsLost;
     }
 
     // Update is called once per frame
@@ -25,11 +25,11 @@ public class CargoPlatform : MonoBehaviour
     {
         switch(cargoPlatformState)
         {
-            case CargoPlatformState.helicopterIsOk:
-                if (helicopterItem.gameObject == null)
-                    cargoPlatformState = CargoPlatformState.helicopterIsLost;
+            case CargoPlatformState.cargoIsOk:
+                if (cargoItem.gameObject == null)
+                    cargoPlatformState = CargoPlatformState.cargoIsLost;
                 break;
-            case CargoPlatformState.helicopterIsLost:
+            case CargoPlatformState.cargoIsLost:
                 cargoHelicopterItem = Instantiate(cargoHelicopterPrefab);
                 cargoHelicopter = cargoHelicopterItem.GetComponent<CargoHelicopter>();
                 cargoHelicopter.Init(this.gameObject.transform.position);
@@ -40,10 +40,10 @@ public class CargoPlatform : MonoBehaviour
                     cargoPlatformState = CargoPlatformState.cargoDelivered;
                 break;
             case CargoPlatformState.cargoDelivered:
-                helicopterItem = Instantiate(helicopterPrefab);
-                helicopter = helicopterItem.GetComponent<HelicopterAI>();
+                cargoItem = Instantiate(cargoPrefab);
+                helicopter = cargoItem.GetComponent<HelicopterAI>();
                 helicopter.StartFlight(this.transform);
-                cargoPlatformState = CargoPlatformState.helicopterIsOk;
+                cargoPlatformState = CargoPlatformState.cargoIsOk;
                 //StartCoroutine(DestroyHelicopter());
                 break;
         }
@@ -57,13 +57,13 @@ public class CargoPlatform : MonoBehaviour
     private IEnumerator DestroyHelicopter()
     {
         yield return new WaitForSeconds(5);
-        Destroy(helicopterItem.gameObject);
+        Destroy(cargoItem.gameObject);
     }
 
     public enum CargoPlatformState
     {
-        helicopterIsOk,
-        helicopterIsLost,
+        cargoIsOk,
+        cargoIsLost,
         cargoIsExpected,
         cargoDelivered
     }

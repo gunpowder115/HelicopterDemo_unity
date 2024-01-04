@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cargoHelicopterPrefab: {fileID: 5709780919029235193, guid: ba5a6ea4f7885384bb620e1c27d13828, type: 3}
-  helicopterPrefab: {fileID: 4815723278743428566, guid: 2be1199387909e44e992074ec37d7f1f, type: 3}
+  cargoPrefab: {fileID: 4815723278743428566, guid: 2be1199387909e44e992074ec37d7f1f, type: 3}
   cargoType: 1
 --- !u!1001 &938148566293554278
 PrefabInstance:
