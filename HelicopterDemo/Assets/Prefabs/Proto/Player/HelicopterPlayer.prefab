@@ -66,3 +66,46 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 3868398541665046078, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+--- !u!1 &4003434706837008607 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5817739379426018126, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+  m_PrefabInstance: {fileID: 7436513375665795985}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2369090265771889126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4003434706837008607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41175428f113cb24a811def3c61d2f8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  increaseAngleKoef: 1
+  yawRotationSpeed: 5
+--- !u!114 &6805662290766829008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4003434706837008607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e25422909cc19844fa03ca8d72fad2e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  translationX: 0
+  invertTranslationX: 0
+  translationY: 0
+  invertTranslationY: 0
+  translationZ: 0
+  invertTranslationZ: 0
+  rotationX: 0
+  invertRotationX: 0
+  rotationY: 1
+  invertRotationY: 0
+  rotationZ: 0
+  invertRotationZ: 0

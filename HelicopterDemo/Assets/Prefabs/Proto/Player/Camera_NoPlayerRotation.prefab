@@ -41,12 +41,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5376200307808644180}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41175428f113cb24a811def3c61d2f8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   increaseAngleKoef: 1
+  yawRotationSpeed: 5
 --- !u!114 &5376200307808644182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54,7 +55,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5376200307808644180}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e25422909cc19844fa03ca8d72fad2e0, type: 3}
   m_Name: 
@@ -127,12 +128,20 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8961558851105953918, guid: b29a4bf3a2bacb34f977542c8e3cc932, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8961558851105953918, guid: b29a4bf3a2bacb34f977542c8e3cc932, type: 3}
       propertyPath: maxVertAngle
       value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 8961558851105953918, guid: b29a4bf3a2bacb34f977542c8e3cc932, type: 3}
       propertyPath: minVertAngle
       value: -45
+      objectReference: {fileID: 0}
+    - target: {fileID: 9063408044783205361, guid: b29a4bf3a2bacb34f977542c8e3cc932, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b29a4bf3a2bacb34f977542c8e3cc932, type: 3}

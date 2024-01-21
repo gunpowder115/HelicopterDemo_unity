@@ -19,12 +19,18 @@ public class InputManager_Proto : MonoBehaviour
 
     private TranslationInput_Proto translationInput;
     private RotationInput_Proto rotationInput;
+    private bool rotateToDirection;
+    private Vector3 targetDirection;
+    private float targetAngle;
 
     // Start is called before the first frame update
     void Start()
     {
-        translationInput = GetComponent<TranslationInput_Proto>();
-        rotationInput = GetComponent<RotationInput_Proto>();
+        translationInput = GetComponentInChildren<TranslationInput_Proto>();
+        rotationInput = GetComponentInChildren<RotationInput_Proto>();
+        rotateToDirection = false;
+        targetDirection = Vector3.forward;
+        targetAngle = 0.0f;
 
         //hide cursor in center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -39,23 +45,27 @@ public class InputManager_Proto : MonoBehaviour
         float inputY = Input.GetAxis("Jump");
         float inputZ = Input.GetAxis("Vertical");
 
-        //rotation around Y
-        float headingInput = 0.0f;
-        bool keyQ = Input.GetKey(KeyCode.Q);
-        bool keyE = Input.GetKey(KeyCode.E);
-        if (keyQ && !keyE) headingInput = -1.0f;
-        else if (!keyQ && keyE) headingInput = 1.0f;
+        //change speed (high/low)
+        bool keyQ = Input.GetKeyDown(KeyCode.Q);
 
         if (translationInput != null)
         {
             if (translationX) translationInput.Translate(Axis_Proto.X, inputX * GetSignAxis(invertTranslationX));
             if (translationY) translationInput.Translate(Axis_Proto.Y, inputY * GetSignAxis(invertTranslationY));
             if (translationZ) translationInput.Translate(Axis_Proto.Z, inputZ * GetSignAxis(invertTranslationZ));
+            //targetAngle = translationInput.GetTargetAngle();
+            targetDirection = translationInput.GetDirection();
+        }
+
+        if (keyQ)
+        {
+            rotateToDirection = translationInput.ChangeSpeed();
         }
 
         if (rotationInput != null)
         {
-            if (rotationY) rotationInput.RotateNoLimits(Axis_Proto.Y, headingInput * GetSignAxis(invertRotationY));
+            //if (rotationY && rotateToDirection) rotationInput.RotateToAngle(Axis_Proto.Y, 1.0f, targetAngle);
+            if (rotationY && rotateToDirection) rotationInput.RotateToDirection(Axis_Proto.Y, targetDirection);
         }
     }
 
