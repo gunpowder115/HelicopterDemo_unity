@@ -25,7 +25,6 @@ public class HelicopterAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(this.gameObject.transform.position);
         if (flight)
         {
             switch (flightPhase)

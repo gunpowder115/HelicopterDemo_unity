@@ -21,7 +21,8 @@ public class InputManager_Proto : MonoBehaviour
     private RotationInput_Proto rotationInput;
     private bool rotateToDirection;
     private Vector3 targetDirection;
-    private float targetAngle;
+    private float angularDistance;
+    private Vector3 currentDirection;
 
     // Start is called before the first frame update
     void Start()
@@ -29,8 +30,9 @@ public class InputManager_Proto : MonoBehaviour
         translationInput = GetComponentInChildren<TranslationInput_Proto>();
         rotationInput = GetComponentInChildren<RotationInput_Proto>();
         rotateToDirection = false;
-        targetDirection = Vector3.forward;
-        targetAngle = 0.0f;
+        targetDirection = transform.forward;
+        currentDirection = transform.forward;
+        angularDistance = 0.0f;
 
         //hide cursor in center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -48,24 +50,23 @@ public class InputManager_Proto : MonoBehaviour
         //change speed (high/low)
         bool keyQ = Input.GetKeyDown(KeyCode.Q);
 
+        if (keyQ)
+            rotateToDirection = translationInput.ChangeSpeed();
+
         if (translationInput != null)
         {
+            angularDistance = translationInput.GetAngularDistance(currentDirection);
+            targetDirection = translationInput.TargetDirection;
+
             if (translationX) translationInput.Translate(Axis_Proto.X, inputX * GetSignAxis(invertTranslationX));
             if (translationY) translationInput.Translate(Axis_Proto.Y, inputY * GetSignAxis(invertTranslationY));
             if (translationZ) translationInput.Translate(Axis_Proto.Z, inputZ * GetSignAxis(invertTranslationZ));
-            //targetAngle = translationInput.GetTargetAngle();
-            targetDirection = translationInput.GetDirection();
-        }
-
-        if (keyQ)
-        {
-            rotateToDirection = translationInput.ChangeSpeed();
         }
 
         if (rotationInput != null)
         {
-            //if (rotationY && rotateToDirection) rotationInput.RotateToAngle(Axis_Proto.Y, 1.0f, targetAngle);
-            if (rotationY && rotateToDirection) rotationInput.RotateToDirection(Axis_Proto.Y, targetDirection);
+            currentDirection = rotationInput.CurrentDirection;
+            if (rotationY && rotateToDirection) rotationInput.DecreaseAngularDistance(Axis_Proto.Y, 1.0f, angularDistance);
         }
     }
 

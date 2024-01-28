@@ -7,6 +7,8 @@ public class TranslationInput_Proto : MonoBehaviour
     [SerializeField] float lowSpeed = 6.0f;
     [SerializeField] float highSpeed = 10.0f;
 
+    public Vector3 TargetDirection { get => new Vector3(deltas[(int)InputManager_Proto.Axis_Proto.X], 0, deltas[(int)InputManager_Proto.Axis_Proto.Z]).normalized; }
+
     private CharacterController characterContoller;
     private float[] deltas;
     private float currSpeed;
@@ -51,8 +53,15 @@ public class TranslationInput_Proto : MonoBehaviour
 
     public float GetTargetAngle()
     {
-        var temp = new Vector3(deltas[(int)InputManager_Proto.Axis_Proto.X], 0, deltas[(int)InputManager_Proto.Axis_Proto.Z]);
-        return Vector3.SignedAngle(Vector3.forward, temp, Vector3.up);
+        var temp = new Vector3(deltas[(int)InputManager_Proto.Axis_Proto.X], 0, deltas[(int)InputManager_Proto.Axis_Proto.Z]).normalized;
+        float targetAngle = Vector3.SignedAngle(transform.forward, temp, Vector3.up);
+        return targetAngle;
+    }
+
+    public float GetAngularDistance(Vector3 currentDirection)
+    {
+        float angularDistance = Vector3.SignedAngle(currentDirection, TargetDirection, Vector3.up);
+        return angularDistance;
     }
 
     public bool ChangeSpeed()

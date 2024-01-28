@@ -688,6 +688,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -2871230655150896038, guid: 8af4f464602cc04418fd599869d59af9, type: 3}
+      propertyPath: placement
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5525379685406505715, guid: 8af4f464602cc04418fd599869d59af9, type: 3}
       propertyPath: shotDelay
       value: 0.2

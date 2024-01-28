@@ -5,6 +5,8 @@ public class RotationInput_Proto : MonoBehaviour
     [SerializeField] float increaseAngleKoef = 1.0f; //dependence coefficient angle changing from input
     [SerializeField] float yawRotationSpeed = 1.0f;
 
+    public Vector3 CurrentDirection { get => transform.forward; }
+
     private float[] angles;
 
     // Start is called before the first frame update
@@ -38,30 +40,48 @@ public class RotationInput_Proto : MonoBehaviour
         angles[index] = angle;
     }
 
+    public void DecreaseAngularDistance(InputManager_Proto.Axis_Proto axis, float input, float angularDistance)
+    {
+        if (Mathf.Abs(angularDistance) > 1f)
+        {
+            int index = (int)axis;
+
+            float deltaAngle = input * increaseAngleKoef;
+            float angle = angles[index];
+
+            angle += Mathf.Sign(angularDistance);
+
+            angles[index] = angle;
+        }
+    }
+
     public void RotateToAngle(InputManager_Proto.Axis_Proto axis, float input, float targetAngle)
     {
-        int index = (int)axis;
-
-        float deltaAngle = input * increaseAngleKoef;
-        float angle = angles[index];
-
-        if (angle > targetAngle)
+        if (Mathf.Abs(targetAngle) > 0.01f)
         {
-            angle -= deltaAngle;
-        }
-        else if (angle < targetAngle)
-        {
-            angle += deltaAngle;
-        }
+            int index = (int)axis;
 
-        angles[index] = angle;
+            float deltaAngle = input * increaseAngleKoef;
+            float angle = angles[index];
+
+            if (targetAngle < 0f)
+            {
+                angle -= deltaAngle;
+            }
+            else if (targetAngle > 0f)
+            {
+                angle += deltaAngle;
+            }
+
+            angles[index] = angle;
+        }
     }
 
     public void RotateToDirection(InputManager_Proto.Axis_Proto axis, Vector3 targetDirection)
-    {
-        if (Vector3.Angle(Vector3.forward, targetDirection) == 180.0f)
+    {        
+        if (Vector3.Angle(CurrentDirection, targetDirection) == 180.0f)
             targetDirection = new Vector3(targetDirection.x + targetDirection.magnitude * 0.01f, 0.0f, targetDirection.z);
 
-        transform.rotation = Quaternion.FromToRotation(Vector3.forward, targetDirection);
+        transform.rotation = Quaternion.FromToRotation(CurrentDirection, targetDirection);
     }
 }

@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class BuildPlacement : MonoBehaviour
 {
-    private bool placement;
+    [SerializeField] bool placement = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        placement = false;
+        
     }
 
     // Update is called once per frame
