@@ -54,12 +54,12 @@ MonoBehaviour:
   invertTranslationY: 0
   translationZ: 1
   invertTranslationZ: 0
-  rotationX: 0
+  rotationX: 1
   invertRotationX: 0
   rotationY: 1
   invertRotationY: 0
-  rotationZ: 0
-  invertRotationZ: 0
+  rotationZ: 1
+  invertRotationZ: 1
 --- !u!143 &3309415596281561064
 CharacterController:
   m_ObjectHideFlags: 0

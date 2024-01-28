@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class RotationInput_Proto : MonoBehaviour
@@ -5,7 +6,16 @@ public class RotationInput_Proto : MonoBehaviour
     [SerializeField] float increaseAngleKoef = 1.0f; //dependence coefficient angle changing from input
     [SerializeField] float yawRotationSpeed = 1.0f;
 
-    public Vector3 CurrentDirection { get => transform.forward; }
+    public Vector3 CurrentDirection 
+    {
+        get
+        {
+            if (transform.forward.y != 0f)
+                return new Vector3(transform.forward.x, 0f, transform.forward.z);
+            else
+                return transform.forward;
+        }
+    }
 
     private float[] angles;
 
@@ -83,5 +93,11 @@ public class RotationInput_Proto : MonoBehaviour
             targetDirection = new Vector3(targetDirection.x + targetDirection.magnitude * 0.01f, 0.0f, targetDirection.z);
 
         transform.rotation = Quaternion.FromToRotation(CurrentDirection, targetDirection);
+    }
+
+    public void Rotate(Vector3 targetDirection)
+    {
+        var rotatingVector = Vector3.Cross(Vector3.up, targetDirection);
+        transform.RotateAround(transform.position, rotatingVector, 30);
     }
 }

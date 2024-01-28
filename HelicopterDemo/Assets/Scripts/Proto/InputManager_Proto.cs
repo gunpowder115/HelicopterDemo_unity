@@ -42,7 +42,7 @@ public class InputManager_Proto : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //movement around X, Y, Z and rotatin around X, Z
+        //movement around X, Y, Z and rotation around X, Z
         float inputX = Input.GetAxis("Horizontal");
         float inputY = Input.GetAxis("Jump");
         float inputZ = Input.GetAxis("Vertical");
@@ -50,13 +50,12 @@ public class InputManager_Proto : MonoBehaviour
         //change speed (high/low)
         bool keyQ = Input.GetKeyDown(KeyCode.Q);
 
-        if (keyQ)
-            rotateToDirection = translationInput.ChangeSpeed();
 
         if (translationInput != null)
         {
+            if (keyQ) rotateToDirection = translationInput.ChangeSpeed();
             angularDistance = translationInput.GetAngularDistance(currentDirection);
-            targetDirection = translationInput.TargetDirection;
+            targetDirection = translationInput.TargetDirection;            
 
             if (translationX) translationInput.Translate(Axis_Proto.X, inputX * GetSignAxis(invertTranslationX));
             if (translationY) translationInput.Translate(Axis_Proto.Y, inputY * GetSignAxis(invertTranslationY));
@@ -66,6 +65,8 @@ public class InputManager_Proto : MonoBehaviour
         if (rotationInput != null)
         {
             currentDirection = rotationInput.CurrentDirection;
+
+            if ((translationX || translationZ) && (rotationX || rotationZ)) rotationInput.Rotate(targetDirection);
             if (rotationY && rotateToDirection) rotationInput.DecreaseAngularDistance(Axis_Proto.Y, 1.0f, angularDistance);
         }
     }

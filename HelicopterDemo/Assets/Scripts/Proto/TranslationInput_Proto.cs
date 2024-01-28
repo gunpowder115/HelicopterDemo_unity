@@ -7,7 +7,10 @@ public class TranslationInput_Proto : MonoBehaviour
     [SerializeField] float lowSpeed = 6.0f;
     [SerializeField] float highSpeed = 10.0f;
 
-    public Vector3 TargetDirection { get => new Vector3(deltas[(int)InputManager_Proto.Axis_Proto.X], 0, deltas[(int)InputManager_Proto.Axis_Proto.Z]).normalized; }
+    public Vector3 TargetDirection 
+    { 
+        get => new Vector3(deltas[(int)InputManager_Proto.Axis_Proto.X], 0, deltas[(int)InputManager_Proto.Axis_Proto.Z]).normalized; 
+    }
 
     private CharacterController characterContoller;
     private float[] deltas;
