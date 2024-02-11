@@ -1,12 +1,10 @@
-using System;
 using UnityEngine;
 
 public class RotationInput_Proto : MonoBehaviour
 {
-    [SerializeField] float increaseAngleKoef = 1.0f; //dependence coefficient angle changing from input
-    [SerializeField] float yawRotationSpeed = 1.0f;
+    [SerializeField] float rotationSpeed = 1.0f;
 
-    public Vector3 CurrentDirection 
+    public Vector3 CurrentDirection
     {
         get
         {
@@ -17,7 +15,13 @@ public class RotationInput_Proto : MonoBehaviour
         }
     }
 
+    public Vector3 CurrentRotation => new Vector3(transform.rotation.x,
+                                                    angles[(int)InputManager_Proto.Axis_Proto.Y],
+                                                    transform.rotation.z);
+
     private float[] angles;
+    private float pitchAndRollAngle;
+    private Vector3 rotatingVector;
 
     // Start is called before the first frame update
     void Start()
@@ -27,77 +31,42 @@ public class RotationInput_Proto : MonoBehaviour
             rigidBody.freezeRotation = true;
 
         angles = new float[3] { transform.localEulerAngles.x, transform.localEulerAngles.y, transform.localEulerAngles.z };
+        pitchAndRollAngle = 30f;
+        rotatingVector = Vector3.zero;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 rotateVector = new Vector3(angles[(int)InputManager_Proto.Axis_Proto.X],
-                                            angles[(int)InputManager_Proto.Axis_Proto.Y],
-                                            angles[(int)InputManager_Proto.Axis_Proto.Z]);
-        transform.localEulerAngles = rotateVector;
-    }
-
-    public void RotateNoLimits(InputManager_Proto.Axis_Proto axis, float input)
-    {
-        int index = (int)axis;
-
-        float deltaAngle = input * increaseAngleKoef;
-        float angle = angles[index];
-
-        angle += deltaAngle;
-
-        angles[index] = angle;
+        transform.rotation = Quaternion.Euler(CurrentRotation);
     }
 
     public void DecreaseAngularDistance(InputManager_Proto.Axis_Proto axis, float input, float angularDistance)
     {
-        if (Mathf.Abs(angularDistance) > 1f)
+        if (Mathf.Abs(angularDistance) > 0f)
         {
             int index = (int)axis;
-
-            float deltaAngle = input * increaseAngleKoef;
             float angle = angles[index];
 
-            angle += Mathf.Sign(angularDistance);
+            angle = Mathf.LerpAngle(angle, angle + angularDistance, Time.deltaTime * rotationSpeed);
 
             angles[index] = angle;
         }
-    }
-
-    public void RotateToAngle(InputManager_Proto.Axis_Proto axis, float input, float targetAngle)
-    {
-        if (Mathf.Abs(targetAngle) > 0.01f)
-        {
-            int index = (int)axis;
-
-            float deltaAngle = input * increaseAngleKoef;
-            float angle = angles[index];
-
-            if (targetAngle < 0f)
-            {
-                angle -= deltaAngle;
-            }
-            else if (targetAngle > 0f)
-            {
-                angle += deltaAngle;
-            }
-
-            angles[index] = angle;
-        }
-    }
-
-    public void RotateToDirection(InputManager_Proto.Axis_Proto axis, Vector3 targetDirection)
-    {        
-        if (Vector3.Angle(CurrentDirection, targetDirection) == 180.0f)
-            targetDirection = new Vector3(targetDirection.x + targetDirection.magnitude * 0.01f, 0.0f, targetDirection.z);
-
-        transform.rotation = Quaternion.FromToRotation(CurrentDirection, targetDirection);
     }
 
     public void Rotate(Vector3 targetDirection)
     {
-        var rotatingVector = Vector3.Cross(Vector3.up, targetDirection);
-        transform.RotateAround(transform.position, rotatingVector, 30);
+        if (targetDirection != Vector3.zero)
+        {
+            rotatingVector = Vector3.Cross(Vector3.up, targetDirection);
+            transform.RotateAround(transform.position, rotatingVector, pitchAndRollAngle);
+            pitchAndRollAngle++;
+        }
+        else
+        {
+            transform.RotateAround(transform.position, rotatingVector, pitchAndRollAngle);
+            pitchAndRollAngle--;
+        }
+        pitchAndRollAngle = Mathf.Clamp(pitchAndRollAngle, 0f, 30f);
     }
 }
