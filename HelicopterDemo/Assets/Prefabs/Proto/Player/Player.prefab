@@ -100,8 +100,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 3309415596281561066}
     m_Modifications:
     - target: {fileID: 2369090265771889126, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
+      propertyPath: lerpYawStep
+      value: 0.001
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369090265771889126, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
       propertyPath: rotationSpeed
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369090265771889126, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
+      propertyPath: largeAttitudeAngle
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 4003434706837008606, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
       propertyPath: m_RootOrder

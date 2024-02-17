@@ -3717,6 +3717,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 940642060817260709, guid: 8ababed77351a4f4c955b2acb57a6e4f, type: 3}
+      propertyPath: lerpStep
+      value: 0.001
+      objectReference: {fileID: 0}
+    - target: {fileID: 940642060817260709, guid: 8ababed77351a4f4c955b2acb57a6e4f, type: 3}
+      propertyPath: lerpYawStep
+      value: 0.001
+      objectReference: {fileID: 0}
     - target: {fileID: 3309415596281561061, guid: 8ababed77351a4f4c955b2acb57a6e4f, type: 3}
       propertyPath: m_Name
       value: Player

@@ -42,15 +42,15 @@ public class InputManager_Proto : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //movement around X, Y, Z and rotation around X, Z
         float inputX = Input.GetAxis("Horizontal");
         float inputY = Input.GetAxis("Jump");
         float inputZ = Input.GetAxis("Vertical");
+        float inputXZ = Mathf.Clamp01(new Vector3(inputX, 0f, inputZ).magnitude);
 
         //change speed (high/low)
         bool keyQ = Input.GetKeyDown(KeyCode.Q);
 
-
+        //movement around X, Y, Z
         if (translationInput != null)
         {
             if (keyQ) rotateToDirection = translationInput.ChangeSpeed();
@@ -62,17 +62,18 @@ public class InputManager_Proto : MonoBehaviour
             if (translationZ) translationInput.Translate(Axis_Proto.Z, inputZ * GetSignAxis(invertTranslationZ));
         }
 
+        //rotation around X, Y, Z
         if (rotationInput != null)
         {
             currentDirection = rotationInput.CurrentDirection;
 
-            if ((translationX || translationZ) && (rotationX || rotationZ)) rotationInput.Rotate(targetDirection);
-            if (rotationY && rotateToDirection) rotationInput.DecreaseAngularDistance(Axis_Proto.Y, 1.0f, angularDistance);
+            if ((translationX || translationZ) && (rotationX || rotationZ)) rotationInput.RotateByAttitude(targetDirection, inputXZ, rotateToDirection);
+            if (rotationY && rotateToDirection) rotationInput.RotateByYaw(angularDistance, inputXZ);
         }
     }
 
     private float GetSignAxis(bool invertAxis) => invertAxis ? -1.0f : 1.0f;
 
-    public enum Axis_Proto
+    public enum Axis_Proto : int
     { X, Y, Z }
 }
