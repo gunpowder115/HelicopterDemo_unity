@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5376200307808644183}
-  - component: {fileID: 5376200307808644177}
-  - component: {fileID: 5376200307808644182}
   m_Layer: 0
   m_Name: Camera_NoPlayerRotation
   m_TagString: Untagged
@@ -34,44 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5376200307808644177
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5376200307808644180}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41175428f113cb24a811def3c61d2f8f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  increaseAngleKoef: 1
-  yawRotationSpeed: 5
---- !u!114 &5376200307808644182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5376200307808644180}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e25422909cc19844fa03ca8d72fad2e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  translationX: 0
-  invertTranslationX: 0
-  translationY: 0
-  invertTranslationY: 0
-  translationZ: 0
-  invertTranslationZ: 0
-  rotationX: 0
-  invertRotationX: 0
-  rotationY: 1
-  invertRotationY: 1
-  rotationZ: 0
-  invertRotationZ: 0
 --- !u!1001 &8686779117518692897
 PrefabInstance:
   m_ObjectHideFlags: 0

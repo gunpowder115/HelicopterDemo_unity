@@ -2,21 +2,6 @@ using UnityEngine;
 
 public class InputManager_Proto : MonoBehaviour
 {
-    [Header("Translation Axes")]
-    [SerializeField] private bool translationX = true;
-    [SerializeField] private bool invertTranslationX = false;
-    [SerializeField] private bool translationY = true;
-    [SerializeField] private bool invertTranslationY = false;
-    [SerializeField] private bool translationZ = true;
-    [SerializeField] private bool invertTranslationZ = false;
-    [Header("Rotation Axes")]
-    [SerializeField] private bool rotationX = false;
-    [SerializeField] private bool invertRotationX = false;
-    [SerializeField] private bool rotationY = false;
-    [SerializeField] private bool invertRotationY = false;
-    [SerializeField] private bool rotationZ = false;
-    [SerializeField] private bool invertRotationZ = false;
-
     private TranslationInput_Proto translationInput;
     private RotationInput_Proto rotationInput;
     private bool rotateToDirection;
@@ -57,9 +42,9 @@ public class InputManager_Proto : MonoBehaviour
             angularDistance = translationInput.GetAngularDistance(currentDirection);
             targetDirection = translationInput.TargetDirection;            
 
-            if (translationX) translationInput.Translate(Axis_Proto.X, inputX * GetSignAxis(invertTranslationX));
-            if (translationY) translationInput.Translate(Axis_Proto.Y, inputY * GetSignAxis(invertTranslationY));
-            if (translationZ) translationInput.Translate(Axis_Proto.Z, inputZ * GetSignAxis(invertTranslationZ));
+            translationInput.Translate(Axis_Proto.X, inputX);
+            translationInput.Translate(Axis_Proto.Y, inputY);
+            translationInput.Translate(Axis_Proto.Z, inputZ);
         }
 
         //rotation around X, Y, Z
@@ -67,12 +52,10 @@ public class InputManager_Proto : MonoBehaviour
         {
             currentDirection = rotationInput.CurrentDirection;
 
-            if ((translationX || translationZ) && (rotationX || rotationZ)) rotationInput.RotateByAttitude(targetDirection, inputXZ, rotateToDirection);
-            if (rotationY && rotateToDirection) rotationInput.RotateByYaw(angularDistance, inputXZ);
+            rotationInput.RotateByAttitude(targetDirection, inputXZ, rotateToDirection);
+            if (rotateToDirection) rotationInput.RotateByYaw(angularDistance, inputXZ);
         }
     }
-
-    private float GetSignAxis(bool invertAxis) => invertAxis ? -1.0f : 1.0f;
 
     public enum Axis_Proto : int
     { X, Y, Z }
