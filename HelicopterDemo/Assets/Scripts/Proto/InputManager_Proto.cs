@@ -2,8 +2,11 @@ using UnityEngine;
 
 public class InputManager_Proto : MonoBehaviour
 {
+    [SerializeField] float changeSpeedInput = 0.5f;
+
     private TranslationInput_Proto translationInput;
     private RotationInput_Proto rotationInput;
+    private CameraRotation cameraRotation;
     private bool rotateToDirection;
     private Vector3 targetDirection;
     private float angularDistance;
@@ -14,6 +17,7 @@ public class InputManager_Proto : MonoBehaviour
     {
         translationInput = GetComponentInChildren<TranslationInput_Proto>();
         rotationInput = GetComponentInChildren<RotationInput_Proto>();
+        cameraRotation = GetComponentInChildren<CameraRotation>();
         rotateToDirection = false;
         targetDirection = transform.forward;
         currentDirection = transform.forward;
@@ -55,6 +59,9 @@ public class InputManager_Proto : MonoBehaviour
             rotationInput.RotateByAttitude(targetDirection, inputXZ, rotateToDirection);
             if (rotateToDirection) rotationInput.RotateByYaw(angularDistance, inputXZ);
         }
+
+        //camera rotation
+        cameraRotation.RotateCameraHorizontally(rotateToDirection ? currentDirection.x : targetDirection.x);
     }
 
     public enum Axis_Proto : int
