@@ -62,6 +62,7 @@ public class InputManager_Proto : MonoBehaviour
 
         //camera rotation
         cameraRotation.RotateCameraHorizontally(rotateToDirection ? currentDirection.x : targetDirection.x);
+        //cameraRotation.RotateCameraVertically();
     }
 
     public enum Axis_Proto : int

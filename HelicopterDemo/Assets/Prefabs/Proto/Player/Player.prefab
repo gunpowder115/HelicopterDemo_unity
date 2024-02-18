@@ -238,6 +238,6 @@ MonoBehaviour:
   maxHorizontalAngle: 25
   maxVerticalAngle_cameraUp: 5
   maxVerticalAngle_cameraDown: 40
-  horizontalSpeed: 0.1
+  horizontalSpeed: 0.7
   horizontalSpeedManual: 0.6
   verticalSpeed: 0.1
