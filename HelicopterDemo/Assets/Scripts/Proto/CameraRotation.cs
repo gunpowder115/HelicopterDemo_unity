@@ -8,11 +8,11 @@ public class CameraRotation : MonoBehaviour
     [SerializeField] float maxVerticalAngle_cameraUp = 5f;
     [SerializeField] float maxVerticalAngle_cameraDown = 40f;
     [SerializeField] float horizontalSpeed = 1f;
+    [SerializeField] float horizontalSpeedManual = 1f;
     [SerializeField] float verticalSpeed = 1f;
 
     private float horizontalRot, verticalRot;
     private float inputHor, inputVert;
-    private float playerDirX_sign;
     private float targetCameraHorRot;
 
     private readonly float defaultVerticalAngle = 15f;
@@ -45,13 +45,19 @@ public class CameraRotation : MonoBehaviour
 
     public void RotateCameraHorizontally(float playerDirX)
     {
+        float currHorSpeed = horizontalSpeed;
+        if (inputHor != 0f)
+        {
+            playerDirX = inputHor;
+            currHorSpeed = horizontalSpeedManual;
+        }
+
         targetCameraHorRot = playerDirX * maxHorizontalAngle;
-        playerDirX_sign = Mathf.Sign(playerDirX);
         float rotSign = Mathf.Sign(targetCameraHorRot - horizontalRot);
 
-        if (Mathf.Abs(horizontalRot - targetCameraHorRot) > 2f * horizontalSpeed)
+        if (Mathf.Abs(horizontalRot - targetCameraHorRot) > 2f * currHorSpeed)
         {
-            horizontalRot += rotSign * horizontalSpeed;
+            horizontalRot += rotSign * currHorSpeed;
             horizontalRot = Mathf.Clamp(horizontalRot, -maxHorizontalAngle, maxHorizontalAngle);
         }
     }
