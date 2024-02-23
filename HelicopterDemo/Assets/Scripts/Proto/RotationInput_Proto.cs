@@ -5,9 +5,6 @@ public class RotationInput_Proto : MonoBehaviour
     [SerializeField] float rotationSpeed = 1.0f;
     [SerializeField] float largeAttitudeAngle = 30.0f;
     [SerializeField] float smallAttitudeAngle = 20.0f;
-    [SerializeField] float lerpYawStep = 0.05f;
-
-    private float lerpYawValue;
 
     public Vector3 CurrentDirection
     {
@@ -20,52 +17,26 @@ public class RotationInput_Proto : MonoBehaviour
         }
     }
 
-    public Vector3 CurrentRotation => new Vector3(transform.rotation.x,
-                                                    angles[(int)InputManager_Proto.Axis_Proto.Y],
-                                                    transform.rotation.z);
-
-    private float[] angles;
-
     // Start is called before the first frame update
     void Start()
     {
         Rigidbody rigidBody = GetComponent<Rigidbody>();
         if (rigidBody)
             rigidBody.freezeRotation = true;
-
-        angles = new float[3] { transform.localEulerAngles.x, transform.localEulerAngles.y, transform.localEulerAngles.z };
-        lerpYawValue = 0f;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Rotate(Vector3 targetDirection, float angularDistance, float input, bool rotateToDirection)
     {
-        transform.rotation = Quaternion.Euler(CurrentRotation);
-    }
+        targetDirection = transform.worldToLocalMatrix * targetDirection;
+        Vector3 eulerAnglesCurrent = transform.rotation.eulerAngles;
+        float targetAngle = input * (rotateToDirection ? largeAttitudeAngle : smallAttitudeAngle);
+        float targetAngleX = targetDirection.z * targetAngle;
+        float targetAngleZ = -targetDirection.x * targetAngle;
+        float targetAngleY = rotateToDirection ? eulerAnglesCurrent.y + angularDistance : eulerAnglesCurrent.y;
 
-    public void RotateByYaw(float angularDistance, float input)
-    {        
-        if (Mathf.Abs(angularDistance) > Mathf.Epsilon)
-        {
-            int index = (int)InputManager_Proto.Axis_Proto.Y;
-            float angle = angles[index];
+        Vector3 eulerAnglesTarget = new Vector3(targetAngleX, targetAngleY, targetAngleZ);
 
-            angle = Mathf.LerpAngle(angle, angle + angularDistance, lerpYawValue *  input);
-            lerpYawValue += lerpYawStep;
-            lerpYawValue = Mathf.Clamp01(lerpYawValue);
-
-            angles[index] = angle;
-        }
-        else
-        {
-            lerpYawValue = 0f;
-        }
-    }
-
-    public void RotateByAttitude(Vector3 targetDirection, float input, bool largeTilt)
-    {
-        Vector3 rotatingVector = Vector3.Cross(Vector3.up, targetDirection);
-        float pitchAndRollAngle = input * (largeTilt ? largeAttitudeAngle : smallAttitudeAngle);
-        transform.RotateAround(transform.position, rotatingVector, pitchAndRollAngle);
+        Quaternion rotationTarget = Quaternion.Euler(eulerAnglesTarget);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, rotationSpeed * Time.deltaTime);
     }
 }

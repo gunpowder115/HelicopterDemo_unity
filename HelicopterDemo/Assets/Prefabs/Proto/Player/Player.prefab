@@ -94,7 +94,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2369090265771889126, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
       propertyPath: rotationSpeed
-      value: 50
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2369090265771889126, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
       propertyPath: largeAttitudeAngle

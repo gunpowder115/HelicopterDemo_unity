@@ -56,8 +56,7 @@ public class InputManager_Proto : MonoBehaviour
         {
             currentDirection = rotationInput.CurrentDirection;
 
-            rotationInput.RotateByAttitude(targetDirection, inputXZ, rotateToDirection);
-            if (rotateToDirection) rotationInput.RotateByYaw(angularDistance, inputXZ);
+            rotationInput.Rotate(targetDirection, angularDistance, inputXZ, rotateToDirection);
         }
 
         //camera rotation
