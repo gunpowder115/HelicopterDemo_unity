@@ -1,65 +1,55 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraRotation : MonoBehaviour
 {
     [SerializeField] float maxHorizontalAngle = 30f;
-    [SerializeField] float maxVerticalAngle_cameraUp = 5f;
-    [SerializeField] float maxVerticalAngle_cameraDown = 40f;
-    [SerializeField] float horizontalSpeed = 1f;
-    [SerializeField] float horizontalSpeedManual = 1f;
-    [SerializeField] float verticalSpeed = 1f;
+    [SerializeField] float maxVerticalAngle_cameraUp = 40f;
+    [SerializeField] float maxVerticalAngle_cameraDown = 5f;
+    [SerializeField] float rotSpeed = 1f;
+    [SerializeField] float rotSpeedManual = 1f;
 
-    private float horizontalRot, verticalRot;
     private float inputHor, inputVert;
-    private float targetCameraVertRot;
 
     private readonly float defaultVerticalAngle = 15f;
-
-    private void Start()
-    {
-        horizontalRot = verticalRot = 0f;
-    }
 
     // Update is called once per frame
     void Update()
     {
         inputHor = Input.GetAxis("CameraHorizontal");
         inputVert = Input.GetAxis("CameraVertical");
-
-        //transform.localEulerAngles = new Vector3(verticalRot + defaultVerticalAngle, horizontalRot, 0f);
     }
-    
-    public void RotateCameraHorizontally(float playerDirX)
+
+    public void RotateHorizontally(float playerDirX)
     {
-        float currHorSpeed = horizontalSpeed;
-        if (inputHor != 0f)
-        {
-            playerDirX += inputHor;
-            currHorSpeed = horizontalSpeedManual;
-        }
+        playerDirX += inputHor;
 
         float targetCameraHorRot = playerDirX * maxHorizontalAngle;
-        
+
         Vector3 eulerAnglesCurrent = transform.rotation.eulerAngles;
+        float currRotSpeed = inputHor != 0f ? rotSpeedManual : rotSpeed;
         Vector3 eulerAnglesTarget = new Vector3(eulerAnglesCurrent.x, targetCameraHorRot, eulerAnglesCurrent.z);
 
         Quaternion rotationTarget = Quaternion.Euler(eulerAnglesTarget);
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, currHorSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, currRotSpeed * Time.deltaTime);
     }
 
-    public void RotateCameraVertically()
+    public void RotateVertically(float playerDirZ)
     {
-        targetCameraVertRot = inputVert * (inputVert > 0 ? maxVerticalAngle_cameraDown - defaultVerticalAngle : 
-            maxVerticalAngle_cameraUp - defaultVerticalAngle);
-        float rotSign = Mathf.Sign(targetCameraVertRot - verticalRot);
+        playerDirZ += inputVert;
 
-        if (Mathf.Abs(verticalRot - targetCameraVertRot) > 2f * verticalSpeed)
-        {
-            verticalRot += rotSign * verticalSpeed;
-            verticalRot = Mathf.Clamp(verticalRot, maxVerticalAngle_cameraUp - defaultVerticalAngle, 
-                                                    maxVerticalAngle_cameraDown - defaultVerticalAngle);
-        }
+        float targetCameraVertRot;
+        if (playerDirZ > 0f)
+            targetCameraVertRot = playerDirZ * maxVerticalAngle_cameraUp;
+        else if (playerDirZ < 0f)
+            targetCameraVertRot = playerDirZ * maxVerticalAngle_cameraDown;
+        else
+            targetCameraVertRot = defaultVerticalAngle;
+
+        Vector3 eulerAnglesCurrent = transform.rotation.eulerAngles;
+        float currRotSpeed = rotSpeedManual;
+        Vector3 eulerAnglesTarget = new Vector3(targetCameraVertRot, eulerAnglesCurrent.y, eulerAnglesCurrent.z);
+
+        Quaternion rotationTarget = Quaternion.Euler(eulerAnglesTarget);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, currRotSpeed * Time.deltaTime);
     }
 }

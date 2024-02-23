@@ -29,9 +29,10 @@ public class RotationInput_Proto : MonoBehaviour
     {
         targetDirection = transform.worldToLocalMatrix * targetDirection;
         Vector3 eulerAnglesCurrent = transform.rotation.eulerAngles;
-        float targetAngle = input * (rotateToDirection ? largeAttitudeAngle : smallAttitudeAngle);
-        float targetAngleX = targetDirection.z * targetAngle;
-        float targetAngleZ = -targetDirection.x * targetAngle;
+
+        float targetAttitudeAngle = input * (rotateToDirection ? largeAttitudeAngle : smallAttitudeAngle);
+        float targetAngleX = targetDirection.z * targetAttitudeAngle;
+        float targetAngleZ = -targetDirection.x * targetAttitudeAngle;
         float targetAngleY = rotateToDirection ? eulerAnglesCurrent.y + angularDistance : eulerAnglesCurrent.y;
 
         Vector3 eulerAnglesTarget = new Vector3(targetAngleX, targetAngleY, targetAngleZ);
