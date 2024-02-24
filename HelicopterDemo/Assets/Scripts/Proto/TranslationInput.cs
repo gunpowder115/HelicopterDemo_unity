@@ -2,14 +2,14 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 
-public class TranslationInput_Proto : MonoBehaviour
+public class TranslationInput : MonoBehaviour
 {
     [SerializeField] float lowSpeed = 6.0f;
     [SerializeField] float highSpeed = 10.0f;
 
     public Vector3 TargetDirection 
     { 
-        get => new Vector3(deltas[(int)InputManager_Proto.Axis_Proto.X], 0, deltas[(int)InputManager_Proto.Axis_Proto.Z]).normalized; 
+        get => new Vector3(deltas[(int)InputManager.Axis_Proto.X], 0, deltas[(int)InputManager.Axis_Proto.Z]).normalized; 
     }
 
     private CharacterController characterContoller;
@@ -30,9 +30,9 @@ public class TranslationInput_Proto : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 movement = new Vector3(deltas[(int)InputManager_Proto.Axis_Proto.X],
-                                        deltas[(int)InputManager_Proto.Axis_Proto.Y],
-                                        deltas[(int)InputManager_Proto.Axis_Proto.Z]);
+        Vector3 movement = new Vector3(deltas[(int)InputManager.Axis_Proto.X],
+                                        deltas[(int)InputManager.Axis_Proto.Y],
+                                        deltas[(int)InputManager.Axis_Proto.Z]);
         movement = Vector3.ClampMagnitude(movement, currSpeed);
         movement *= Time.deltaTime;
         movement = transform.TransformDirection(movement);
@@ -40,14 +40,14 @@ public class TranslationInput_Proto : MonoBehaviour
             characterContoller.Move(movement);
     }
 
-    public void Translate(InputManager_Proto.Axis_Proto axis, float input)
+    public void Translate(InputManager.Axis_Proto axis, float input)
     {
         deltas[(int)axis] = input * currSpeed;
     }
 
     public Vector3 GetDirection()
     {
-        var temp = new Vector3(deltas[(int)InputManager_Proto.Axis_Proto.X], 0, deltas[(int)InputManager_Proto.Axis_Proto.Z]);
+        var temp = new Vector3(deltas[(int)InputManager.Axis_Proto.X], 0, deltas[(int)InputManager.Axis_Proto.Z]);
         if (temp != Vector3.zero) horizontalMovement = temp;
         return horizontalMovement;
     }
@@ -56,7 +56,7 @@ public class TranslationInput_Proto : MonoBehaviour
 
     public float GetTargetAngle()
     {
-        var temp = new Vector3(deltas[(int)InputManager_Proto.Axis_Proto.X], 0, deltas[(int)InputManager_Proto.Axis_Proto.Z]).normalized;
+        var temp = new Vector3(deltas[(int)InputManager.Axis_Proto.X], 0, deltas[(int)InputManager.Axis_Proto.Z]).normalized;
         float targetAngle = Vector3.SignedAngle(transform.forward, temp, Vector3.up);
         return targetAngle;
     }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RotationInput_Proto : MonoBehaviour
+public class RotationInput : MonoBehaviour
 {
     [SerializeField] float attitudeRotSpeed = 6.0f;
     [SerializeField] float yawRotSpeed = 3.0f;

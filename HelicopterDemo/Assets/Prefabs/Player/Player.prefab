@@ -10,9 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8546363007158415150}
   - component: {fileID: 8546363007158415136}
-  - component: {fileID: 8546363007158415137}
-  - component: {fileID: 8546363007158415139}
-  - component: {fileID: 8546363007158415138}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -55,59 +52,6 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8546363007158415137
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8546363007158415151}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 28254481e69cd0e4f99568746e3039b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 12
---- !u!114 &8546363007158415139
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8546363007158415151}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afb0e7989990c7e4e8cf567ec1fbed9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxAngleValue: 30
-  angleEpsilon: 0.1
-  increaseAngleKoef: 1
-  decreaseAngleKoef: 0.1
---- !u!114 &8546363007158415138
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8546363007158415151}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16e58ae74910ad64781970968d8c5983, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  translationX: 1
-  invertTranslationX: 0
-  translationY: 1
-  invertTranslationY: 0
-  translationZ: 1
-  invertTranslationZ: 0
-  rotationX: 0
-  invertRotationX: 0
-  rotationY: 1
-  invertRotationY: 0
-  rotationZ: 0
-  invertRotationZ: 0
 --- !u!1001 &8546363007099956165
 PrefabInstance:
   m_ObjectHideFlags: 0

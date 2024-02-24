@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class InputManager_Proto : MonoBehaviour
+public class InputManager : MonoBehaviour
 {
     [SerializeField] float changeSpeedInput = 0.5f;
 
-    private TranslationInput_Proto translationInput;
-    private RotationInput_Proto rotationInput;
+    private TranslationInput translationInput;
+    private RotationInput rotationInput;
     private CameraRotation cameraRotation;
     private bool rotateToDirection;
     private Vector3 targetDirection;
@@ -15,8 +15,8 @@ public class InputManager_Proto : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        translationInput = GetComponentInChildren<TranslationInput_Proto>();
-        rotationInput = GetComponentInChildren<RotationInput_Proto>();
+        translationInput = GetComponentInChildren<TranslationInput>();
+        rotationInput = GetComponentInChildren<RotationInput>();
         cameraRotation = GetComponentInChildren<CameraRotation>();
         rotateToDirection = false;
         targetDirection = transform.forward;
