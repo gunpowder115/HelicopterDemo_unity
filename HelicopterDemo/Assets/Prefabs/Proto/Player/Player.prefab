@@ -93,8 +93,16 @@ PrefabInstance:
       value: 0.001
       objectReference: {fileID: 0}
     - target: {fileID: 2369090265771889126, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
+      propertyPath: yawRotSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369090265771889126, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
       propertyPath: rotationSpeed
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2369090265771889126, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
+      propertyPath: attitudeRotSpeed
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2369090265771889126, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
       propertyPath: largeAttitudeAngle
@@ -238,6 +246,5 @@ MonoBehaviour:
   maxHorizontalAngle: 25
   maxVerticalAngle_cameraUp: 40
   maxVerticalAngle_cameraDown: 5
-  horizontalSpeed: 0.7
-  horizontalSpeedManual: 0.6
-  verticalSpeed: 0.1
+  rotSpeed: 0.5
+  rotSpeedManual: 1
