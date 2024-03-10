@@ -44,7 +44,7 @@ public class InputManager : MonoBehaviour
         {
             if (keyQ) rotateToDirection = translationInput.ChangeSpeed();
             angularDistance = translationInput.GetAngularDistance(currentDirection);
-            targetDirection = translationInput.TargetDirection;            
+            targetDirection = translationInput.TargetDirection;
 
             translationInput.Translate(Axis_Proto.X, inputX);
             translationInput.Translate(Axis_Proto.Y, inputY);
@@ -61,8 +61,11 @@ public class InputManager : MonoBehaviour
         }
 
         //camera rotation
-        cameraRotation.RotateHorizontally(rotateToDirection ? currentDirection.x : targetDirection.x);
-        cameraRotation.RotateVertically(0f);
+        if (cameraRotation != null)
+        {
+            cameraRotation.RotateHorizontally(rotateToDirection ? currentDirection.x : targetDirection.x);
+            cameraRotation.RotateVertically(0f);
+        }
     }
 
     public enum Axis_Proto : int

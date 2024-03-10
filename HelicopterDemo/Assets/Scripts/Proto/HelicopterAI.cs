@@ -1,4 +1,5 @@
 using UnityEngine;
+using static InputManager;
 
 public class HelicopterAI : MonoBehaviour
 {
@@ -11,10 +12,26 @@ public class HelicopterAI : MonoBehaviour
     [SerializeField] private float absBorderX = 200f;
     [SerializeField] private float absBorderZ = 200f;
 
+    private TranslationInput translationInput;
+    private RotationInput rotationInput;
     private FlightPhase flightPhase;
     private Vector3 translation;
     private float distance;
     private bool flight;
+    private RaycastHit hit;
+
+    private Vector3 targetInput;
+    private Vector3 currentInput;
+    private Vector3 targetDirection;
+    private Vector3 currentDirection;
+    private float angularDistance;
+
+    private void Start()
+    {
+        translationInput = GetComponentInChildren<TranslationInput>();
+        rotationInput = GetComponentInChildren<RotationInput>();
+        hit = new RaycastHit();
+    }
 
     // Update is called once per frame
     void Update()
@@ -24,28 +41,45 @@ public class HelicopterAI : MonoBehaviour
             switch (flightPhase)
             {
                 case FlightPhase.Takeoff:
-                    if (this.gameObject.transform.position.y < minHeight)
-                        this.gameObject.transform.Translate(Vector3.up * verticalSpeed * Time.deltaTime);
-                    else
+                    if (!Takeoff())
                     {
-                        SelectTranslation();
-                        flightPhase = FlightPhase.Flight;
+                        targetInput = GetTargetInput();
+                        if (!translationInput.CurrSpeedIsHigh)
+                            translationInput.ChangeSpeed();
+                        flightPhase = FlightPhase.DirectFlight;
                     }
                     break;
-                case FlightPhase.Flight:
-                    this.gameObject.transform.Translate(translation * speed * Time.deltaTime);
 
-                    if (this.gameObject.transform.position.y >= maxHeight ||
-                        this.gameObject.transform.position.y <= minHeight)
-                        SelectHeight();
+                case FlightPhase.DirectFlight:
+                    currentInput = GetCurrentInput();
+                    float inputXZ = Mathf.Clamp01(new Vector3(currentInput.x, 0f, currentInput.z).magnitude);
+
+                    if (translationInput != null)
+                    {
+                        angularDistance = translationInput.GetAngularDistance(currentDirection);
+                        targetDirection = translationInput.TargetDirection;
+
+                        translationInput.Translate(Axis_Proto.X, currentInput.x);
+                        translationInput.Translate(Axis_Proto.Y, currentInput.y);
+                        translationInput.Translate(Axis_Proto.Z, currentInput.z);
+                    }
+
+                    if (rotationInput != null)
+                    {
+                        currentDirection = rotationInput.CurrentDirection;
+
+                        rotationInput.RotateByYaw(angularDistance, true);
+                        rotationInput.RotateByAttitude(targetDirection, inputXZ, true);
+                    }
 
                     Ray ray = new Ray(this.gameObject.transform.position, this.gameObject.transform.forward);
-                    RaycastHit hit;
                     if (Physics.SphereCast(ray, 5.0f, out hit))
                     {
                         GameObject hitObject = hit.transform.gameObject;
-                        if (hitObject.CompareTag("Obstacle") && hit.distance < 15.0f)
-                            SelectTranslation();
+                        if (hitObject.CompareTag("Obstacle") && hit.distance < 20.0f)
+                        {
+                            targetInput = GetTargetInput();
+                        }
                     }
                     break;
             }
@@ -60,30 +94,47 @@ public class HelicopterAI : MonoBehaviour
         flight = true;
     }
 
-    private void SelectTranslation()
+    private bool Takeoff()
     {
-        float angle = Random.Range(-110, 110);
-        this.gameObject.transform.Rotate(new Vector3(0, angle, 0));
-
-        distance = Random.Range(minDistance, maxDistance);
-        float deltaHeight = Random.Range(minHeight, maxHeight) - this.gameObject.transform.position.y;
-        float vertSpeed = deltaHeight / distance * speed;
-        Vector3 targetDirection = speed * Vector3.forward + vertSpeed * Vector3.up;
-        translation = targetDirection.normalized;
+        if (this.gameObject.transform.position.y < minHeight)
+        {
+            this.gameObject.transform.Translate(Vector3.up * verticalSpeed * Time.deltaTime);
+            return true;
+        }
+        else
+            return false;
     }
 
-    private void SelectHeight()
+    private Vector3 GetTargetInput()
     {
-        distance = Random.Range(minDistance, maxDistance);
-        float deltaHeight = Random.Range(minHeight, maxHeight) - this.gameObject.transform.position.y;
-        float vertSpeed = deltaHeight / distance * speed;
-        Vector3 targetDirection = speed * Vector3.forward + vertSpeed * Vector3.up;
-        translation = targetDirection.normalized;
+        float inputX = Random.Range(-1f, 1f);
+        float inputY = 0f;
+        //float inputY = Mathf.Clamp(DeltaHeight, -1f, 1f);
+        float inputZ = Random.Range(-1f, 1f);
+        return new Vector3(inputX, inputY, inputZ).normalized;
+    }
+
+    private Vector3 GetCurrentInput()
+    {
+        float deltaX = targetInput.x - currentInput.x;
+        float deltaZ = targetInput.z - currentInput.z;
+
+        float currInX = currentInput.x + Mathf.Sign(deltaX) * Time.deltaTime / 0.33f;
+        float currInZ = currentInput.z + Mathf.Sign(deltaZ) * Time.deltaTime / 0.33f;
+        currInX = Mathf.Clamp(currInX, 
+                                targetInput.x > 0f ? -targetInput.x : targetInput.x, 
+                                targetInput.x > 0f ? targetInput.x : -targetInput.x);
+        currInZ = Mathf.Clamp(currInZ, 
+                                targetInput.z > 0f ? -targetInput.z : targetInput.z, 
+                                targetInput.z > 0f ? targetInput.z : -targetInput.z);
+
+        currentInput = new Vector3(currInX, currentInput.y, currInZ);
+        return currentInput;
     }
 
     public enum FlightPhase
     {
         Takeoff,
-        Flight
+        DirectFlight,
     }
 }

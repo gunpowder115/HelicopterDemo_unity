@@ -104,7 +104,7 @@ public class CargoHelicopter : MonoBehaviour
 
     private void InitCargo()
     {
-        cargo = Instantiate(cargoPrefab);
+        cargo = Instantiate(cargoPrefab, this.gameObject.transform);
         cargo.transform.rotation = this.transform.rotation;
         cargo.transform.position = new Vector3(this.transform.position.x, this.transform.position.y - targetHeight, this.transform.position.z);
     }
@@ -113,8 +113,6 @@ public class CargoHelicopter : MonoBehaviour
     {
         translation *= (back ? -1f : 1f);
         this.gameObject.transform.Translate(translation * speed * Time.deltaTime, Space.World);
-        if (withCargo)
-            cargo.transform.Translate(translation * speed * Time.deltaTime, Space.World);
     }
 
     private IEnumerator CargoDrop()
