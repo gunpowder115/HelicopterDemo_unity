@@ -14,9 +14,8 @@ public class HelicopterAI : MonoBehaviour
 
     private TranslationInput translationInput;
     private RotationInput rotationInput;
+
     private FlightPhase flightPhase;
-    private Vector3 translation;
-    private float distance;
     private bool flight;
     private RaycastHit hit;
 
@@ -25,6 +24,7 @@ public class HelicopterAI : MonoBehaviour
     private Vector3 targetDirection;
     private Vector3 currentDirection;
     private float angularDistance;
+    private float targetHeight;
 
     private void Start()
     {
@@ -72,6 +72,12 @@ public class HelicopterAI : MonoBehaviour
                         rotationInput.RotateByAttitude(targetDirection, inputXZ, true);
                     }
 
+                    if ((targetInput.y > 0f && this.gameObject.transform.position.y >= targetHeight) ||
+                        (targetInput.y < 0f && this.gameObject.transform.position.y <= targetHeight))
+                    {
+                        targetInput = new Vector3(targetInput.x, 0f, targetInput.z);
+                    }
+
                     Ray ray = new Ray(this.gameObject.transform.position, this.gameObject.transform.forward);
                     if (Physics.SphereCast(ray, 5.0f, out hit))
                     {
@@ -108,28 +114,33 @@ public class HelicopterAI : MonoBehaviour
     private Vector3 GetTargetInput()
     {
         float inputX = Random.Range(-1f, 1f);
-        float inputY = 0f;
-        //float inputY = Mathf.Clamp(DeltaHeight, -1f, 1f);
         float inputZ = Random.Range(-1f, 1f);
-        return new Vector3(inputX, inputY, inputZ).normalized;
+
+        Vector3 result = new Vector3(inputX, 0f, inputZ).normalized;
+
+        targetHeight = Random.Range(minHeight, maxHeight);
+        float deltaHeight = targetHeight - this.gameObject.transform.position.y;
+        float inputY = Mathf.Clamp(deltaHeight, -0.3f, 0.3f);
+
+        result = new Vector3(result.x, inputY, result.z);
+        return result;
     }
 
     private Vector3 GetCurrentInput()
     {
-        float deltaX = targetInput.x - currentInput.x;
-        float deltaZ = targetInput.z - currentInput.z;
-
-        float currInX = currentInput.x + Mathf.Sign(deltaX) * Time.deltaTime / 0.33f;
-        float currInZ = currentInput.z + Mathf.Sign(deltaZ) * Time.deltaTime / 0.33f;
-        currInX = Mathf.Clamp(currInX, 
-                                targetInput.x > 0f ? -targetInput.x : targetInput.x, 
-                                targetInput.x > 0f ? targetInput.x : -targetInput.x);
-        currInZ = Mathf.Clamp(currInZ, 
-                                targetInput.z > 0f ? -targetInput.z : targetInput.z, 
-                                targetInput.z > 0f ? targetInput.z : -targetInput.z);
-
-        currentInput = new Vector3(currInX, currentInput.y, currInZ);
+        currentInput = new Vector3(GetCurrentInputByAxis(targetInput.x, currentInput.x), 
+                                    GetCurrentInputByAxis(targetInput.y, currentInput.y), 
+                                    GetCurrentInputByAxis(targetInput.z, currentInput.z));
         return currentInput;
+    }
+
+    private float GetCurrentInputByAxis(float tgtIn, float currIn)
+    {
+        float deltaIn = tgtIn - currIn;
+        float newCurrIn = currIn + Mathf.Sign(deltaIn) * Time.deltaTime / 0.33f;
+        return Mathf.Clamp(newCurrIn, 
+                            tgtIn > 0f ? -tgtIn : tgtIn, 
+                            tgtIn > 0f ? tgtIn: -tgtIn);
     }
 
     public enum FlightPhase
