@@ -14,10 +14,18 @@ public class HelicopterAI : MonoBehaviour
     [SerializeField] private float absBorderX = 200f;
     [SerializeField] private float absBorderZ = 200f;
 
+    public GameObject SelectedTarget { get; set; }
+
+    private FlightPhases flightPhase;
+    public FlightPhases FlightPhase
+    {
+        get => flightPhase;
+        set => flightPhase = value;
+    }
+
     private TranslationInput translationInput;
     private RotationInput rotationInput;
 
-    private FlightPhase flightPhase;
     private bool flight;
     private RaycastHit hit;
 
@@ -40,15 +48,15 @@ public class HelicopterAI : MonoBehaviour
     {
         if (flight)
         {
-            switch (flightPhase)
+            switch (FlightPhase)
             {
-                case FlightPhase.Takeoff:
+                case FlightPhases.Takeoff:
                     if (this.gameObject.transform.position.y > minHeight)
                     {
                         targetInput = GetTargetInput();
                         if (!translationInput.CurrSpeedIsHigh)
                             translationInput.ChangeSpeed();
-                        flightPhase = FlightPhase.Patrolling;
+                        FlightPhase = FlightPhases.Patrolling;
                     }
                     break;
 
@@ -77,7 +85,7 @@ public class HelicopterAI : MonoBehaviour
 
     public void StartFlight()
     {
-        flightPhase = FlightPhase.Takeoff;
+        FlightPhase = FlightPhases.Takeoff;
         targetInput = new Vector3(0f, patrolVerticalSpeed, 0f);
         flight = true;
     }
@@ -90,7 +98,7 @@ public class HelicopterAI : MonoBehaviour
         Vector3 result = new Vector3(inputX, 0f, inputZ).normalized;
 
         float speedScale = normalSpeed;
-        if (flightPhase == FlightPhase.Patrolling || flightPhase == FlightPhase.Takeoff)
+        if (FlightPhase == FlightPhases.Patrolling || FlightPhase == FlightPhases.Takeoff)
             speedScale = patrolSpeed;
 
         result.Scale(new Vector3(speedScale, speedScale, speedScale));
@@ -99,7 +107,7 @@ public class HelicopterAI : MonoBehaviour
         float deltaHeight = targetHeight - this.gameObject.transform.position.y;
 
         float verticalSpeedScale = normalVerticalSpeed;
-        if (flightPhase == FlightPhase.Patrolling || flightPhase == FlightPhase.Takeoff)
+        if (FlightPhase == FlightPhases.Patrolling || FlightPhase == FlightPhases.Takeoff)
             verticalSpeedScale = patrolVerticalSpeed;
 
         float inputY = Mathf.Clamp(Mathf.Abs(deltaHeight), -verticalSpeedScale, verticalSpeedScale);
@@ -150,11 +158,12 @@ public class HelicopterAI : MonoBehaviour
         }
     }
 
-    public enum FlightPhase
+    public enum FlightPhases
     {
         Takeoff,
         Patrolling,
         Pursuit,
         Attack,
+        Leaving,
     }
 }

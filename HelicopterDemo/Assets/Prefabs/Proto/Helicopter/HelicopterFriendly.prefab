@@ -13,11 +13,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: a882fc75ccd87084795ab46db1faf895, type: 2}
     - target: {fileID: 5817739379426018126, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
       propertyPath: m_Name
-      value: HelicopterPlayer
+      value: HelicopterFriendly
       objectReference: {fileID: 0}
     - target: {fileID: 5817739379426018126, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
       propertyPath: m_TagString
-      value: Player
+      value: FriendlyAir
       objectReference: {fileID: 0}
     - target: {fileID: 5817739379426018127, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
       propertyPath: m_RootOrder

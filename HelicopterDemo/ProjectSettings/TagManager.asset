@@ -7,6 +7,10 @@ TagManager:
   - Friendly
   - Fuel
   - Obstacle
+  - EnemyGround
+  - EnemyAir
+  - FriendlyGround
+  - FriendlyAir
   layers:
   - Default
   - TransparentFX
