@@ -59,7 +59,7 @@ public class HelicopterAI : MonoBehaviour
                         targetInput = new Vector3(targetInput.x, 0f, targetInput.z);
                     }
 
-                    Ray ray = new Ray(this.gameObject.transform.position, this.gameObject.transform.forward);
+                    Ray ray = new Ray(this.gameObject.transform.position, new Vector3(targetInput.x, 0f, targetInput.z));
                     if (Physics.SphereCast(ray, 5.0f, out hit))
                     {
                         GameObject hitObject = hit.transform.gameObject;
