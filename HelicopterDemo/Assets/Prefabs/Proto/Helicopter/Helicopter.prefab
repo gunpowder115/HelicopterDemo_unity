@@ -248,8 +248,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa247dcb1f13dbb4b88fd6f044e8d345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 17
-  verticalSpeed: 3
+  normalSpeed: 1
+  patrolSpeed: 0.7
+  patrolVerticalSpeed: 0.3
+  normalVerticalSpeed: 0.5
   minHeight: 15
   maxHeight: 50
   minDistance: 40

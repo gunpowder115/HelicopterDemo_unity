@@ -3,8 +3,10 @@ using static InputManager;
 
 public class HelicopterAI : MonoBehaviour
 {
-    [SerializeField] private float speed = 1f;
-    [SerializeField] private float verticalSpeed = 0.5f;
+    [SerializeField] private float normalSpeed = 1f;
+    [SerializeField] private float patrolSpeed = 0.7f;
+    [SerializeField] private float patrolVerticalSpeed = 0.3f;
+    [SerializeField] private float normalVerticalSpeed = 0.5f;
     [SerializeField] private float minHeight = 15f;
     [SerializeField] private float maxHeight = 50f;
     [SerializeField] private float minDistance = 15f;
@@ -41,37 +43,16 @@ public class HelicopterAI : MonoBehaviour
             switch (flightPhase)
             {
                 case FlightPhase.Takeoff:
-                    if (!Takeoff())
+                    if (this.gameObject.transform.position.y > minHeight)
                     {
                         targetInput = GetTargetInput();
                         if (!translationInput.CurrSpeedIsHigh)
                             translationInput.ChangeSpeed();
-                        flightPhase = FlightPhase.DirectFlight;
+                        flightPhase = FlightPhase.Patrolling;
                     }
                     break;
 
-                case FlightPhase.DirectFlight:
-                    currentInput = GetCurrentInput();
-                    float inputXZ = Mathf.Clamp01(new Vector3(currentInput.x, 0f, currentInput.z).magnitude);
-
-                    if (translationInput != null)
-                    {
-                        angularDistance = translationInput.GetAngularDistance(currentDirection);
-                        targetDirection = translationInput.TargetDirection;
-
-                        translationInput.Translate(Axis_Proto.X, currentInput.x);
-                        translationInput.Translate(Axis_Proto.Y, currentInput.y);
-                        translationInput.Translate(Axis_Proto.Z, currentInput.z);
-                    }
-
-                    if (rotationInput != null)
-                    {
-                        currentDirection = rotationInput.CurrentDirection;
-
-                        rotationInput.RotateByYaw(angularDistance, true);
-                        rotationInput.RotateByAttitude(targetDirection, inputXZ, true);
-                    }
-
+                default:
                     if ((targetInput.y > 0f && this.gameObject.transform.position.y >= targetHeight) ||
                         (targetInput.y < 0f && this.gameObject.transform.position.y <= targetHeight))
                     {
@@ -89,26 +70,16 @@ public class HelicopterAI : MonoBehaviour
                     }
                     break;
             }
+
+            Movement();
         }
     }
 
-    public void StartFlight(Transform platformTransform)
+    public void StartFlight()
     {
-        this.gameObject.transform.position = platformTransform.position;
-        this.gameObject.transform.rotation = platformTransform.rotation;
         flightPhase = FlightPhase.Takeoff;
+        targetInput = new Vector3(0f, patrolVerticalSpeed, 0f);
         flight = true;
-    }
-
-    private bool Takeoff()
-    {
-        if (this.gameObject.transform.position.y < minHeight)
-        {
-            this.gameObject.transform.Translate(Vector3.up * verticalSpeed * Time.deltaTime);
-            return true;
-        }
-        else
-            return false;
     }
 
     private Vector3 GetTargetInput()
@@ -118,9 +89,21 @@ public class HelicopterAI : MonoBehaviour
 
         Vector3 result = new Vector3(inputX, 0f, inputZ).normalized;
 
+        float speedScale = normalSpeed;
+        if (flightPhase == FlightPhase.Patrolling || flightPhase == FlightPhase.Takeoff)
+            speedScale = patrolSpeed;
+
+        result.Scale(new Vector3(speedScale, speedScale, speedScale));
+
         targetHeight = Random.Range(minHeight, maxHeight);
         float deltaHeight = targetHeight - this.gameObject.transform.position.y;
-        float inputY = Mathf.Clamp(deltaHeight, -0.3f, 0.3f);
+
+        float verticalSpeedScale = normalVerticalSpeed;
+        if (flightPhase == FlightPhase.Patrolling || flightPhase == FlightPhase.Takeoff)
+            verticalSpeedScale = patrolVerticalSpeed;
+
+        float inputY = Mathf.Clamp(Mathf.Abs(deltaHeight), -verticalSpeedScale, verticalSpeedScale);
+        inputY *= Mathf.Sign(deltaHeight);
 
         result = new Vector3(result.x, inputY, result.z);
         return result;
@@ -128,8 +111,8 @@ public class HelicopterAI : MonoBehaviour
 
     private Vector3 GetCurrentInput()
     {
-        currentInput = new Vector3(GetCurrentInputByAxis(targetInput.x, currentInput.x), 
-                                    GetCurrentInputByAxis(targetInput.y, currentInput.y), 
+        currentInput = new Vector3(GetCurrentInputByAxis(targetInput.x, currentInput.x),
+                                    GetCurrentInputByAxis(targetInput.y, currentInput.y),
                                     GetCurrentInputByAxis(targetInput.z, currentInput.z));
         return currentInput;
     }
@@ -138,14 +121,40 @@ public class HelicopterAI : MonoBehaviour
     {
         float deltaIn = tgtIn - currIn;
         float newCurrIn = currIn + Mathf.Sign(deltaIn) * Time.deltaTime / 0.33f;
-        return Mathf.Clamp(newCurrIn, 
-                            tgtIn > 0f ? -tgtIn : tgtIn, 
-                            tgtIn > 0f ? tgtIn: -tgtIn);
+        return Mathf.Clamp(newCurrIn,
+                            tgtIn > 0f ? -tgtIn : tgtIn,
+                            tgtIn > 0f ? tgtIn : -tgtIn);
+    }
+
+    private void Movement()
+    {
+        currentInput = GetCurrentInput();
+        float inputXZ = Mathf.Clamp01(new Vector3(currentInput.x, 0f, currentInput.z).magnitude);
+
+        if (translationInput != null)
+        {
+            angularDistance = translationInput.GetAngularDistance(currentDirection);
+            targetDirection = translationInput.TargetDirection;
+
+            translationInput.Translate(Axis_Proto.X, currentInput.x);
+            translationInput.Translate(Axis_Proto.Y, currentInput.y);
+            translationInput.Translate(Axis_Proto.Z, currentInput.z);
+        }
+
+        if (rotationInput != null)
+        {
+            currentDirection = rotationInput.CurrentDirection;
+
+            rotationInput.RotateByYaw(angularDistance, true);
+            rotationInput.RotateByAttitude(targetDirection, inputXZ, true);
+        }
     }
 
     public enum FlightPhase
     {
         Takeoff,
-        DirectFlight,
+        Patrolling,
+        Pursuit,
+        Attack,
     }
 }

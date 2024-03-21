@@ -40,9 +40,9 @@ public class CargoPlatform : MonoBehaviour
                     cargoPlatformState = CargoPlatformState.cargoDelivered;
                 break;
             case CargoPlatformState.cargoDelivered:
-                cargoItem = Instantiate(cargoPrefab);
+                cargoItem = Instantiate(cargoPrefab, this.gameObject.transform.position, cargoHelicopterItem.transform.rotation);
                 helicopter = cargoItem.GetComponent<HelicopterAI>();
-                helicopter.StartFlight(this.transform);
+                helicopter.StartFlight();
                 cargoPlatformState = CargoPlatformState.cargoIsOk;
                 //StartCoroutine(DestroyHelicopter());
                 break;
