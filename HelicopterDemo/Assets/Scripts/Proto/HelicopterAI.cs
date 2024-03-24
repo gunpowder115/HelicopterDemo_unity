@@ -25,8 +25,9 @@ public class HelicopterAI : MonoBehaviour
 
     private TranslationInput translationInput;
     private RotationInput rotationInput;
+    private TargetFinder targetFinder;
 
-    private bool flight;
+    private bool flight; 
     private RaycastHit hit;
 
     private Vector3 targetInput;
@@ -40,6 +41,7 @@ public class HelicopterAI : MonoBehaviour
     {
         translationInput = GetComponentInChildren<TranslationInput>();
         rotationInput = GetComponentInChildren<RotationInput>();
+        targetFinder = GetComponent<TargetFinder>();
         hit = new RaycastHit();
     }
 
@@ -60,22 +62,19 @@ public class HelicopterAI : MonoBehaviour
                     }
                     break;
 
-                default:
-                    if ((targetInput.y > 0f && this.gameObject.transform.position.y >= targetHeight) ||
-                        (targetInput.y < 0f && this.gameObject.transform.position.y <= targetHeight))
-                    {
-                        targetInput = new Vector3(targetInput.x, 0f, targetInput.z);
-                    }
+                case FlightPhases.Patrolling:
+                    ClampVerticalMovement();
+                    CheckObstacles();
+                    if (targetFinder)
+                        StartCoroutine(targetFinder.SearchForTargets());
+                    break;
 
-                    Ray ray = new Ray(this.gameObject.transform.position, new Vector3(targetInput.x, 0f, targetInput.z));
-                    if (Physics.SphereCast(ray, 5.0f, out hit))
-                    {
-                        GameObject hitObject = hit.transform.gameObject;
-                        if (hitObject.CompareTag("Obstacle") && hit.distance < 20.0f)
-                        {
-                            targetInput = GetTargetInput();
-                        }
-                    }
+                case FlightPhases.Pursuit:
+                    ClampVerticalMovement();
+                    CheckObstacles();
+                    break;
+
+                default:
                     break;
             }
 
@@ -155,6 +154,28 @@ public class HelicopterAI : MonoBehaviour
 
             rotationInput.RotateByYaw(angularDistance, true);
             rotationInput.RotateByAttitude(targetDirection, inputXZ, true);
+        }
+    }
+
+    private void ClampVerticalMovement()
+    {
+        if ((targetInput.y > 0f && this.gameObject.transform.position.y >= targetHeight) ||
+            (targetInput.y < 0f && this.gameObject.transform.position.y <= targetHeight))
+        {
+            targetInput = new Vector3(targetInput.x, 0f, targetInput.z);
+        }
+    }
+
+    private void CheckObstacles()
+    {
+        Ray ray = new Ray(this.gameObject.transform.position, new Vector3(targetInput.x, 0f, targetInput.z));
+        if (Physics.SphereCast(ray, 5.0f, out hit))
+        {
+            GameObject hitObject = hit.transform.gameObject;
+            if (hitObject.CompareTag("Obstacle") && hit.distance < 20.0f)
+            {
+                targetInput = GetTargetInput();
+            }
         }
     }
 

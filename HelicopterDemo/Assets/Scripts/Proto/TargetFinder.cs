@@ -34,13 +34,7 @@ public class TargetFinder : MonoBehaviour
         helicopterAI = GetComponent<HelicopterAI>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        StartCoroutine(SearchForTargets());
-    }
-
-    private IEnumerator SearchForTargets()
+    public IEnumerator SearchForTargets()
     {
         yield return new WaitForSeconds(findDeltaTime);
 
