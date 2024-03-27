@@ -6,7 +6,7 @@ public class BuildController_proto : MonoBehaviour
 {
     public const int platformCount = 8;
 
-    [Header("Prefabs array from N (north) to clockwise")]
+    [Header("Prefabs array from N (north, X = 0, Z = 1) to clockwise")]
     [SerializeField] private GameObject[] buildPrefabs = new GameObject[platformCount];
     [SerializeField] private GameObject platformPrefab = null;
     [SerializeField] private float distToPlatform = 40f;

@@ -13,8 +13,26 @@ public class HelicopterAI : MonoBehaviour
     [SerializeField] private float maxDistance = 50f;
     [SerializeField] private float absBorderX = 200f;
     [SerializeField] private float absBorderZ = 200f;
+    [SerializeField] private float minPursuitDistance = 40f;
+    [SerializeField] private float maxPursuitDistance = 50f;
+    [SerializeField] private float minAttackDistance = 10f;
+    [SerializeField] private float maxAttackDistance = 20f;
 
     public GameObject SelectedTarget { get; set; }
+    private float DistanceToTarget
+    {
+        get
+        {
+            if (SelectedTarget)
+            {
+                Vector3 diff = SelectedTarget.transform.position - this.gameObject.transform.position;
+                Vector3 diffHor = new Vector3(diff.x, 0f, diff.z);
+                return diffHor.magnitude;
+            }
+            else
+                return Mathf.Infinity;
+        }
+    }
 
     private FlightPhases flightPhase;
     public FlightPhases FlightPhase
@@ -26,10 +44,10 @@ public class HelicopterAI : MonoBehaviour
     private TranslationInput translationInput;
     private RotationInput rotationInput;
     private TargetFinder targetFinder;
+    private TargetSelector targetSelector;
 
     private bool flight; 
     private RaycastHit hit;
-
     private Vector3 targetInput;
     private Vector3 currentInput;
     private Vector3 targetDirection;
@@ -42,6 +60,7 @@ public class HelicopterAI : MonoBehaviour
         translationInput = GetComponentInChildren<TranslationInput>();
         rotationInput = GetComponentInChildren<RotationInput>();
         targetFinder = GetComponent<TargetFinder>();
+        targetSelector = GetComponent<TargetSelector>();
         hit = new RaycastHit();
     }
 
@@ -59,25 +78,60 @@ public class HelicopterAI : MonoBehaviour
                         if (!translationInput.CurrSpeedIsHigh)
                             translationInput.ChangeSpeed();
                         FlightPhase = FlightPhases.Patrolling;
-                    }
+                    }                    
+                    if (this.gameObject.tag.Contains("Enemy"))
+                        Debug.Log("Takeoff");
                     break;
 
                 case FlightPhases.Patrolling:
                     ClampVerticalMovement();
                     CheckObstacles();
-                    if (targetFinder)
-                        StartCoroutine(targetFinder.SearchForTargets());
+                    if (targetFinder && targetSelector)
+                    {
+                        SelectedTarget = targetSelector.SelectTarget(targetFinder.FoundTargets);
+                        if (SelectedTarget)
+                        {
+                            if (DistanceToTarget < minPursuitDistance)
+                            {
+                                FlightPhase = FlightPhases.Pursuit;
+                            }
+                        }
+                    }                    
+                    if (this.gameObject.tag.Contains("Enemy"))
+                        Debug.Log("Patrolling");
                     break;
 
                 case FlightPhases.Pursuit:
                     ClampVerticalMovement();
                     CheckObstacles();
+                    TargetPursuit();
+                    if (DistanceToTarget < minAttackDistance)
+                    {
+                        FlightPhase = FlightPhases.Attack;
+                        targetInput = new Vector3(0f, 0f, 0f);
+                    }
+                    else if (DistanceToTarget > maxPursuitDistance)
+                    {
+                        FlightPhase = FlightPhases.Patrolling;
+                    }                    
+                    if (this.gameObject.tag.Contains("Enemy"))
+                        Debug.Log("Pursuit");
+                    break;
+
+                case FlightPhases.Attack:
+                    ClampVerticalMovement();
+                    CheckObstacles();
+                    if (DistanceToTarget > maxAttackDistance)
+                    {
+                        FlightPhase = FlightPhases.Pursuit;
+                    }
+                    if (this.gameObject.tag.Contains("Enemy"))
+                        Debug.Log("Attack");
                     break;
 
                 default:
                     break;
             }
-
             Movement();
         }
     }
@@ -87,6 +141,12 @@ public class HelicopterAI : MonoBehaviour
         FlightPhase = FlightPhases.Takeoff;
         targetInput = new Vector3(0f, patrolVerticalSpeed, 0f);
         flight = true;
+    }
+
+    private void TargetPursuit()
+    {
+        Vector3 toTarget = SelectedTarget.transform.position - this.gameObject.transform.position;
+        targetInput = toTarget.normalized;
     }
 
     private Vector3 GetTargetInput()
@@ -102,7 +162,10 @@ public class HelicopterAI : MonoBehaviour
 
         result.Scale(new Vector3(speedScale, speedScale, speedScale));
 
-        targetHeight = Random.Range(minHeight, maxHeight);
+        if (FlightPhase == FlightPhases.Pursuit || FlightPhase == FlightPhases.Attack)
+            targetHeight = SelectedTarget.transform.position.y;
+        else
+            targetHeight = Random.Range(minHeight, maxHeight);
         float deltaHeight = targetHeight - this.gameObject.transform.position.y;
 
         float verticalSpeedScale = normalVerticalSpeed;

@@ -11,6 +11,9 @@ TagManager:
   - EnemyAir
   - FriendlyGround
   - FriendlyAir
+  - EnemyBase
+  - FriendlyBase
+  - NeutralBase
   layers:
   - Default
   - TransparentFX
