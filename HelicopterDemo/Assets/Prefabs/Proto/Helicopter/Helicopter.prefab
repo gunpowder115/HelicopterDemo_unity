@@ -253,14 +253,17 @@ MonoBehaviour:
   normalSpeed: 1
   patrolSpeed: 0.7
   patrolVerticalSpeed: 0.3
-  normalVerticalSpeed: 0.5
+  normalVerticalSpeed: 0.7
   minHeight: 15
   maxHeight: 50
   minDistance: 40
   maxDistance: 60
   absBorderX: 200
   absBorderZ: 200
-  attackDistance: 5
+  minPursuitDistance: 40
+  maxPursuitDistance: 50
+  minAttackDistance: 10
+  maxAttackDistance: 20
 --- !u!114 &8060781396489575223
 MonoBehaviour:
   m_ObjectHideFlags: 0
