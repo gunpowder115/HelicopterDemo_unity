@@ -20,6 +20,7 @@ public class HelicopterAI : MonoBehaviour
     [SerializeField] private float maxPursuitDistance = 50f;
     [SerializeField] private float minAttackDistance = 10f;
     [SerializeField] private float maxAttackDistance = 20f;
+    [SerializeField] private bool opportToChangeTarget = true;
 
     public GameObject SelectedTarget { get; set; }
     private float DistanceToTarget
@@ -252,11 +253,16 @@ public class HelicopterAI : MonoBehaviour
             GameObject newTarget = targetSelector.SelectTarget(targetFinder.FoundTargets);
             if (newTarget)
             {
-                Vector3 toNewTarget = newTarget.transform.position - this.gameObject.transform.position;
-                toNewTarget = new Vector3(toNewTarget.x, 0f, toNewTarget.z);
-                float distToNewTarget = toNewTarget.magnitude;
-                if (distToNewTarget < DistanceToTarget)
+                if (!SelectedTarget)
                     SelectedTarget = newTarget;
+                if (opportToChangeTarget)
+                {
+                    Vector3 toNewTarget = newTarget.transform.position - this.gameObject.transform.position;
+                    toNewTarget = new Vector3(toNewTarget.x, 0f, toNewTarget.z);
+                    float distToNewTarget = toNewTarget.magnitude;
+                    if (distToNewTarget < DistanceToTarget)
+                        SelectedTarget = newTarget;
+                }
             }
         }
     }
