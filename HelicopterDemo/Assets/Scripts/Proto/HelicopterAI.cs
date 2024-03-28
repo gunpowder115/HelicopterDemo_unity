@@ -100,19 +100,14 @@ public class HelicopterAI : MonoBehaviour
                 case FlightPhases.Patrolling:
                     ClampVerticalMovement();
                     CheckObstacles();
-                    if (targetFinder && targetSelector)
-                    {
-                        SelectedTarget = targetSelector.SelectTarget(targetFinder.FoundTargets);
-                        if (SelectedTarget)
-                        {
-                            if (DistanceToTarget < minPursuitDistance)
-                                FlightPhase = FlightPhases.Pursuit;
-                        }
-                    }
+                    SelectNewTarget();
+                    if (DistanceToTarget < minPursuitDistance)
+                        FlightPhase = FlightPhases.Pursuit;
                     break;
 
                 case FlightPhases.Pursuit:
                     targetInput = GetTargetInput();
+                    SelectNewTarget();
                     if (DistanceToTarget < minAttackDistance)
                         FlightPhase = FlightPhases.Attack;
                     else if (DistanceToTarget > maxPursuitDistance)
@@ -121,6 +116,7 @@ public class HelicopterAI : MonoBehaviour
 
                 case FlightPhases.Attack:
                     targetInput = GetTargetInput();
+                    SelectNewTarget();
                     if (DistanceToTarget > maxAttackDistance)
                         FlightPhase = FlightPhases.Pursuit;
                     break;
@@ -245,6 +241,22 @@ public class HelicopterAI : MonoBehaviour
             if (hitObject.CompareTag("Obstacle") && hit.distance < 20.0f)
             {
                 targetInput = GetTargetInput();
+            }
+        }
+    }
+
+    private void SelectNewTarget()
+    {
+        if (targetFinder && targetSelector)
+        {
+            GameObject newTarget = targetSelector.SelectTarget(targetFinder.FoundTargets);
+            if (newTarget)
+            {
+                Vector3 toNewTarget = newTarget.transform.position - this.gameObject.transform.position;
+                toNewTarget = new Vector3(toNewTarget.x, 0f, toNewTarget.z);
+                float distToNewTarget = toNewTarget.magnitude;
+                if (distToNewTarget < DistanceToTarget)
+                    SelectedTarget = newTarget;
             }
         }
     }
