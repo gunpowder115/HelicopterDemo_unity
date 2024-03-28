@@ -260,10 +260,10 @@ MonoBehaviour:
   maxDistance: 60
   absBorderX: 200
   absBorderZ: 200
-  minPursuitDistance: 40
-  maxPursuitDistance: 50
-  minAttackDistance: 10
-  maxAttackDistance: 20
+  minPursuitDistance: 60
+  maxPursuitDistance: 70
+  minAttackDistance: 30
+  maxAttackDistance: 40
 --- !u!114 &8060781396489575223
 MonoBehaviour:
   m_ObjectHideFlags: 0

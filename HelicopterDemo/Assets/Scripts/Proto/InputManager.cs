@@ -43,8 +43,8 @@ public class InputManager : MonoBehaviour
         if (translationInput != null)
         {
             if (keyQ) rotateToDirection = translationInput.ChangeSpeed();
-            angularDistance = translationInput.GetAngularDistance(currentDirection);
             targetDirection = translationInput.TargetDirection;
+            angularDistance = translationInput.GetAngularDistance(currentDirection, targetDirection);            
 
             translationInput.Translate(Axis_Proto.X, inputX);
             translationInput.Translate(Axis_Proto.Y, inputY);

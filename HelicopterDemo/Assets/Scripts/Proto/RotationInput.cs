@@ -7,16 +7,7 @@ public class RotationInput : MonoBehaviour
     [SerializeField] float largeAttitudeAngle = 30.0f;
     [SerializeField] float smallAttitudeAngle = 20.0f;
 
-    public Vector3 CurrentDirection
-    {
-        get
-        {
-            if (transform.forward.y != 0f)
-                return new Vector3(transform.forward.x, 0f, transform.forward.z);
-            else
-                return transform.forward;
-        }
-    }
+    public Vector3 CurrentDirection  => new Vector3(transform.forward.x, 0f, transform.forward.z);
 
     // Start is called before the first frame update
     void Start()

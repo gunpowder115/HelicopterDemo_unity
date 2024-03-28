@@ -3,16 +3,19 @@ using static InputManager;
 
 public class HelicopterAI : MonoBehaviour
 {
+    [Header("Normal (high) and patrol (low) speed")]
     [SerializeField] private float normalSpeed = 1f;
     [SerializeField] private float patrolSpeed = 0.7f;
     [SerializeField] private float patrolVerticalSpeed = 0.3f;
     [SerializeField] private float normalVerticalSpeed = 0.5f;
+    [Header("Borders")]
     [SerializeField] private float minHeight = 15f;
     [SerializeField] private float maxHeight = 50f;
     [SerializeField] private float minDistance = 15f;
     [SerializeField] private float maxDistance = 50f;
     [SerializeField] private float absBorderX = 200f;
     [SerializeField] private float absBorderZ = 200f;
+    [Header("For pursuit target")]
     [SerializeField] private float minPursuitDistance = 40f;
     [SerializeField] private float maxPursuitDistance = 50f;
     [SerializeField] private float minAttackDistance = 10f;
@@ -31,6 +34,20 @@ public class HelicopterAI : MonoBehaviour
             }
             else
                 return Mathf.Infinity;
+        }
+    }
+    private Vector3 DirectionToTarget
+    {
+        get
+        {
+            if (SelectedTarget)
+            {
+                Vector3 dirToTarget = SelectedTarget.transform.position - this.gameObject.transform.position;
+                Vector3 dirToTargetHor = new Vector3(dirToTarget.x, 0f, dirToTarget.z).normalized;
+                return dirToTargetHor;
+            }
+            else
+                return Vector3.zero;
         }
     }
 
@@ -52,7 +69,6 @@ public class HelicopterAI : MonoBehaviour
     private Vector3 currentInput;
     private Vector3 targetDirection;
     private Vector3 currentDirection;
-    private float angularDistance;
     private float targetHeight;
 
     private void Start()
@@ -90,9 +106,7 @@ public class HelicopterAI : MonoBehaviour
                         if (SelectedTarget)
                         {
                             if (DistanceToTarget < minPursuitDistance)
-                            {
                                 FlightPhase = FlightPhases.Pursuit;
-                            }
                         }
                     }
                     break;
@@ -100,21 +114,15 @@ public class HelicopterAI : MonoBehaviour
                 case FlightPhases.Pursuit:
                     targetInput = GetTargetInput();
                     if (DistanceToTarget < minAttackDistance)
-                    {
                         FlightPhase = FlightPhases.Attack;
-                    }
                     else if (DistanceToTarget > maxPursuitDistance)
-                    {
                         FlightPhase = FlightPhases.Patrolling;
-                    }
                     break;
 
                 case FlightPhases.Attack:
                     targetInput = GetTargetInput();
                     if (DistanceToTarget > maxAttackDistance)
-                    {
                         FlightPhase = FlightPhases.Pursuit;
-                    }
                     break;
 
                 default:
@@ -141,10 +149,8 @@ public class HelicopterAI : MonoBehaviour
         switch (FlightPhase)
         {
             case FlightPhases.Pursuit:
-                Vector3 toTarget = SelectedTarget.transform.position - this.gameObject.transform.position;
-                Vector3 toTargetHor = new Vector3(toTarget.x, 0f, toTarget.z).normalized;
-                inputX = toTargetHor.x;
-                inputZ = toTargetHor.z;
+                inputX = DirectionToTarget.x;
+                inputZ = DirectionToTarget.z;
                 targetHeight = SelectedTarget.transform.position.y;
                 break;
 
@@ -168,7 +174,7 @@ public class HelicopterAI : MonoBehaviour
 
         result.Scale(new Vector3(speedScale, speedScale, speedScale));
 
-        float deltaHeight = targetHeight - this.gameObject.transform.position.y;                    
+        float deltaHeight = targetHeight - this.gameObject.transform.position.y;
         float inputY = Mathf.Clamp(Mathf.Abs(deltaHeight), -verticalSpeedScale, verticalSpeedScale);
         inputY *= Mathf.Sign(deltaHeight);
 
@@ -197,11 +203,15 @@ public class HelicopterAI : MonoBehaviour
     {
         currentInput = GetCurrentInput();
         float inputXZ = Mathf.Clamp01(new Vector3(currentInput.x, 0f, currentInput.z).magnitude);
+        float angularDistance = 0f;
 
         if (translationInput != null)
         {
-            angularDistance = translationInput.GetAngularDistance(currentDirection);
             targetDirection = translationInput.TargetDirection;
+            if (FlightPhase == FlightPhases.Attack)
+                angularDistance = translationInput.GetAngularDistance(currentDirection, DirectionToTarget);
+            else
+                angularDistance = translationInput.GetAngularDistance(currentDirection, targetDirection);
 
             translationInput.Translate(Axis_Proto.X, currentInput.x);
             translationInput.Translate(Axis_Proto.Y, currentInput.y);

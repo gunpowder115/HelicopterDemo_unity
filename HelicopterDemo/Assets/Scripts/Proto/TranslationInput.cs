@@ -52,9 +52,9 @@ public class TranslationInput : MonoBehaviour
         deltas[(int)axis] = input * currSpeed;
     }
 
-    public float GetAngularDistance(Vector3 currentDirection)
+    public float GetAngularDistance(Vector3 currentDirection, Vector3 targetDirection)
     {
-        float angularDistance = Vector3.SignedAngle(currentDirection, TargetDirection, Vector3.up);
+        float angularDistance = Vector3.SignedAngle(currentDirection, targetDirection, Vector3.up);
         return angularDistance;
     }
 
