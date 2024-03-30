@@ -39,21 +39,10 @@ public class ShootingController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (barrels != null)
-        //{
-        //    if (currentClipVolume > 0)
-        //    {
-        //        foreach (var barrel in barrels)
-        //            barrel.CreateProjectile();
-        //    }
-        //}
-
-        //FireTheClip();
-
-        BarrelShot();
+        //BarrelShot();
     }
 
-    private void BarrelShot()
+    public void BarrelShot()
     {
         if (currentShotDelay >= shotDelay)
         {

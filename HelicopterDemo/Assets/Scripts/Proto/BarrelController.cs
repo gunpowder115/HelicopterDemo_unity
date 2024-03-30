@@ -26,12 +26,6 @@ public class BarrelController : MonoBehaviour
         lastProjectileIndex = 0;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void CreateProjectile()
     {
         if (ProjectilePrefab != null && projectileItems[lastProjectileIndex] == null)

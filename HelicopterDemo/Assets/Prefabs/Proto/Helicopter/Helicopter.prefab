@@ -264,6 +264,7 @@ MonoBehaviour:
   maxPursuitDistance: 70
   minAttackDistance: 30
   maxAttackDistance: 40
+  opportToChangeTarget: 1
 --- !u!114 &8060781396489575223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -627,6 +628,39 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e8481abe3faf07458de29c85e9667ba, type: 3}
+--- !u!1 &892639459270619566 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 892639458389067852, guid: 1e8481abe3faf07458de29c85e9667ba, type: 3}
+  m_PrefabInstance: {fileID: 2140502498}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1472815853241098254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 892639459270619566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ada153dc9a85de4fb13bccd874ad672, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileStartCoef: 2
+--- !u!114 &4390593786501460224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 892639459270619566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee7bc7de93393324ba81aff938ba0738, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectilePrefab: {fileID: 414063744379305735, guid: 545b31a1ed007c344b97dec369c8ba8d, type: 3}
+  shotDelay: 0.5
+  maxClipVolume: 16
 --- !u!4 &2804678730384318202 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2804678732205516568, guid: 1e8481abe3faf07458de29c85e9667ba, type: 3}
