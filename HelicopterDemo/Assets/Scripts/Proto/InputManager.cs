@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    [SerializeField] float changeSpeedInput = 0.5f;
+    [SerializeField] float changeSpeedInput = 0.7f;
+    [SerializeField] bool useNewInputSystem = true;
 
     private TranslationInput translationInput;
     private RotationInput rotationInput;
@@ -11,6 +12,25 @@ public class InputManager : MonoBehaviour
     private Vector3 targetDirection;
     private float angularDistance;
     private Vector3 currentDirection;
+
+    private PlayerInput playerInput;
+
+    private void Awake()
+    {
+        playerInput = new PlayerInput();
+
+        playerInput.Player.Shoot.performed += context => Shoot();
+    }
+
+    private void OnEnable()
+    {
+        playerInput.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerInput.Disable();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -31,20 +51,21 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float inputX = Input.GetAxis("Horizontal");
+        Vector2 inputDirection = GetInput();
+        float inputX = inputDirection.x;
         float inputY = Input.GetAxis("Jump");
-        float inputZ = Input.GetAxis("Vertical");
+        float inputZ = inputDirection.y;
         float inputXZ = Mathf.Clamp01(new Vector3(inputX, 0f, inputZ).magnitude);
-
-        //change speed (high/low)
-        bool keyQ = Input.GetKeyDown(KeyCode.Q);
 
         //movement around X, Y, Z
         if (translationInput != null)
         {
-            if (keyQ) rotateToDirection = translationInput.ChangeSpeed();
+            if (inputXZ >= changeSpeedInput && !translationInput.CurrSpeedIsHigh ||
+                inputXZ < changeSpeedInput && translationInput.CurrSpeedIsHigh)
+                rotateToDirection = translationInput.ChangeSpeed();
+
             targetDirection = translationInput.TargetDirection;
-            angularDistance = translationInput.GetAngularDistance(currentDirection, targetDirection);            
+            angularDistance = translationInput.GetAngularDistance(currentDirection, targetDirection);
 
             translationInput.Translate(Axis_Proto.X, inputX);
             translationInput.Translate(Axis_Proto.Y, inputY);
@@ -63,9 +84,32 @@ public class InputManager : MonoBehaviour
         //camera rotation
         if (cameraRotation != null)
         {
+            cameraRotation.UseNewInputSystem = useNewInputSystem;
             cameraRotation.RotateHorizontally(rotateToDirection ? currentDirection.x : targetDirection.x);
             cameraRotation.RotateVertically(0f);
         }
+    }
+
+    private Vector2 GetInput()
+    {
+        Vector2 input;
+        if (useNewInputSystem)
+        {
+            input = playerInput.Player.Move.ReadValue<Vector2>();
+            Debug.Log(input.x);
+        }
+        else
+        {
+            float inputX = Input.GetAxis("Horizontal");
+            float inputZ = Input.GetAxis("Vertical");
+            input = new Vector2(inputX, inputZ);
+        }
+        return input;
+    }
+
+    private void Shoot()
+    {
+        Debug.Log("Shot!");
     }
 
     public enum Axis_Proto : int

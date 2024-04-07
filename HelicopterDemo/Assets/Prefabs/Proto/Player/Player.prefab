@@ -49,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   changeSpeedInput: 0.7
+  useNewInputSystem: 1
 --- !u!143 &3309415596281561064
 CharacterController:
   m_ObjectHideFlags: 0

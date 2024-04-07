@@ -8,15 +8,32 @@ public class CameraRotation : MonoBehaviour
     [SerializeField] float rotSpeed = 1f;
     [SerializeField] float rotSpeedManual = 1f;
 
+    public bool UseNewInputSystem { get; set; }
+
     private float inputHor, inputVert;
+    private PlayerInput playerInput;
 
     private readonly float defaultVerticalAngle = 15f;
+
+    private void Awake()
+    {
+        playerInput = new PlayerInput();
+    }
+
+    private void OnEnable()
+    {
+        playerInput.Enable();
+    }
+
+    private void OnDisable()
+    {
+        playerInput.Disable();
+    }
 
     // Update is called once per frame
     void Update()
     {
-        inputHor = Input.GetAxis("CameraHorizontal");
-        inputVert = Input.GetAxis("CameraVertical");
+        GetInput();
     }
 
     public void RotateHorizontally(float playerDirX)
@@ -35,7 +52,7 @@ public class CameraRotation : MonoBehaviour
 
     public void RotateVertically(float playerDirZ)
     {
-        playerDirZ += inputVert;
+        playerDirZ -= inputVert;
 
         float targetCameraVertRot;
         if (playerDirZ > 0f)
@@ -51,5 +68,20 @@ public class CameraRotation : MonoBehaviour
 
         Quaternion rotationTarget = Quaternion.Euler(eulerAnglesTarget);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, currRotSpeed * Time.deltaTime);
+    }
+
+    private void GetInput()
+    {
+        if (UseNewInputSystem)
+        {
+            Vector2 input = playerInput.Camera.Move.ReadValue<Vector2>();
+            inputHor = input.x;
+            inputVert = input.y;
+        }
+        else
+        {
+            inputHor = Input.GetAxis("CameraHorizontal");
+            inputVert = Input.GetAxis("CameraVertical");
+        }
     }
 }
