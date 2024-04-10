@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3241826464650643306}
-  - component: {fileID: 1490989279021541225}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -33,27 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1490989279021541225
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3241826464650643307}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0ab9ac55d1ad7b4fbfe338b5bb09e2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minBuildCount: 2
-  maxBuildCount: 5
-  platformCount: 8
-  minDistance: 40
-  maxDistance: 40
-  platformPrefab: {fileID: 1207229997720244302, guid: 4b244c760c4d2d64cbc9e33da0aa2278, type: 3}
-  airGunPrefab: {fileID: 1062278017372328827, guid: f125070c18c5e3f4e8abd7e3a5a9caf2, type: 3}
-  defenceSystemPrefab: {fileID: 1182577047928619122, guid: 4fc6c6e6d59bb5b4e8ff396073e6eb26, type: 3}
-  helipadPrefab: {fileID: 3597528998112675256, guid: baaa0bf6cf37eb74d9d3fc4a0aef65a0, type: 3}
 --- !u!1001 &6630995678299955341
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -12,8 +12,6 @@ GameObject:
   - component: {fileID: 1102957407486038444}
   - component: {fileID: 1446917380716058479}
   - component: {fileID: 7797650413671282599}
-  - component: {fileID: 6356149344141359396}
-  - component: {fileID: 1960258557673270796}
   m_Layer: 0
   m_Name: Platform
   m_TagString: Untagged
@@ -99,28 +97,3 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6356149344141359396
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1207229997720244302}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ac3e790afccb204cbb560884f59a2a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selectedBuilding: 0
---- !u!114 &1960258557673270796
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1207229997720244302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b5e039bdb2b6cf49a82cd2823c249a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
