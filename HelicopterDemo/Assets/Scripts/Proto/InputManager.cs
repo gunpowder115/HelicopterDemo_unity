@@ -12,8 +12,9 @@ public class InputManager : MonoBehaviour
     private Vector3 targetDirection;
     private float angularDistance;
     private Vector3 currentDirection;
-
+    private bool cameraInAim, aiming;
     private PlayerInput playerInput;
+    private Vector3 aimAngles;
 
     private void Awake()
     {
@@ -42,6 +43,7 @@ public class InputManager : MonoBehaviour
         targetDirection = transform.forward;
         currentDirection = transform.forward;
         angularDistance = 0.0f;
+        cameraInAim = aiming = false;
 
         //hide cursor in center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -76,6 +78,7 @@ public class InputManager : MonoBehaviour
         if (rotationInput != null)
         {
             currentDirection = rotationInput.CurrentDirection;
+            aimAngles = rotationInput.AimAngles;
 
             rotationInput.RotateByYaw(angularDistance, rotateToDirection);
             rotationInput.RotateByAttitude(targetDirection, inputXZ, rotateToDirection);
@@ -85,8 +88,26 @@ public class InputManager : MonoBehaviour
         if (cameraRotation != null)
         {
             cameraRotation.UseNewInputSystem = useNewInputSystem;
-            cameraRotation.RotateHorizontally(rotateToDirection ? currentDirection.x : targetDirection.x);
-            cameraRotation.RotateVertically(0f);
+            bool changeCamera = Input.GetKeyDown(KeyCode.Q);
+
+            if (changeCamera && !aiming)
+            {
+                cameraInAim = !cameraInAim;
+                aiming = true;
+            }
+
+            if (aiming)
+                aiming = cameraRotation.ChangeCameraState(cameraInAim);
+            else
+            {
+                if (!cameraInAim)
+                {
+                    cameraRotation.RotateHorizontally(rotateToDirection ? currentDirection.x : targetDirection.x);
+                    cameraRotation.RotateVertically(0f);
+                }
+                else
+                    cameraRotation.RotateWithPlayer(aimAngles);
+            }
         }
     }
 

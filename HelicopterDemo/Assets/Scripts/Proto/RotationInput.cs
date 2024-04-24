@@ -8,6 +8,7 @@ public class RotationInput : MonoBehaviour
     [SerializeField] float smallAttitudeAngle = 20.0f;
 
     public Vector3 CurrentDirection  => new Vector3(transform.forward.x, 0f, transform.forward.z);
+    public Vector3 AimAngles => new Vector3(this.gameObject.transform.eulerAngles.x, this.gameObject.transform.eulerAngles.y, 0f);
 
     // Start is called before the first frame update
     void Start()
