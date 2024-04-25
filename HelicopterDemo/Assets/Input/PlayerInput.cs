@@ -362,6 +362,45 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Common"",
+            ""id"": ""69cecf3f-6408-4b49-8b89-55c97cc02e6e"",
+            ""actions"": [
+                {
+                    ""name"": ""MinorAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""30c96a13-6a2e-41bb-af59-83e3156ef167"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a76a1c0a-45cb-4836-bfea-b666cac4f3ea"",
+                    ""path"": ""<Keyboard>/k"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""MinorAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f477672e-a5f2-4594-a265-1cd2e2381be3"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""MinorAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -396,6 +435,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Move = m_Camera.FindAction("Move", throwIfNotFound: true);
+        // Common
+        m_Common = asset.FindActionMap("Common", throwIfNotFound: true);
+        m_Common_MinorAction = m_Common.FindAction("MinorAction", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -525,6 +567,39 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         }
     }
     public CameraActions @Camera => new CameraActions(this);
+
+    // Common
+    private readonly InputActionMap m_Common;
+    private ICommonActions m_CommonActionsCallbackInterface;
+    private readonly InputAction m_Common_MinorAction;
+    public struct CommonActions
+    {
+        private @PlayerInput m_Wrapper;
+        public CommonActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @MinorAction => m_Wrapper.m_Common_MinorAction;
+        public InputActionMap Get() { return m_Wrapper.m_Common; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CommonActions set) { return set.Get(); }
+        public void SetCallbacks(ICommonActions instance)
+        {
+            if (m_Wrapper.m_CommonActionsCallbackInterface != null)
+            {
+                @MinorAction.started -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorAction;
+                @MinorAction.performed -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorAction;
+                @MinorAction.canceled -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorAction;
+            }
+            m_Wrapper.m_CommonActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @MinorAction.started += instance.OnMinorAction;
+                @MinorAction.performed += instance.OnMinorAction;
+                @MinorAction.canceled += instance.OnMinorAction;
+            }
+        }
+    }
+    public CommonActions @Common => new CommonActions(this);
     private int m_KeyboardSchemeIndex = -1;
     public InputControlScheme KeyboardScheme
     {
@@ -551,5 +626,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     public interface ICameraActions
     {
         void OnMove(InputAction.CallbackContext context);
+    }
+    public interface ICommonActions
+    {
+        void OnMinorAction(InputAction.CallbackContext context);
     }
 }

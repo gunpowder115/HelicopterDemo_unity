@@ -81,30 +81,33 @@ public class CameraRotation : MonoBehaviour
         transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, currRotSpeed * Time.deltaTime);
     }
 
-    public bool ChangeCameraState(bool needToAim)
+    public bool ChangeCameraState(bool needToAim, Vector3 targetRotation)
     {
-        Quaternion rotationTarget;
+        Quaternion rotationTarget, containerRotationTarget;
         Vector3 positionTarget;
         if (needToAim)
         {
             rotationTarget = Quaternion.Euler(cameraAimingRotation);
             positionTarget = cameraAimingPosition;
+            containerRotationTarget = Quaternion.Euler(targetRotation);
         }
         else
         {
             rotationTarget = Quaternion.Euler(cameraDefaultRotation);
             positionTarget = cameraDefaultPosition;
-            cameraContainer.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+            containerRotationTarget = Quaternion.Euler(0f, 0f, 0f);
         }
 
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, aimingSpeed * Time.deltaTime);
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, rotationTarget, aimingSpeed * Time.deltaTime);
         transform.localPosition = Vector3.Lerp(transform.localPosition, positionTarget, aimingSpeed * Time.deltaTime);
+        cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, containerRotationTarget, aimingSpeed * Time.deltaTime);
 
         Vector3 toAim = positionTarget - transform.localPosition;
         if (toAim.magnitude <= Time.deltaTime)
         {
             transform.localPosition = positionTarget;
-            transform.rotation = rotationTarget;
+            transform.localRotation = rotationTarget;
+            cameraContainer.transform.rotation = containerRotationTarget;
             return false;
         }
         else
@@ -113,7 +116,7 @@ public class CameraRotation : MonoBehaviour
 
     public void RotateWithPlayer(Vector3 targetRotation)
     {
-        cameraContainer.transform.eulerAngles = targetRotation;
+        cameraContainer.transform.rotation = Quaternion.Euler(targetRotation);
     }
 
     private void GetInput()

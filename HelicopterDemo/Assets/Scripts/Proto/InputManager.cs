@@ -21,6 +21,7 @@ public class InputManager : MonoBehaviour
         playerInput = new PlayerInput();
 
         playerInput.Player.Shoot.performed += context => Shoot();
+        playerInput.Common.MinorAction.performed += context => DoMinorAction();
     }
 
     private void OnEnable()
@@ -88,16 +89,9 @@ public class InputManager : MonoBehaviour
         if (cameraRotation != null)
         {
             cameraRotation.UseNewInputSystem = useNewInputSystem;
-            bool changeCamera = Input.GetKeyDown(KeyCode.Q);
-
-            if (changeCamera && !aiming)
-            {
-                cameraInAim = !cameraInAim;
-                aiming = true;
-            }
 
             if (aiming)
-                aiming = cameraRotation.ChangeCameraState(cameraInAim);
+                aiming = cameraRotation.ChangeCameraState(cameraInAim, aimAngles);
             else
             {
                 if (!cameraInAim)
@@ -131,6 +125,12 @@ public class InputManager : MonoBehaviour
     private void Shoot()
     {
         Debug.Log("Shot!");
+    }
+
+    private void DoMinorAction()
+    {
+        cameraInAim = !cameraInAim;
+        aiming = true;
     }
 
     public enum Axis_Proto : int
