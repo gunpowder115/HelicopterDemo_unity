@@ -55,8 +55,9 @@ public class InputManager : MonoBehaviour
     void Update()
     {
         Vector2 inputDirection = GetInput();
+        Vector2 inputVerticalDirection = GetVerticalInput();
         float inputX = inputDirection.x;
-        float inputY = Input.GetAxis("Jump");
+        float inputY = inputVerticalDirection.y;
         float inputZ = inputDirection.y;
         float inputXZ = Mathf.Clamp01(new Vector3(inputX, 0f, inputZ).magnitude);
 
@@ -111,7 +112,6 @@ public class InputManager : MonoBehaviour
         if (useNewInputSystem)
         {
             input = playerInput.Player.Move.ReadValue<Vector2>();
-            Debug.Log(input.x);
         }
         else
         {
@@ -119,6 +119,14 @@ public class InputManager : MonoBehaviour
             float inputZ = Input.GetAxis("Vertical");
             input = new Vector2(inputX, inputZ);
         }
+        return input;
+    }
+
+    private Vector2 GetVerticalInput()
+    {
+        Vector2 input = new Vector2();
+        if (useNewInputSystem)
+            input = playerInput.Player.VerticalMove.ReadValue<Vector2>();
         return input;
     }
 
