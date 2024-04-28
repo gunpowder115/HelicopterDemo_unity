@@ -279,6 +279,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lowSpeed: 10
   highSpeed: 20
+  maxHeight: 70
+  minHeight: 10
 --- !u!114 &63990704278970995
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ public class InputManager : MonoBehaviour
 {
     [SerializeField] float changeSpeedInput = 0.7f;
     [SerializeField] bool useNewInputSystem = true;
+    [SerializeField] float vertFastCoef = 5f;
 
     private TranslationInput translationInput;
     private RotationInput rotationInput;
@@ -15,13 +16,17 @@ public class InputManager : MonoBehaviour
     private bool cameraInAim, aiming;
     private PlayerInput playerInput;
     private Vector3 aimAngles;
+    private VertMoveStates vertState;
+    private float vertDirection;
 
     private void Awake()
     {
         playerInput = new PlayerInput();
 
-        playerInput.Player.Shoot.performed += context => Shoot();
+        playerInput.Common.MainAction.performed += context => DoMainAction();
         playerInput.Common.MinorAction.performed += context => DoMinorAction();
+        playerInput.Player.VerticalFastUp.performed += context => VerticalFastMove(1f);
+        playerInput.Player.VerticalFastDown.performed += context => VerticalFastMove(-1f);
     }
 
     private void OnEnable()
@@ -45,6 +50,7 @@ public class InputManager : MonoBehaviour
         currentDirection = transform.forward;
         angularDistance = 0.0f;
         cameraInAim = aiming = false;
+        vertState = VertMoveStates.Normal;
 
         //hide cursor in center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -70,9 +76,11 @@ public class InputManager : MonoBehaviour
 
             targetDirection = translationInput.TargetDirection;
             angularDistance = translationInput.GetAngularDistance(currentDirection, targetDirection);
+            if (translationInput.IsHeightBorder)
+                vertState = VertMoveStates.Normal;
 
             translationInput.Translate(Axis_Proto.X, inputX);
-            translationInput.Translate(Axis_Proto.Y, inputY);
+            translationInput.Translate(Axis_Proto.Y, vertState == VertMoveStates.Fast ? vertFastCoef * vertDirection : inputY);
             translationInput.Translate(Axis_Proto.Z, inputZ);
         }
 
@@ -124,15 +132,21 @@ public class InputManager : MonoBehaviour
 
     private Vector2 GetVerticalInput()
     {
-        Vector2 input = new Vector2();
+        Vector2 input = new Vector2(0f, 0f);
         if (useNewInputSystem)
             input = playerInput.Player.VerticalMove.ReadValue<Vector2>();
         return input;
     }
 
-    private void Shoot()
+    private void VerticalFastMove(float dir)
     {
-        Debug.Log("Shot!");
+        vertState = VertMoveStates.Fast;
+        vertDirection = dir;
+    }
+
+    private void DoMainAction()
+    {
+        Debug.Log("MainAction!");
     }
 
     private void DoMinorAction()
@@ -143,4 +157,7 @@ public class InputManager : MonoBehaviour
 
     public enum Axis_Proto : int
     { X, Y, Z }
+
+    public enum VertMoveStates
+    { Normal, Fast }
 }
