@@ -105,7 +105,7 @@ public class InputManager : MonoBehaviour
             {
                 if (!cameraInAim)
                 {
-                    cameraRotation.RotateHorizontally(rotateToDirection ? currentDirection.x : targetDirection.x);
+                    cameraRotation.RotateHorizontally(currentDirection.x);
                     cameraRotation.RotateVertically(0f);
                 }
                 else
