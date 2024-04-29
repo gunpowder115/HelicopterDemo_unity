@@ -40,6 +40,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "FastMove",
+                    "type": "Button",
+                    "id": "907ec624-9005-4fd1-b27f-baa6025f5ad6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -504,6 +513,28 @@
                     "action": "VerticalFastDown",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "78c86fe4-eb14-49ce-807f-44abf5962ebb",
+                    "path": "<Keyboard>/j",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "FastMove",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "6b640485-6fd1-4724-975b-38e0e7b945aa",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "FastMove",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -639,6 +670,15 @@
             "id": "69cecf3f-6408-4b49-8b89-55c97cc02e6e",
             "actions": [
                 {
+                    "name": "MainAction",
+                    "type": "Button",
+                    "id": "3d0080ff-523b-4dcc-8ac5-c4c4a41ec85a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "MinorAction",
                     "type": "Button",
                     "id": "30c96a13-6a2e-41bb-af59-83e3156ef167",
@@ -648,9 +688,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "MainAction",
+                    "name": "MinorActionHold",
                     "type": "Button",
-                    "id": "3d0080ff-523b-4dcc-8ac5-c4c4a41ec85a",
+                    "id": "9757473b-4b97-4471-9026-1f8f90607849",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AnyTargetSelection",
+                    "type": "Button",
+                    "id": "a269572e-b59e-4d03-9a5e-916544ee712c",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -662,7 +711,7 @@
                     "name": "",
                     "id": "a76a1c0a-45cb-4836-bfea-b666cac4f3ea",
                     "path": "<Keyboard>/k",
-                    "interactions": "",
+                    "interactions": "Press(behavior=1)",
                     "processors": "",
                     "groups": "Keyboard",
                     "action": "MinorAction",
@@ -673,10 +722,32 @@
                     "name": "",
                     "id": "f477672e-a5f2-4594-a265-1cd2e2381be3",
                     "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
+                    "interactions": "Press(behavior=1)",
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "MinorAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dfe8f938-a524-4e2b-986a-0ba2731aa9ae",
+                    "path": "<Keyboard>/u",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "AnyTargetSelection",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d3ba9fa6-1614-456d-90e6-846180f744eb",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "AnyTargetSelection",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -699,6 +770,28 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "MainAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "eb717775-ce8d-41fc-8ba8-80bedff6cb56",
+                    "path": "<Keyboard>/k",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "MinorActionHold",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5eb52780-2bbb-491f-bfbd-0da8f49f1de7",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "MinorActionHold",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

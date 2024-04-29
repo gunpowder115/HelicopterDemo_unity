@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -16,15 +17,25 @@ public class InputManager : MonoBehaviour
     private bool cameraInAim, aiming;
     private PlayerInput playerInput;
     private Vector3 aimAngles;
-    private VertMoveStates vertState;
     private float vertDirection;
+    private PlayerStates playerState;
 
     private void Awake()
     {
         playerInput = new PlayerInput();
 
         playerInput.Common.MainAction.performed += context => DoMainAction();
+        playerInput.Common.MainAction.canceled += context => DoMainActionCancel();
+
         playerInput.Common.MinorAction.performed += context => DoMinorAction();
+        playerInput.Common.MinorActionHold.performed += context => DoMinorActionHold();
+
+        playerInput.Common.AnyTargetSelection.performed += context => AnyTargetSelection();
+        playerInput.Common.AnyTargetSelection.canceled += context => AnyTargetSelectionCancel();
+
+        playerInput.Player.FastMove.performed += context => FastMove();
+        playerInput.Player.FastMove.canceled += context => FastMoveCancel();
+
         playerInput.Player.VerticalFastUp.performed += context => VerticalFastMove(1f);
         playerInput.Player.VerticalFastDown.performed += context => VerticalFastMove(-1f);
     }
@@ -50,7 +61,7 @@ public class InputManager : MonoBehaviour
         currentDirection = transform.forward;
         angularDistance = 0.0f;
         cameraInAim = aiming = false;
-        vertState = VertMoveStates.Normal;
+        playerState = PlayerStates.Normal;
 
         //hide cursor in center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -76,11 +87,11 @@ public class InputManager : MonoBehaviour
 
             targetDirection = translationInput.TargetDirection;
             angularDistance = translationInput.GetAngularDistance(currentDirection, targetDirection);
-            if (translationInput.IsHeightBorder)
-                vertState = VertMoveStates.Normal;
+            if (translationInput.IsHeightBorder && playerState == PlayerStates.VerticalFastMoving)
+                playerState = PlayerStates.Normal;
 
             translationInput.Translate(Axis_Proto.X, inputX);
-            translationInput.Translate(Axis_Proto.Y, vertState == VertMoveStates.Fast ? vertFastCoef * vertDirection : inputY);
+            translationInput.Translate(Axis_Proto.Y, playerState == PlayerStates.VerticalFastMoving ? vertFastCoef * vertDirection : inputY);
             translationInput.Translate(Axis_Proto.Z, inputZ);
         }
 
@@ -112,6 +123,8 @@ public class InputManager : MonoBehaviour
                     cameraRotation.RotateWithPlayer(aimAngles);
             }
         }
+
+        Debug.Log(playerState);
     }
 
     private Vector2 GetInput()
@@ -140,24 +153,85 @@ public class InputManager : MonoBehaviour
 
     private void VerticalFastMove(float dir)
     {
-        vertState = VertMoveStates.Fast;
-        vertDirection = dir;
+        if (playerState == PlayerStates.Normal)
+        {
+            playerState = PlayerStates.VerticalFastMoving;
+            vertDirection = dir;
+        }
+    }
+
+    private void FastMove()
+    {
+        if (playerState == PlayerStates.Normal)
+        {
+            playerState = PlayerStates.FastMoving;
+        }
+    }
+
+    private void FastMoveCancel()
+    {
+        if (playerState == PlayerStates.FastMoving)
+        {
+            playerState = PlayerStates.Normal;
+        }
     }
 
     private void DoMainAction()
     {
-        Debug.Log("MainAction!");
+        Debug.Log("Doing main action started");
+    }
+
+    private void DoMainActionCancel()
+    {
+        Debug.Log("Doing main action cancelled");
     }
 
     private void DoMinorAction()
     {
-        cameraInAim = !cameraInAim;
-        aiming = true;
+        if (playerState == PlayerStates.Normal || playerState == PlayerStates.Aiming)
+        {
+            cameraInAim = !cameraInAim;
+            aiming = true;
+            playerState = cameraInAim ? PlayerStates.Aiming : PlayerStates.Normal;
+        }
+        else
+            playerState = PlayerStates.Normal;
+    }
+
+    private void DoMinorActionHold()
+    {
+        if (playerState == PlayerStates.Normal)
+        {
+            playerState = PlayerStates.SelectionFarTarget;
+        }
+    }
+
+    private void AnyTargetSelection()
+    {
+        if (playerState == PlayerStates.Normal)
+        {
+            playerState = PlayerStates.SelectionAnyTarget;
+        }
+    }
+
+    private void AnyTargetSelectionCancel()
+    {
+        if (playerState == PlayerStates.SelectionAnyTarget)
+        {
+            playerState = PlayerStates.Normal;
+        }
     }
 
     public enum Axis_Proto : int
     { X, Y, Z }
 
-    public enum VertMoveStates
-    { Normal, Fast }
+    public enum PlayerStates
+    {
+        Normal,
+        Aiming,
+        SelectionFarTarget,
+        SelectionAnyTarget,
+        FastMoving,
+        VerticalFastMoving
+    }
 }

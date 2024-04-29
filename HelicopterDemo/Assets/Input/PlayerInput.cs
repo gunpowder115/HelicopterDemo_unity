@@ -62,6 +62,15 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FastMove"",
+                    ""type"": ""Button"",
+                    ""id"": ""907ec624-9005-4fd1-b27f-baa6025f5ad6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -526,6 +535,28 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""action"": ""VerticalFastDown"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""78c86fe4-eb14-49ce-807f-44abf5962ebb"",
+                    ""path"": ""<Keyboard>/j"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""FastMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6b640485-6fd1-4724-975b-38e0e7b945aa"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""FastMove"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -661,6 +692,15 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
             ""id"": ""69cecf3f-6408-4b49-8b89-55c97cc02e6e"",
             ""actions"": [
                 {
+                    ""name"": ""MainAction"",
+                    ""type"": ""Button"",
+                    ""id"": ""3d0080ff-523b-4dcc-8ac5-c4c4a41ec85a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""MinorAction"",
                     ""type"": ""Button"",
                     ""id"": ""30c96a13-6a2e-41bb-af59-83e3156ef167"",
@@ -670,9 +710,18 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""MainAction"",
+                    ""name"": ""MinorActionHold"",
                     ""type"": ""Button"",
-                    ""id"": ""3d0080ff-523b-4dcc-8ac5-c4c4a41ec85a"",
+                    ""id"": ""9757473b-4b97-4471-9026-1f8f90607849"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""AnyTargetSelection"",
+                    ""type"": ""Button"",
+                    ""id"": ""a269572e-b59e-4d03-9a5e-916544ee712c"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -684,7 +733,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""a76a1c0a-45cb-4836-bfea-b666cac4f3ea"",
                     ""path"": ""<Keyboard>/k"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=1)"",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
                     ""action"": ""MinorAction"",
@@ -695,10 +744,32 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""f477672e-a5f2-4594-a265-1cd2e2381be3"",
                     ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=1)"",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""MinorAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dfe8f938-a524-4e2b-986a-0ba2731aa9ae"",
+                    ""path"": ""<Keyboard>/u"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""AnyTargetSelection"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d3ba9fa6-1614-456d-90e6-846180f744eb"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""AnyTargetSelection"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -721,6 +792,28 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""MainAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb717775-ce8d-41fc-8ba8-80bedff6cb56"",
+                    ""path"": ""<Keyboard>/k"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""MinorActionHold"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5eb52780-2bbb-491f-bfbd-0da8f49f1de7"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": ""Hold"",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""MinorActionHold"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -758,13 +851,16 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         m_Player_VerticalMove = m_Player.FindAction("VerticalMove", throwIfNotFound: true);
         m_Player_VerticalFastUp = m_Player.FindAction("VerticalFastUp", throwIfNotFound: true);
         m_Player_VerticalFastDown = m_Player.FindAction("VerticalFastDown", throwIfNotFound: true);
+        m_Player_FastMove = m_Player.FindAction("FastMove", throwIfNotFound: true);
         // Camera
         m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
         m_Camera_Move = m_Camera.FindAction("Move", throwIfNotFound: true);
         // Common
         m_Common = asset.FindActionMap("Common", throwIfNotFound: true);
-        m_Common_MinorAction = m_Common.FindAction("MinorAction", throwIfNotFound: true);
         m_Common_MainAction = m_Common.FindAction("MainAction", throwIfNotFound: true);
+        m_Common_MinorAction = m_Common.FindAction("MinorAction", throwIfNotFound: true);
+        m_Common_MinorActionHold = m_Common.FindAction("MinorActionHold", throwIfNotFound: true);
+        m_Common_AnyTargetSelection = m_Common.FindAction("AnyTargetSelection", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -828,6 +924,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_VerticalMove;
     private readonly InputAction m_Player_VerticalFastUp;
     private readonly InputAction m_Player_VerticalFastDown;
+    private readonly InputAction m_Player_FastMove;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -836,6 +933,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         public InputAction @VerticalMove => m_Wrapper.m_Player_VerticalMove;
         public InputAction @VerticalFastUp => m_Wrapper.m_Player_VerticalFastUp;
         public InputAction @VerticalFastDown => m_Wrapper.m_Player_VerticalFastDown;
+        public InputAction @FastMove => m_Wrapper.m_Player_FastMove;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -857,6 +955,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @VerticalFastDown.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalFastDown;
                 @VerticalFastDown.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalFastDown;
                 @VerticalFastDown.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalFastDown;
+                @FastMove.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFastMove;
+                @FastMove.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFastMove;
+                @FastMove.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnFastMove;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -873,6 +974,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 @VerticalFastDown.started += instance.OnVerticalFastDown;
                 @VerticalFastDown.performed += instance.OnVerticalFastDown;
                 @VerticalFastDown.canceled += instance.OnVerticalFastDown;
+                @FastMove.started += instance.OnFastMove;
+                @FastMove.performed += instance.OnFastMove;
+                @FastMove.canceled += instance.OnFastMove;
             }
         }
     }
@@ -914,14 +1018,18 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     // Common
     private readonly InputActionMap m_Common;
     private ICommonActions m_CommonActionsCallbackInterface;
-    private readonly InputAction m_Common_MinorAction;
     private readonly InputAction m_Common_MainAction;
+    private readonly InputAction m_Common_MinorAction;
+    private readonly InputAction m_Common_MinorActionHold;
+    private readonly InputAction m_Common_AnyTargetSelection;
     public struct CommonActions
     {
         private @PlayerInput m_Wrapper;
         public CommonActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @MinorAction => m_Wrapper.m_Common_MinorAction;
         public InputAction @MainAction => m_Wrapper.m_Common_MainAction;
+        public InputAction @MinorAction => m_Wrapper.m_Common_MinorAction;
+        public InputAction @MinorActionHold => m_Wrapper.m_Common_MinorActionHold;
+        public InputAction @AnyTargetSelection => m_Wrapper.m_Common_AnyTargetSelection;
         public InputActionMap Get() { return m_Wrapper.m_Common; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -931,22 +1039,34 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         {
             if (m_Wrapper.m_CommonActionsCallbackInterface != null)
             {
-                @MinorAction.started -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorAction;
-                @MinorAction.performed -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorAction;
-                @MinorAction.canceled -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorAction;
                 @MainAction.started -= m_Wrapper.m_CommonActionsCallbackInterface.OnMainAction;
                 @MainAction.performed -= m_Wrapper.m_CommonActionsCallbackInterface.OnMainAction;
                 @MainAction.canceled -= m_Wrapper.m_CommonActionsCallbackInterface.OnMainAction;
+                @MinorAction.started -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorAction;
+                @MinorAction.performed -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorAction;
+                @MinorAction.canceled -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorAction;
+                @MinorActionHold.started -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorActionHold;
+                @MinorActionHold.performed -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorActionHold;
+                @MinorActionHold.canceled -= m_Wrapper.m_CommonActionsCallbackInterface.OnMinorActionHold;
+                @AnyTargetSelection.started -= m_Wrapper.m_CommonActionsCallbackInterface.OnAnyTargetSelection;
+                @AnyTargetSelection.performed -= m_Wrapper.m_CommonActionsCallbackInterface.OnAnyTargetSelection;
+                @AnyTargetSelection.canceled -= m_Wrapper.m_CommonActionsCallbackInterface.OnAnyTargetSelection;
             }
             m_Wrapper.m_CommonActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @MinorAction.started += instance.OnMinorAction;
-                @MinorAction.performed += instance.OnMinorAction;
-                @MinorAction.canceled += instance.OnMinorAction;
                 @MainAction.started += instance.OnMainAction;
                 @MainAction.performed += instance.OnMainAction;
                 @MainAction.canceled += instance.OnMainAction;
+                @MinorAction.started += instance.OnMinorAction;
+                @MinorAction.performed += instance.OnMinorAction;
+                @MinorAction.canceled += instance.OnMinorAction;
+                @MinorActionHold.started += instance.OnMinorActionHold;
+                @MinorActionHold.performed += instance.OnMinorActionHold;
+                @MinorActionHold.canceled += instance.OnMinorActionHold;
+                @AnyTargetSelection.started += instance.OnAnyTargetSelection;
+                @AnyTargetSelection.performed += instance.OnAnyTargetSelection;
+                @AnyTargetSelection.canceled += instance.OnAnyTargetSelection;
             }
         }
     }
@@ -975,6 +1095,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
         void OnVerticalMove(InputAction.CallbackContext context);
         void OnVerticalFastUp(InputAction.CallbackContext context);
         void OnVerticalFastDown(InputAction.CallbackContext context);
+        void OnFastMove(InputAction.CallbackContext context);
     }
     public interface ICameraActions
     {
@@ -982,7 +1103,9 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
     }
     public interface ICommonActions
     {
-        void OnMinorAction(InputAction.CallbackContext context);
         void OnMainAction(InputAction.CallbackContext context);
+        void OnMinorAction(InputAction.CallbackContext context);
+        void OnMinorActionHold(InputAction.CallbackContext context);
+        void OnAnyTargetSelection(InputAction.CallbackContext context);
     }
 }
