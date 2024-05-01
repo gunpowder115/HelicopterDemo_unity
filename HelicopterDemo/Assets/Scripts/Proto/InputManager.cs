@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -10,6 +9,7 @@ public class InputManager : MonoBehaviour
     private TranslationInput translationInput;
     private RotationInput rotationInput;
     private CameraRotation cameraRotation;
+    private TargetSelectionInput targetSelectionInput;
     private bool rotateToDirection;
     private Vector3 targetDirection;
     private float angularDistance;
@@ -56,6 +56,8 @@ public class InputManager : MonoBehaviour
         translationInput = GetComponentInChildren<TranslationInput>();
         rotationInput = GetComponentInChildren<RotationInput>();
         cameraRotation = GetComponentInChildren<CameraRotation>();
+        targetSelectionInput = GetComponentInChildren<TargetSelectionInput>();
+
         rotateToDirection = false;
         targetDirection = transform.forward;
         currentDirection = transform.forward;
@@ -78,7 +80,17 @@ public class InputManager : MonoBehaviour
         float inputZ = inputDirection.y;
         float inputXZ = Mathf.Clamp01(new Vector3(inputX, 0f, inputZ).magnitude);
 
+        //move aim if it target selection mode
+        bool aimMovement = playerState == PlayerStates.SelectionFarTarget || playerState == PlayerStates.SelectionAnyTarget;
+        Vector2 toTargetSelection = new Vector2();
+        if (targetSelectionInput && aimMovement)
+        {
+            targetSelectionInput.MoveAim(new Vector2(inputX, inputZ));
+            toTargetSelection = targetSelectionInput.ToTargetSelection;
+        }
+
         //movement around X, Y, Z
+        bool playerCanTranslate = playerState != PlayerStates.SelectionFarTarget && playerState != PlayerStates.SelectionAnyTarget;
         if (translationInput != null)
         {
             if (inputXZ >= changeSpeedInput && !translationInput.CurrSpeedIsHigh ||
@@ -90,6 +102,8 @@ public class InputManager : MonoBehaviour
             if (translationInput.IsHeightBorder && playerState == PlayerStates.VerticalFastMoving)
                 playerState = PlayerStates.Normal;
 
+            if (!playerCanTranslate)
+                inputX = inputY = inputZ = 0f;
             translationInput.Translate(Axis_Proto.X, inputX);
             translationInput.Translate(Axis_Proto.Y, playerState == PlayerStates.VerticalFastMoving ? vertFastCoef * vertDirection : inputY);
             translationInput.Translate(Axis_Proto.Z, inputZ);
@@ -106,9 +120,10 @@ public class InputManager : MonoBehaviour
         }
 
         //camera rotation
-        if (cameraRotation != null)
+        if (cameraRotation)
         {
             cameraRotation.UseNewInputSystem = useNewInputSystem;
+            bool rotateWithTargetSelection = playerState == PlayerStates.SelectionFarTarget || playerState == PlayerStates.SelectionAnyTarget;
 
             if (aiming)
                 aiming = cameraRotation.ChangeCameraState(cameraInAim, aimAngles);
@@ -116,8 +131,8 @@ public class InputManager : MonoBehaviour
             {
                 if (!cameraInAim)
                 {
-                    cameraRotation.RotateHorizontally(currentDirection.x);
-                    cameraRotation.RotateVertically(0f);
+                    cameraRotation.RotateHorizontally(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x);
+                    cameraRotation.RotateVertically(rotateWithTargetSelection ? toTargetSelection.y : 0f);
                 }
                 else
                     cameraRotation.RotateWithPlayer(aimAngles);
@@ -195,13 +210,17 @@ public class InputManager : MonoBehaviour
             playerState = cameraInAim ? PlayerStates.Aiming : PlayerStates.Normal;
         }
         else
+        {
+            targetSelectionInput.HideAim();
             playerState = PlayerStates.Normal;
+        }
     }
 
     private void DoMinorActionHold()
     {
         if (playerState == PlayerStates.Normal)
         {
+            targetSelectionInput.ShowAim();
             playerState = PlayerStates.SelectionFarTarget;
         }
     }
@@ -210,6 +229,7 @@ public class InputManager : MonoBehaviour
     {
         if (playerState == PlayerStates.Normal)
         {
+            targetSelectionInput.ShowAim();
             playerState = PlayerStates.SelectionAnyTarget;
         }
     }
@@ -218,6 +238,7 @@ public class InputManager : MonoBehaviour
     {
         if (playerState == PlayerStates.SelectionAnyTarget)
         {
+            targetSelectionInput.HideAim();
             playerState = PlayerStates.Normal;
         }
     }

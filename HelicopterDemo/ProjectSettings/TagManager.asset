@@ -15,6 +15,7 @@ TagManager:
   - FriendlyBase
   - NeutralBase
   - CameraContainer
+  - Aim
   layers:
   - Default
   - TransparentFX
