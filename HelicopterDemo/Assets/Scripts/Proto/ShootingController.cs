@@ -39,7 +39,7 @@ public class ShootingController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //BarrelShot();
+        BarrelShot();
     }
 
     public void BarrelShot()
