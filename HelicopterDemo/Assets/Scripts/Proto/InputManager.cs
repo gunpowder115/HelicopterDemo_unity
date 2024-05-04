@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -9,6 +10,7 @@ public class InputManager : MonoBehaviour
     bool rotateToDirection;
     bool cameraInAim, aiming;
     bool minigunFire;
+    int unguidedMissileIndex, guidedMissileIndex;
     float angularDistance;
     float vertDirection;
     Vector3 targetDirection;
@@ -21,6 +23,7 @@ public class InputManager : MonoBehaviour
     TargetSelectionInput targetSelectionInput;
     PlayerInput playerInput;
     BarrelShooter minigun;
+    List<MissileShooter> unguidedMissiles, guidedMissiles;
 
     private void Awake()
     {
@@ -32,6 +35,7 @@ public class InputManager : MonoBehaviour
         playerInput.Common.MinorAction.performed += context => DoMinorAction();
         playerInput.Common.MinorActionHold.performed += context => DoMinorActionHold();
 
+        playerInput.Common.AnyTargetSelection.started += context => DoMinorActionCancel(); //todo
         playerInput.Common.AnyTargetSelection.performed += context => AnyTargetSelection();
         playerInput.Common.AnyTargetSelection.canceled += context => AnyTargetSelectionCancel();
 
@@ -60,6 +64,27 @@ public class InputManager : MonoBehaviour
         cameraRotation = GetComponentInChildren<CameraRotation>();
         targetSelectionInput = GetComponentInChildren<TargetSelectionInput>();
         minigun = GetComponentInChildren<BarrelShooter>();
+
+        List<MissileShooter> missiles = new List<MissileShooter>(GetComponentsInChildren<MissileShooter>());
+        unguidedMissiles = new List<MissileShooter>();
+        guidedMissiles = new List<MissileShooter>();
+        unguidedMissileIndex = guidedMissileIndex = -1;
+        if (missiles != null)
+        {
+            for (int i = 0; i < missiles.Count; i++)
+            {
+                if (missiles[i].IsGuided)
+                {
+                    if (guidedMissileIndex < 0) guidedMissileIndex = i;
+                    guidedMissiles.Add(missiles[i]);
+                }
+                else if (!missiles[i].IsGuided)
+                {
+                    if (unguidedMissileIndex < 0) unguidedMissileIndex = i;
+                    unguidedMissiles.Add(missiles[i]);
+                }
+            }
+        }
 
         rotateToDirection = false;
         targetDirection = transform.forward;
@@ -230,6 +255,16 @@ public class InputManager : MonoBehaviour
         {
             targetSelectionInput.ShowAim();
             playerState = PlayerStates.SelectionFarTarget;
+        }
+    }
+
+    private void DoMinorActionCancel()
+    {
+        if (playerState != PlayerStates.SelectionAnyTarget && playerState != PlayerStates.SelectionFarTarget &&
+            unguidedMissiles[unguidedMissileIndex].IsEnable)
+        {
+            unguidedMissiles[unguidedMissileIndex++].Launch();
+            if (unguidedMissileIndex >= unguidedMissiles.Count) unguidedMissileIndex = 0;
         }
     }
 

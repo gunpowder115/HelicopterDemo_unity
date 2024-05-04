@@ -334,7 +334,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2909483424473657732, guid: 430d03fe4b7dfa9439333be208d5f09f, type: 3}
       propertyPath: m_Name
-      value: UnguidedMissileSystem_right
+      value: GuidedMissile_right
       objectReference: {fileID: 0}
     - target: {fileID: 2909483424473657848, guid: 430d03fe4b7dfa9439333be208d5f09f, type: 3}
       propertyPath: m_RootOrder
@@ -346,7 +346,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2909483424473657848, guid: 430d03fe4b7dfa9439333be208d5f09f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.124
+      value: 1.287
       objectReference: {fileID: 0}
     - target: {fileID: 2909483424473657848, guid: 430d03fe4b7dfa9439333be208d5f09f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -396,7 +396,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7516879531868764482, guid: c0eb89ac8d91975449a1349230a8d4ff, type: 3}
       propertyPath: m_Name
-      value: AirGuidedMissileSystem_right
+      value: UnguidedMissileSystem_right
       objectReference: {fileID: 0}
     - target: {fileID: 7516879531868764483, guid: c0eb89ac8d91975449a1349230a8d4ff, type: 3}
       propertyPath: m_RootOrder
@@ -458,7 +458,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7516879531868764482, guid: c0eb89ac8d91975449a1349230a8d4ff, type: 3}
       propertyPath: m_Name
-      value: AirGuidedMissileSystem_left
+      value: UnguidedMissileSystem_left
       objectReference: {fileID: 0}
     - target: {fileID: 7516879531868764483, guid: c0eb89ac8d91975449a1349230a8d4ff, type: 3}
       propertyPath: m_RootOrder
@@ -520,7 +520,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2909483424473657732, guid: 430d03fe4b7dfa9439333be208d5f09f, type: 3}
       propertyPath: m_Name
-      value: UnguidedMissileSystem_left
+      value: GuidedMissile_left
       objectReference: {fileID: 0}
     - target: {fileID: 2909483424473657848, guid: 430d03fe4b7dfa9439333be208d5f09f, type: 3}
       propertyPath: m_RootOrder
@@ -532,7 +532,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2909483424473657848, guid: 430d03fe4b7dfa9439333be208d5f09f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.124
+      value: 1.287
       objectReference: {fileID: 0}
     - target: {fileID: 2909483424473657848, guid: 430d03fe4b7dfa9439333be208d5f09f, type: 3}
       propertyPath: m_LocalPosition.z
