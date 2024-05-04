@@ -6,19 +6,21 @@ public class InputManager : MonoBehaviour
     [SerializeField] bool useNewInputSystem = true;
     [SerializeField] float vertFastCoef = 5f;
 
-    private TranslationInput translationInput;
-    private RotationInput rotationInput;
-    private CameraRotation cameraRotation;
-    private TargetSelectionInput targetSelectionInput;
-    private bool rotateToDirection;
-    private Vector3 targetDirection;
-    private float angularDistance;
-    private Vector3 currentDirection;
-    private bool cameraInAim, aiming;
-    private PlayerInput playerInput;
-    private Vector3 aimAngles;
-    private float vertDirection;
-    private PlayerStates playerState;
+    bool rotateToDirection;
+    bool cameraInAim, aiming;
+    bool minigunFire;
+    float angularDistance;
+    float vertDirection;
+    Vector3 targetDirection;
+    Vector3 currentDirection;
+    Vector3 aimAngles;
+    PlayerStates playerState;
+    TranslationInput translationInput;
+    RotationInput rotationInput;
+    CameraRotation cameraRotation;
+    TargetSelectionInput targetSelectionInput;
+    PlayerInput playerInput;
+    BarrelShooter minigun;
 
     private void Awake()
     {
@@ -57,6 +59,7 @@ public class InputManager : MonoBehaviour
         rotationInput = GetComponentInChildren<RotationInput>();
         cameraRotation = GetComponentInChildren<CameraRotation>();
         targetSelectionInput = GetComponentInChildren<TargetSelectionInput>();
+        minigun = GetComponentInChildren<BarrelShooter>();
 
         rotateToDirection = false;
         targetDirection = transform.forward;
@@ -139,6 +142,9 @@ public class InputManager : MonoBehaviour
             }
         }
 
+        if (minigun && minigunFire)
+            minigun.Fire();
+
         Debug.Log(playerState);
     }
 
@@ -193,12 +199,14 @@ public class InputManager : MonoBehaviour
 
     private void DoMainAction()
     {
-        Debug.Log("Doing main action started");
+        if (playerState != PlayerStates.SelectionAnyTarget && playerState != PlayerStates.SelectionFarTarget)
+            minigunFire = true;
     }
 
     private void DoMainActionCancel()
     {
-        Debug.Log("Doing main action cancelled");
+        minigunFire = false;
+        if (minigun) minigun.StopFire();
     }
 
     private void DoMinorAction()

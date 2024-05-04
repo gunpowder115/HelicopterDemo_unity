@@ -192,6 +192,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HelicopterPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 6472959871105664727, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
+      propertyPath: shotDeltaTime
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6805662290766829008, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
