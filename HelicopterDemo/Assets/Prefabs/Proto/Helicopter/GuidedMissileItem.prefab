@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9112825553204389491}
-  - component: {fileID: 4523749860111826375}
+  - component: {fileID: -8641184250342525596}
   m_Layer: 0
-  m_Name: GuidedMissile
+  m_Name: GuidedMissileItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -34,7 +34,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4523749860111826375
+--- !u!114 &-8641184250342525596
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,12 +43,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 9112825553204389488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bacde925d76a4b34ba974378b3feb109, type: 3}
+  m_Script: {fileID: 11500000, guid: 2a58cf9687a85b949a1ab9cc0f78ea98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  missilePrefab: {fileID: 9112825553204389488, guid: 79c6cdb6227fb854e9b12221e4dcce36, type: 3}
-  rechargeTime: 8
-  guided: 1
+  speed: 30
+  lifetime: 10
 --- !u!1 &9112825554286059668
 GameObject:
   m_ObjectHideFlags: 0

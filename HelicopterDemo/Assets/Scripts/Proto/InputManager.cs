@@ -68,21 +68,14 @@ public class InputManager : MonoBehaviour
         List<MissileShooter> missiles = new List<MissileShooter>(GetComponentsInChildren<MissileShooter>());
         unguidedMissiles = new List<MissileShooter>();
         guidedMissiles = new List<MissileShooter>();
-        unguidedMissileIndex = guidedMissileIndex = -1;
         if (missiles != null)
         {
-            for (int i = 0; i < missiles.Count; i++)
+            foreach(var missile in missiles)
             {
-                if (missiles[i].IsGuided)
-                {
-                    if (guidedMissileIndex < 0) guidedMissileIndex = i;
-                    guidedMissiles.Add(missiles[i]);
-                }
-                else if (!missiles[i].IsGuided)
-                {
-                    if (unguidedMissileIndex < 0) unguidedMissileIndex = i;
-                    unguidedMissiles.Add(missiles[i]);
-                }
+                if (missile.IsGuided)
+                    guidedMissiles.Add(missile);
+                else
+                    unguidedMissiles.Add(missile);
             }
         }
 
@@ -244,6 +237,11 @@ public class InputManager : MonoBehaviour
         }
         else
         {
+            if (playerState == PlayerStates.SelectionFarTarget && guidedMissiles[guidedMissileIndex].IsEnable)
+            {
+                guidedMissiles[guidedMissileIndex++].Launch();
+                if (guidedMissileIndex >= guidedMissiles.Count) guidedMissileIndex = 0;
+            }
             targetSelectionInput.HideAim();
             playerState = PlayerStates.Normal;
         }
