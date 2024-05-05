@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class InputManager : MonoBehaviour
@@ -6,6 +7,8 @@ public class InputManager : MonoBehaviour
     [SerializeField] float changeSpeedInput = 0.7f;
     [SerializeField] bool useNewInputSystem = true;
     [SerializeField] float vertFastCoef = 5f;
+    [SerializeField] float maxDistToAim = 20f;
+    [SerializeField] LineRenderer lineRenderer;
 
     bool rotateToDirection;
     bool cameraInAim, aiming;
@@ -23,6 +26,7 @@ public class InputManager : MonoBehaviour
     TargetSelectionInput targetSelectionInput;
     PlayerInput playerInput;
     BarrelShooter minigun;
+    NpcController npcController;
     List<MissileShooter> unguidedMissiles, guidedMissiles;
 
     private void Awake()
@@ -64,6 +68,7 @@ public class InputManager : MonoBehaviour
         cameraRotation = GetComponentInChildren<CameraRotation>();
         targetSelectionInput = GetComponentInChildren<TargetSelectionInput>();
         minigun = GetComponentInChildren<BarrelShooter>();
+        npcController = NpcController.GetInstance();
 
         List<MissileShooter> missiles = new List<MissileShooter>(GetComponentsInChildren<MissileShooter>());
         unguidedMissiles = new List<MissileShooter>();
@@ -85,6 +90,7 @@ public class InputManager : MonoBehaviour
         angularDistance = 0.0f;
         cameraInAim = aiming = false;
         playerState = PlayerStates.Normal;
+        lineRenderer.enabled = false;
 
         //hide cursor in center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -162,6 +168,8 @@ public class InputManager : MonoBehaviour
 
         if (minigun && minigunFire)
             minigun.Fire();
+
+        DrawLineToEnemy();
 
         Debug.Log(playerState);
     }
@@ -281,6 +289,25 @@ public class InputManager : MonoBehaviour
         {
             targetSelectionInput.HideAim();
             playerState = PlayerStates.Normal;
+        }
+    }
+
+    void DrawLineToEnemy()
+    {
+        var distToEnemies = npcController.FindDistToEnemies(this.gameObject);
+        if (distToEnemies.Count > 0)
+        {
+            var distToNearestEnemy = distToEnemies.ElementAt(0);
+            float dist = distToNearestEnemy.Key;
+            GameObject nearestEnemy = distToNearestEnemy.Value;
+            if (dist < maxDistToAim)
+            {
+                lineRenderer.enabled = true;
+                lineRenderer.SetPosition(0, this.transform.position);
+                lineRenderer.SetPosition(1, nearestEnemy.transform.position);
+            }
+            else
+                lineRenderer.enabled = false;
         }
     }
 

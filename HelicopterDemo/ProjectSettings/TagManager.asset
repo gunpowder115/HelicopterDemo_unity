@@ -16,6 +16,8 @@ TagManager:
   - NeutralBase
   - CameraContainer
   - Aim
+  - EnemyBuild
+  - FriendlyBuild
   layers:
   - Default
   - TransparentFX

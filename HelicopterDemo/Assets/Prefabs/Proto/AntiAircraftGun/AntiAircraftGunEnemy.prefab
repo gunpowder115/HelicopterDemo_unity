@@ -19,21 +19,25 @@ PrefabInstance:
       propertyPath: m_Name
       value: AntiAircraftGunEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 8958542072398395810, guid: 8af4f464602cc04418fd599869d59af9, type: 3}
+      propertyPath: m_TagString
+      value: EnemyBuild
+      objectReference: {fileID: 0}
     - target: {fileID: 8958542072398395869, guid: 8af4f464602cc04418fd599869d59af9, type: 3}
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8958542072398395869, guid: 8af4f464602cc04418fd599869d59af9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -15.5
       objectReference: {fileID: 0}
     - target: {fileID: 8958542072398395869, guid: 8af4f464602cc04418fd599869d59af9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -3.565998
       objectReference: {fileID: 0}
     - target: {fileID: 8958542072398395869, guid: 8af4f464602cc04418fd599869d59af9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 89.2
       objectReference: {fileID: 0}
     - target: {fileID: 8958542072398395869, guid: 8af4f464602cc04418fd599869d59af9, type: 3}
       propertyPath: m_LocalRotation.w
