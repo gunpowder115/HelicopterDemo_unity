@@ -14,12 +14,13 @@ public class InputManager : MonoBehaviour
     bool cameraInAim, aiming;
     bool minigunFire;
     int unguidedMissileIndex, guidedMissileIndex;
-    float angularDistance;
     float vertDirection;
+    float yawAngle;
     Vector3 targetDirection;
     Vector3 currentDirection;
     Vector3 aimAngles;
     PlayerStates playerState;
+    GameObject possibleTarget, selectedTarget;
     TranslationInput translationInput;
     RotationInput rotationInput;
     CameraRotation cameraRotation;
@@ -87,7 +88,6 @@ public class InputManager : MonoBehaviour
         rotateToDirection = false;
         targetDirection = transform.forward;
         currentDirection = transform.forward;
-        angularDistance = 0.0f;
         cameraInAim = aiming = false;
         playerState = PlayerStates.Normal;
         lineRenderer.enabled = false;
@@ -125,15 +125,20 @@ public class InputManager : MonoBehaviour
                 rotateToDirection = translationInput.ChangeSpeed();
 
             targetDirection = translationInput.TargetDirection;
-            angularDistance = translationInput.GetAngularDistance(currentDirection, targetDirection);
             if (translationInput.IsHeightBorder && playerState == PlayerStates.VerticalFastMoving)
                 playerState = PlayerStates.Normal;
 
             if (!playerCanTranslate)
                 inputX = inputY = inputZ = 0f;
-            translationInput.Translate(Axis_Proto.X, inputX);
-            translationInput.Translate(Axis_Proto.Y, playerState == PlayerStates.VerticalFastMoving ? vertFastCoef * vertDirection : inputY);
-            translationInput.Translate(Axis_Proto.Z, inputZ);
+
+            if (playerState == PlayerStates.Aiming && selectedTarget)
+                translationInput.TranslateRelToTarget(new Vector3(inputX, inputY, inputZ), yawAngle);
+            else
+            {
+                translationInput.Translate(Axis_Proto.X, inputX);
+                translationInput.Translate(Axis_Proto.Y, playerState == PlayerStates.VerticalFastMoving ? vertFastCoef * vertDirection : inputY);
+                translationInput.Translate(Axis_Proto.Z, inputZ);
+            }
         }
 
         //rotation around X, Y, Z
@@ -141,9 +146,15 @@ public class InputManager : MonoBehaviour
         {
             currentDirection = rotationInput.CurrentDirection;
             aimAngles = rotationInput.AimAngles;
+            yawAngle = rotationInput.YawAngle;
 
-            rotationInput.RotateByYaw(angularDistance, rotateToDirection);
-            rotationInput.RotateByAttitude(targetDirection, inputXZ, rotateToDirection);
+            if (playerState == PlayerStates.Aiming && selectedTarget)
+            {
+                Quaternion rotToTarget = Quaternion.LookRotation((selectedTarget.transform.position - this.transform.position));
+                rotationInput.RotateToTarget(rotToTarget, inputX);
+            }
+            else
+                rotationInput.RotateToDirection(targetDirection, inputXZ, rotateToDirection);
         }
 
         //camera rotation
@@ -169,7 +180,8 @@ public class InputManager : MonoBehaviour
         if (minigun && minigunFire)
             minigun.Fire();
 
-        DrawLineToEnemy();
+        if (playerState == PlayerStates.Normal)
+            DrawLineToEnemy();
 
         Debug.Log(playerState);
     }
@@ -237,11 +249,12 @@ public class InputManager : MonoBehaviour
 
     private void DoMinorAction()
     {
-        if (playerState == PlayerStates.Normal || playerState == PlayerStates.Aiming)
+        if ((playerState == PlayerStates.Normal && possibleTarget) || playerState == PlayerStates.Aiming)
         {
             cameraInAim = !cameraInAim;
             aiming = true;
             playerState = cameraInAim ? PlayerStates.Aiming : PlayerStates.Normal;
+            selectedTarget = cameraInAim ? possibleTarget : null;
         }
         else
         {
@@ -305,9 +318,13 @@ public class InputManager : MonoBehaviour
                 lineRenderer.enabled = true;
                 lineRenderer.SetPosition(0, this.transform.position);
                 lineRenderer.SetPosition(1, nearestEnemy.transform.position);
+                possibleTarget = nearestEnemy;
             }
             else
+            {
                 lineRenderer.enabled = false;
+                possibleTarget = null;
+            }
         }
     }
 

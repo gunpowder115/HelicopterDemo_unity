@@ -7,8 +7,9 @@ public class RotationInput : MonoBehaviour
     [SerializeField] float largeAttitudeAngle = 30.0f;
     [SerializeField] float smallAttitudeAngle = 20.0f;
 
+    public float YawAngle => transform.rotation.eulerAngles.y;
     public Vector3 CurrentDirection  => new Vector3(transform.forward.x, 0f, transform.forward.z);
-    public Vector3 AimAngles => new Vector3(this.gameObject.transform.eulerAngles.x, this.gameObject.transform.eulerAngles.y, 0f);
+    public Vector3 AimAngles => new Vector3(this.transform.eulerAngles.x, this.transform.eulerAngles.y, this.transform.eulerAngles.z);
 
     // Start is called before the first frame update
     void Start()
@@ -18,30 +19,27 @@ public class RotationInput : MonoBehaviour
             rigidBody.freezeRotation = true;
     }
 
-    public void RotateByYaw(float angularDistance, bool rotateToDirection)
+    public void RotateToDirection(Vector3 targetDirection, float input, bool rotateToDirection)
     {
         Vector3 eulerAnglesCurrent = transform.rotation.eulerAngles;
+        Quaternion yawRotation = Quaternion.LookRotation(targetDirection);
+        float targetAngleY = rotateToDirection ? yawRotation.eulerAngles.y : eulerAnglesCurrent.y;
 
-        float targetAngleY = rotateToDirection ? eulerAnglesCurrent.y + angularDistance : eulerAnglesCurrent.y;
+        targetDirection = transform.worldToLocalMatrix * targetDirection;
+        float targetAttitudeAngle = input * (rotateToDirection ? largeAttitudeAngle : smallAttitudeAngle);
 
-        Vector3 eulerAnglesTarget = new Vector3(eulerAnglesCurrent.x, targetAngleY, eulerAnglesCurrent.z);
+        float targetAngleX = targetDirection.z * targetAttitudeAngle;
+        float targetAngleZ = -targetDirection.x * targetAttitudeAngle;
 
+        Vector3 eulerAnglesTarget = new Vector3(targetAngleX, targetAngleY, targetAngleZ);
         Quaternion rotationTarget = Quaternion.Euler(eulerAnglesTarget);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, yawRotSpeed * Time.deltaTime);
     }
 
-    public void RotateByAttitude(Vector3 targetDirection, float input, bool rotateToDirection)
+    public void RotateToTarget(Quaternion targetRotation, float rollInput)
     {
-        targetDirection = transform.worldToLocalMatrix * targetDirection;
-        Vector3 eulerAnglesCurrent = transform.rotation.eulerAngles;
-
-        float targetAttitudeAngle = input * (rotateToDirection ? largeAttitudeAngle : smallAttitudeAngle);
-        float targetAngleX = targetDirection.z * targetAttitudeAngle;
-        float targetAngleZ = -targetDirection.x * targetAttitudeAngle;
-
-        Vector3 eulerAnglesTarget = new Vector3(targetAngleX, eulerAnglesCurrent.y, targetAngleZ);
-
-        Quaternion rotationTarget = Quaternion.Euler(eulerAnglesTarget);
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, attitudeRotSpeed * Time.deltaTime);
+        float targetAngleZ = -rollInput * largeAttitudeAngle;
+        targetRotation = Quaternion.Euler(targetRotation.eulerAngles.x, targetRotation.eulerAngles.y, targetRotation.eulerAngles.z + targetAngleZ);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, yawRotSpeed * Time.deltaTime);
     }
 }

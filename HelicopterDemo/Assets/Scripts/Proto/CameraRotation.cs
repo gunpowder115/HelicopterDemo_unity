@@ -116,7 +116,7 @@ public class CameraRotation : MonoBehaviour
 
     public void RotateWithPlayer(Vector3 targetRotation)
     {
-        cameraContainer.transform.rotation = Quaternion.Euler(targetRotation);
+        cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, Quaternion.Euler(targetRotation), aimingSpeed * Time.deltaTime);
     }
 
     private void GetInput()

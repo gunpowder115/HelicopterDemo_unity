@@ -221,9 +221,7 @@ public class HelicopterAI : MonoBehaviour
         if (rotationInput != null)
         {
             currentDirection = rotationInput.CurrentDirection;
-
-            rotationInput.RotateByYaw(angularDistance, true);
-            rotationInput.RotateByAttitude(targetDirection, inputXZ, true);
+            rotationInput.RotateToDirection(targetDirection, inputXZ, true);
         }
     }
 

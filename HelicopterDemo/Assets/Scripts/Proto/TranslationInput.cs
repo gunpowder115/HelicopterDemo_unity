@@ -58,6 +58,16 @@ public class TranslationInput : MonoBehaviour
         deltas[(int)axis] = input * currSpeed;
     }
 
+    public void TranslateRelToTarget(Vector3 input, float angle)
+    {
+        Vector3 temp = new Vector3(input.x * currSpeed, input.y * currSpeed, input.z * currSpeed);
+        Quaternion rot = Quaternion.Euler(0f, angle, 0f);
+        temp = rot * temp;
+        deltas[0] = temp.x;
+        deltas[1] = temp.y;
+        deltas[2] = temp.z;
+    }
+
     public float GetAngularDistance(Vector3 currentDirection, Vector3 targetDirection)
     {
         float angularDistance = Vector3.SignedAngle(currentDirection, targetDirection, Vector3.up);
