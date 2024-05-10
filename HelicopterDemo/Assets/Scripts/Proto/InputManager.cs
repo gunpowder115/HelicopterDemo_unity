@@ -7,6 +7,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] float changeSpeedInput = 0.7f;
     [SerializeField] bool useNewInputSystem = true;
     [SerializeField] float vertFastCoef = 5f;
+    [SerializeField] float minDistToAim = 17f;
     [SerializeField] float maxDistToAim = 20f;
     [SerializeField] LineRenderer lineRenderer;
 
@@ -76,7 +77,7 @@ public class InputManager : MonoBehaviour
         guidedMissiles = new List<MissileShooter>();
         if (missiles != null)
         {
-            foreach(var missile in missiles)
+            foreach (var missile in missiles)
             {
                 if (missile.IsGuided)
                     guidedMissiles.Add(missile);
@@ -174,10 +175,13 @@ public class InputManager : MonoBehaviour
         }
 
         if (minigun && minigunFire)
-            minigun.Fire();
+            minigun.Fire(selectedTarget);
 
         if (playerState == PlayerStates.Normal)
             DrawLineToEnemy();
+
+        if (playerState == PlayerStates.Aiming && (aimAngles.x > 45f || (selectedTarget.transform.position - transform.position).magnitude > maxDistToAim))
+            ChangeAimState();
 
         Debug.Log(playerState);
     }
@@ -247,21 +251,27 @@ public class InputManager : MonoBehaviour
     {
         if ((playerState == PlayerStates.Normal && possibleTarget) || playerState == PlayerStates.Aiming)
         {
-            cameraInAim = !cameraInAim;
-            aiming = true;
-            playerState = cameraInAim ? PlayerStates.Aiming : PlayerStates.Normal;
-            selectedTarget = cameraInAim ? possibleTarget : null;
+            ChangeAimState();
         }
         else
         {
             if (playerState == PlayerStates.SelectionFarTarget && guidedMissiles[guidedMissileIndex].IsEnable)
             {
-                guidedMissiles[guidedMissileIndex++].Launch();
+                guidedMissiles[guidedMissileIndex++].Launch(null);
                 if (guidedMissileIndex >= guidedMissiles.Count) guidedMissileIndex = 0;
             }
             targetSelectionInput.HideAim();
             playerState = PlayerStates.Normal;
         }
+    }
+
+    void ChangeAimState()
+    {
+        cameraInAim = !cameraInAim;
+        aiming = true;
+        playerState = cameraInAim ? PlayerStates.Aiming : PlayerStates.Normal;
+        selectedTarget = cameraInAim ? possibleTarget : null;
+        if (playerState == PlayerStates.Aiming) lineRenderer.enabled = false;
     }
 
     private void DoMinorActionHold()
@@ -278,7 +288,7 @@ public class InputManager : MonoBehaviour
         if (playerState != PlayerStates.SelectionAnyTarget && playerState != PlayerStates.SelectionFarTarget &&
             unguidedMissiles[unguidedMissileIndex].IsEnable)
         {
-            unguidedMissiles[unguidedMissileIndex++].Launch();
+            unguidedMissiles[unguidedMissileIndex++].Launch(selectedTarget);
             if (unguidedMissileIndex >= unguidedMissiles.Count) unguidedMissileIndex = 0;
         }
     }
@@ -309,7 +319,7 @@ public class InputManager : MonoBehaviour
             var distToNearestEnemy = distToEnemies.ElementAt(0);
             float dist = distToNearestEnemy.Key;
             GameObject nearestEnemy = distToNearestEnemy.Value;
-            if (dist < maxDistToAim)
+            if (dist < minDistToAim)
             {
                 lineRenderer.enabled = true;
                 lineRenderer.SetPosition(0, this.transform.position);

@@ -27,7 +27,6 @@ public class RotationInput : MonoBehaviour
 
         targetDirection = transform.worldToLocalMatrix * targetDirection;
         float targetAttitudeAngle = input * (rotateToDirection ? largeAttitudeAngle : smallAttitudeAngle);
-
         float targetAngleX = targetDirection.z * targetAttitudeAngle;
         float targetAngleZ = -targetDirection.x * targetAttitudeAngle;
 

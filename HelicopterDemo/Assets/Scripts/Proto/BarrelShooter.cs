@@ -13,9 +13,11 @@ public class BarrelShooter : MonoBehaviour
     bool firstShot;
     int currClipVolume;
     float currShotDeltaTime, currRechargeTime;
+    GameObject target;
 
-    public void Fire()
+    public void Fire(GameObject target)
     {
+        this.target = target;
         if (firstShot)
             FirstShot();
         else if (currClipVolume >= 0f)
@@ -77,8 +79,16 @@ public class BarrelShooter : MonoBehaviour
         float deflectionHor = Random.Range(-maxDeflectionAngle, maxDeflectionAngle);
         float deflectionVert = Random.Range(-maxDeflectionAngle, maxDeflectionAngle);
 
-        Vector3 euler = this.transform.eulerAngles;
+        Vector3 euler = CalculateRotToTarget().eulerAngles;
         euler = new Vector3(euler.x + deflectionHor, euler.y + deflectionVert, euler.z);
         return Quaternion.Euler(euler);
+    }
+
+    Quaternion CalculateRotToTarget()
+    {
+        if (target)
+            return Quaternion.LookRotation(target.transform.position - transform.position);
+        else
+            return transform.rotation;
     }
 }

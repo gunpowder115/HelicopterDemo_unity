@@ -51,6 +51,7 @@ MonoBehaviour:
   changeSpeedInput: 0.7
   useNewInputSystem: 1
   vertFastCoef: 5
+  minDistToAim: 35
   maxDistToAim: 40
   lineRenderer: {fileID: 0}
 --- !u!143 &3309415596281561064

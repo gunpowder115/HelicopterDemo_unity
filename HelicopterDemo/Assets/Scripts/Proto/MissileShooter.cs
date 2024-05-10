@@ -13,10 +13,10 @@ public class MissileShooter : MonoBehaviour
     bool isEnable;
     GameObject[] childObjects;
 
-    public void Launch()
+    public void Launch(GameObject target)
     {
         if (missilePrefab)
-            Instantiate(missilePrefab, this.transform.position, this.transform.rotation);
+            Instantiate(missilePrefab, this.transform.position, CalculateRotToTarget(target));
         else
             Debug.Log(this.ToString() + ": missilePrefab is NULL!");
         StartCoroutine(MissileActivity());
@@ -41,5 +41,13 @@ public class MissileShooter : MonoBehaviour
         foreach (var obj in childObjects)
             obj.SetActive(true);
         isEnable = true;
+    }
+
+    Quaternion CalculateRotToTarget(GameObject target)
+    {
+        if (target && !guided)
+            return Quaternion.LookRotation(target.transform.position - transform.position);
+        else
+            return transform.rotation;
     }
 }
