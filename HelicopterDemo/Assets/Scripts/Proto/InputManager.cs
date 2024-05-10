@@ -134,11 +134,7 @@ public class InputManager : MonoBehaviour
             if (playerState == PlayerStates.Aiming && selectedTarget)
                 translationInput.TranslateRelToTarget(new Vector3(inputX, inputY, inputZ), yawAngle);
             else
-            {
-                translationInput.Translate(Axis_Proto.X, inputX);
-                translationInput.Translate(Axis_Proto.Y, playerState == PlayerStates.VerticalFastMoving ? vertFastCoef * vertDirection : inputY);
-                translationInput.Translate(Axis_Proto.Z, inputZ);
-            }
+                translationInput.TranslateGlobal(new Vector3(inputX, playerState == PlayerStates.VerticalFastMoving ? vertFastCoef * vertDirection : inputY, inputZ));
         }
 
         //rotation around X, Y, Z

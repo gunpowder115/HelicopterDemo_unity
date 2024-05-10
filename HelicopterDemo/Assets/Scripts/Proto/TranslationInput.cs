@@ -15,7 +15,6 @@ public class TranslationInput : MonoBehaviour
     private CharacterController characterContoller;
     private float[] deltas;
     private float currSpeed;
-    //private bool currSpeedIsHigh;
 
     // Start is called before the first frame update
     void Start()
@@ -53,25 +52,21 @@ public class TranslationInput : MonoBehaviour
             this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x, minHeight, this.gameObject.transform.position.z);
     }
 
-    public void Translate(InputManager.Axis_Proto axis, float input)
+    public void TranslateGlobal(Vector3 input)
     {
-        deltas[(int)axis] = input * currSpeed;
+        deltas[0] = input.x * currSpeed;
+        deltas[1] = input.y * currSpeed;
+        deltas[2] = input.z * currSpeed;
     }
 
     public void TranslateRelToTarget(Vector3 input, float angle)
     {
-        Vector3 temp = new Vector3(input.x * currSpeed, input.y * currSpeed, input.z * currSpeed);
+        Vector3 temp = new Vector3(input.x * lowSpeed, input.y * lowSpeed, input.z * lowSpeed);
         Quaternion rot = Quaternion.Euler(0f, angle, 0f);
         temp = rot * temp;
         deltas[0] = temp.x;
         deltas[1] = temp.y;
         deltas[2] = temp.z;
-    }
-
-    public float GetAngularDistance(Vector3 currentDirection, Vector3 targetDirection)
-    {
-        float angularDistance = Vector3.SignedAngle(currentDirection, targetDirection, Vector3.up);
-        return angularDistance;
     }
 
     public bool ChangeSpeed()

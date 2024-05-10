@@ -203,19 +203,11 @@ public class HelicopterAI : MonoBehaviour
     {
         currentInput = GetCurrentInput();
         float inputXZ = Mathf.Clamp01(new Vector3(currentInput.x, 0f, currentInput.z).magnitude);
-        float angularDistance = 0f;
 
         if (translationInput != null)
         {
             targetDirection = translationInput.TargetDirection;
-            if (FlightPhase == FlightPhases.Attack)
-                angularDistance = translationInput.GetAngularDistance(currentDirection, DirectionToTarget);
-            else
-                angularDistance = translationInput.GetAngularDistance(currentDirection, targetDirection);
-
-            translationInput.Translate(Axis_Proto.X, currentInput.x);
-            translationInput.Translate(Axis_Proto.Y, currentInput.y);
-            translationInput.Translate(Axis_Proto.Z, currentInput.z);
+            translationInput.TranslateGlobal(new Vector3(currentInput.x, currentInput.y, currentInput.z));
         }
 
         if (rotationInput != null)
