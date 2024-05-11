@@ -46,7 +46,6 @@ public class InputManager : MonoBehaviour
         playerInput.Common.MinorAction.performed += context => DoMinorAction();
         playerInput.Common.MinorActionHold.performed += context => DoMinorActionHold();
 
-        playerInput.Common.AnyTargetSelection.started += context => DoMinorActionCancel(); //todo
         playerInput.Common.AnyTargetSelection.performed += context => AnyTargetSelection();
         playerInput.Common.AnyTargetSelection.canceled += context => AnyTargetSelectionCancel();
 
@@ -240,9 +239,9 @@ public class InputManager : MonoBehaviour
     private void FastMove()
     {
         if (playerState == PlayerStates.Normal)
-        {
             fastMove = true;
-        }
+        else if (playerState == PlayerStates.Aiming)
+            ChangeAimState();
     }
 
     private void FastMoveCancel()
@@ -264,19 +263,22 @@ public class InputManager : MonoBehaviour
 
     private void DoMinorAction()
     {
-        if ((playerState == PlayerStates.Normal && possibleTarget) || playerState == PlayerStates.Aiming)
+        if ((playerState == PlayerStates.Normal && possibleTarget)/* || playerState == PlayerStates.Aiming*/)
         {
             ChangeAimState();
         }
-        else
+        else if (playerState == PlayerStates.SelectionFarTarget && guidedMissiles[guidedMissileIndex].IsEnable)
         {
-            if (playerState == PlayerStates.SelectionFarTarget && guidedMissiles[guidedMissileIndex].IsEnable)
-            {
-                guidedMissiles[guidedMissileIndex++].Launch(null);
-                if (guidedMissileIndex >= guidedMissiles.Count) guidedMissileIndex = 0;
-            }
+            guidedMissiles[guidedMissileIndex++].Launch(null);
+            if (guidedMissileIndex >= guidedMissiles.Count) guidedMissileIndex = 0;
             targetSelectionInput.HideAim();
             playerState = PlayerStates.Normal;
+        }
+        else if (playerState != PlayerStates.SelectionAnyTarget && playerState != PlayerStates.SelectionFarTarget &&
+            unguidedMissiles[unguidedMissileIndex].IsEnable)
+        {
+            unguidedMissiles[unguidedMissileIndex++].Launch(selectedTarget);
+            if (unguidedMissileIndex >= unguidedMissiles.Count) unguidedMissileIndex = 0;
         }
     }
 
@@ -295,16 +297,6 @@ public class InputManager : MonoBehaviour
         {
             targetSelectionInput.ShowAim();
             playerState = PlayerStates.SelectionFarTarget;
-        }
-    }
-
-    private void DoMinorActionCancel()
-    {
-        if (playerState != PlayerStates.SelectionAnyTarget && playerState != PlayerStates.SelectionFarTarget &&
-            unguidedMissiles[unguidedMissileIndex].IsEnable)
-        {
-            unguidedMissiles[unguidedMissileIndex++].Launch(selectedTarget);
-            if (unguidedMissileIndex >= unguidedMissiles.Count) unguidedMissileIndex = 0;
         }
     }
 
