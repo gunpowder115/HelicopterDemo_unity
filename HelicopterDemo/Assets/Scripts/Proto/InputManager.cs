@@ -9,14 +9,19 @@ public class InputManager : MonoBehaviour
     [SerializeField] float vertFastCoef = 5f;
     [SerializeField] float minDistToAim = 17f;
     [SerializeField] float maxDistToAim = 20f;
+    [SerializeField] float speed = 20f;
+    [SerializeField] float lowSpeedCoef = 0.5f;
+    [SerializeField] float highSpeedCoef = 3f;
     [SerializeField] LineRenderer lineRenderer;
 
     bool rotateToDirection;
     bool cameraInAim, aiming;
     bool minigunFire;
+    bool verticalFastMove, fastMove;
     int unguidedMissileIndex, guidedMissileIndex;
     float vertDirection;
     float yawAngle;
+    float currSpeed;
     Vector3 targetDirection;
     Vector3 currentDirection;
     Vector3 aimAngles;
@@ -92,6 +97,7 @@ public class InputManager : MonoBehaviour
         cameraInAim = aiming = false;
         playerState = PlayerStates.Normal;
         lineRenderer.enabled = false;
+        currSpeed = speed;
 
         //hide cursor in center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -121,21 +127,33 @@ public class InputManager : MonoBehaviour
         bool playerCanTranslate = playerState != PlayerStates.SelectionFarTarget && playerState != PlayerStates.SelectionAnyTarget;
         if (translationInput != null)
         {
-            if (inputXZ >= changeSpeedInput && !translationInput.CurrSpeedIsHigh ||
-                inputXZ < changeSpeedInput && translationInput.CurrSpeedIsHigh)
-                rotateToDirection = translationInput.ChangeSpeed();
+            if (inputXZ >= changeSpeedInput && !translationInput.RotToDir ||
+                inputXZ < changeSpeedInput && translationInput.RotToDir)
+                rotateToDirection = translationInput.SwitchRotation();
 
             targetDirection = translationInput.TargetDirection;
-            if (translationInput.IsHeightBorder && playerState == PlayerStates.VerticalFastMoving)
-                playerState = PlayerStates.Normal;
+            if (translationInput.IsHeightBorder && verticalFastMove)
+                verticalFastMove = false;
 
             if (!playerCanTranslate)
                 inputX = inputY = inputZ = 0f;
 
             if (playerState == PlayerStates.Aiming && selectedTarget)
-                translationInput.TranslateRelToTarget(new Vector3(inputX, inputY, inputZ), yawAngle);
+            {
+                currSpeed = speed * lowSpeedCoef;
+                translationInput.TranslateRelToTarget(new Vector3(inputX, inputY, inputZ), yawAngle, currSpeed);
+            }
             else
-                translationInput.TranslateGlobal(new Vector3(inputX, playerState == PlayerStates.VerticalFastMoving ? vertFastCoef * vertDirection : inputY, inputZ));
+            {
+                currSpeed = speed;
+                if (fastMove)
+                {
+                    currSpeed *= highSpeedCoef;
+                    inputX = (inputX == 0f ? currentDirection.x : inputX);
+                    inputZ = (inputZ == 0f ? currentDirection.z : inputZ);
+                }
+                translationInput.TranslateGlobal(new Vector3(inputX, verticalFastMove ? vertFastCoef * vertDirection : inputY, inputZ), currSpeed);
+            }
         }
 
         //rotation around X, Y, Z
@@ -151,7 +169,7 @@ public class InputManager : MonoBehaviour
                 rotationInput.RotateToTarget(rotToTarget, inputX);
             }
             else
-                rotationInput.RotateToDirection(targetDirection, inputXZ, rotateToDirection);
+                rotationInput.RotateToDirection(targetDirection, currSpeed / speed, rotateToDirection);
         }
 
         //camera rotation
@@ -214,7 +232,7 @@ public class InputManager : MonoBehaviour
     {
         if (playerState == PlayerStates.Normal)
         {
-            playerState = PlayerStates.VerticalFastMoving;
+            verticalFastMove = true;
             vertDirection = dir;
         }
     }
@@ -223,16 +241,13 @@ public class InputManager : MonoBehaviour
     {
         if (playerState == PlayerStates.Normal)
         {
-            playerState = PlayerStates.FastMoving;
+            fastMove = true;
         }
     }
 
     private void FastMoveCancel()
     {
-        if (playerState == PlayerStates.FastMoving)
-        {
-            playerState = PlayerStates.Normal;
-        }
+        fastMove = false;
     }
 
     private void DoMainAction()
@@ -343,7 +358,5 @@ public class InputManager : MonoBehaviour
         Aiming,
         SelectionFarTarget,
         SelectionAnyTarget,
-        FastMoving,
-        VerticalFastMoving
     }
 }

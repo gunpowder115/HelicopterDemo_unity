@@ -4,6 +4,7 @@ using static InputManager;
 public class HelicopterAI : MonoBehaviour
 {
     [Header("Normal (high) and patrol (low) speed")]
+    [SerializeField] private float absSpeed = 20f;
     [SerializeField] private float normalSpeed = 1f;
     [SerializeField] private float patrolSpeed = 0.7f;
     [SerializeField] private float patrolVerticalSpeed = 0.3f;
@@ -94,8 +95,6 @@ public class HelicopterAI : MonoBehaviour
                     if (this.gameObject.transform.position.y > minHeight)
                     {
                         targetInput = GetTargetInput();
-                        if (!translationInput.CurrSpeedIsHigh)
-                            translationInput.ChangeSpeed();
                         FlightPhase = FlightPhases.Patrolling;
                     }
                     break;
@@ -207,7 +206,7 @@ public class HelicopterAI : MonoBehaviour
         if (translationInput != null)
         {
             targetDirection = translationInput.TargetDirection;
-            translationInput.TranslateGlobal(new Vector3(currentInput.x, currentInput.y, currentInput.z));
+            translationInput.TranslateGlobal(new Vector3(currentInput.x, currentInput.y, currentInput.z), absSpeed);
         }
 
         if (rotationInput != null)

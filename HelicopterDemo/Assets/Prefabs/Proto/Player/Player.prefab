@@ -53,6 +53,7 @@ MonoBehaviour:
   vertFastCoef: 5
   minDistToAim: 35
   maxDistToAim: 40
+  fastCoef: 3
   lineRenderer: {fileID: 0}
 --- !u!143 &3309415596281561064
 CharacterController:
