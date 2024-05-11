@@ -12,6 +12,8 @@ public class InputManager : MonoBehaviour
     [SerializeField] float speed = 20f;
     [SerializeField] float lowSpeedCoef = 0.5f;
     [SerializeField] float highSpeedCoef = 3f;
+    [SerializeField] float fastSpeedReduction = 3f;
+    [SerializeField] float speedReductionDead = 0.05f;
     [SerializeField] LineRenderer lineRenderer;
 
     bool rotateToDirection;
@@ -144,13 +146,21 @@ public class InputManager : MonoBehaviour
             }
             else
             {
-                currSpeed = speed;
                 if (fastMove)
                 {
-                    currSpeed *= highSpeedCoef;
+                    currSpeed = speed * highSpeedCoef;
                     inputX = (inputX == 0f ? currentDirection.x : inputX);
                     inputZ = (inputZ == 0f ? currentDirection.z : inputZ);
                 }
+                else if (currSpeed - speed > speedReductionDead * speed)
+                {
+                    currSpeed = Mathf.LerpUnclamped(currSpeed, speed, fastSpeedReduction * Time.deltaTime);
+                    inputX = (inputX == 0f ? currentDirection.x : inputX);
+                    inputZ = (inputZ == 0f ? currentDirection.z : inputZ);
+                }
+                else
+                    currSpeed = speed;
+
                 translationInput.TranslateGlobal(new Vector3(inputX, verticalFastMove ? vertFastCoef * vertDirection : inputY, inputZ), currSpeed);
             }
         }
