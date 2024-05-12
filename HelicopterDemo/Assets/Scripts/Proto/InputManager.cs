@@ -28,7 +28,7 @@ public class InputManager : MonoBehaviour
     Vector3 currentDirection;
     Vector3 aimAngles;
     PlayerStates playerState;
-    GameObject possibleTarget, selectedTarget;
+    GameObject possibleTarget, selectedTarget, possiblePlatform, selectedPlatform;
     TranslationInput translationInput;
     RotationInput rotationInput;
     CameraRotation cameraRotation;
@@ -36,6 +36,7 @@ public class InputManager : MonoBehaviour
     PlayerInput playerInput;
     BarrelShooter minigun;
     NpcController npcController;
+    PlatformController platformController;
     List<MissileShooter> unguidedMissiles, guidedMissiles;
 
     private void Awake()
@@ -77,6 +78,7 @@ public class InputManager : MonoBehaviour
         targetSelectionInput = GetComponentInChildren<TargetSelectionInput>();
         minigun = GetComponentInChildren<BarrelShooter>();
         npcController = NpcController.GetInstance();
+        platformController = PlatformController.GetInstance();
 
         List<MissileShooter> missiles = new List<MissileShooter>(GetComponentsInChildren<MissileShooter>());
         unguidedMissiles = new List<MissileShooter>();
@@ -205,7 +207,7 @@ public class InputManager : MonoBehaviour
             minigun.Fire(selectedTarget);
 
         if (playerState == PlayerStates.Normal)
-            DrawLineToEnemy();
+            DrawLineToTarget();
 
         if (playerState == PlayerStates.Aiming && (aimAngles.x > 45f || (selectedTarget.transform.position - transform.position).magnitude > maxDistToAim))
             ChangeAimState();
@@ -273,9 +275,19 @@ public class InputManager : MonoBehaviour
 
     private void DoMinorAction()
     {
-        if ((playerState == PlayerStates.Normal && possibleTarget)/* || playerState == PlayerStates.Aiming*/)
+        if (playerState == PlayerStates.Normal)
         {
-            ChangeAimState();
+            if (possibleTarget) ChangeAimState();
+            else if (possiblePlatform)
+            {
+                selectedPlatform = possiblePlatform;
+                playerState = PlayerStates.BuildSelection;
+            }
+        }
+        else if (playerState == PlayerStates.BuildSelection)
+        {
+            selectedPlatform = null;
+            playerState = PlayerStates.Normal;
         }
         else if (playerState == PlayerStates.SelectionFarTarget && guidedMissiles[guidedMissileIndex].IsEnable)
         {
@@ -328,26 +340,60 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    void DrawLineToEnemy()
+    void DrawLineToTarget()
     {
-        var distToEnemies = npcController.FindDistToEnemies(this.gameObject);
-        if (distToEnemies.Count > 0)
+        KeyValuePair<float, GameObject> nearest;
+        TargetTypes targetType;
+        if (FindNearestObject(out nearest, out targetType))
         {
-            var distToNearestEnemy = distToEnemies.ElementAt(0);
-            float dist = distToNearestEnemy.Key;
-            GameObject nearestEnemy = distToNearestEnemy.Value;
-            if (dist < minDistToAim)
+            if (nearest.Key < minDistToAim)
             {
                 lineRenderer.enabled = true;
+                Color lineColor = targetType == TargetTypes.Enemy ? Color.red : Color.blue;
+                lineRenderer.startColor = lineColor;
+                lineRenderer.endColor = lineColor;
                 lineRenderer.SetPosition(0, this.transform.position);
-                lineRenderer.SetPosition(1, nearestEnemy.transform.position);
-                possibleTarget = nearestEnemy;
+                lineRenderer.SetPosition(1, nearest.Value.transform.position);
+                possibleTarget = targetType == TargetTypes.Enemy ? nearest.Value : null;
+                possiblePlatform = targetType == TargetTypes.Platform ? nearest.Value : null;
             }
             else
             {
                 lineRenderer.enabled = false;
-                possibleTarget = null;
+                possibleTarget = possiblePlatform = null;
             }
+        }
+    }
+
+    bool FindNearestObject(out KeyValuePair<float, GameObject> nearest, out TargetTypes targetType)
+    {
+        var distToEnemies = npcController.FindDistToEnemies(this.gameObject);
+        var distToPlatforms = platformController.FindDistToPlatforms(this.gameObject);
+        bool areEnemies = distToEnemies.Count > 0;
+        bool arePlatforms = distToPlatforms.Count > 0;
+
+        var distToNearestEnemy = areEnemies ? distToEnemies.ElementAt(0) : new KeyValuePair<float, GameObject>(Mathf.Infinity, null);
+        var distToNearestPlatform = arePlatforms ? distToPlatforms.ElementAt(0) : new KeyValuePair<float, GameObject>(Mathf.Infinity, null);
+
+        if (areEnemies || arePlatforms)
+        {
+            if (distToNearestEnemy.Key < distToNearestPlatform.Key)
+            {
+                nearest = distToNearestEnemy;
+                targetType = TargetTypes.Enemy;
+            }
+            else
+            {
+                nearest = distToNearestPlatform;
+                targetType = TargetTypes.Platform;
+            }
+            return true;
+        }
+        else
+        {
+            nearest = new KeyValuePair<float, GameObject>(Mathf.Infinity, null);
+            targetType = TargetTypes.None;
+            return false;
         }
     }
 
@@ -360,5 +406,13 @@ public class InputManager : MonoBehaviour
         Aiming,
         SelectionFarTarget,
         SelectionAnyTarget,
+        BuildSelection
+    }
+
+    public enum TargetTypes
+    {
+        None,
+        Enemy,
+        Platform
     }
 }

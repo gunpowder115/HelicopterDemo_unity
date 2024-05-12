@@ -18,6 +18,7 @@ TagManager:
   - Aim
   - EnemyBuild
   - FriendlyBuild
+  - Platform
   layers:
   - Default
   - TransparentFX

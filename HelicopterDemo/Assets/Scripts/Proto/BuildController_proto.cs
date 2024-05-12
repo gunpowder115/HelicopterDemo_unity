@@ -8,7 +8,6 @@ public class BuildController_proto : MonoBehaviour
 
     [Header("Prefabs array from N (north, X = 0, Z = 1) to clockwise")]
     [SerializeField] private GameObject[] buildPrefabs = new GameObject[platformCount];
-    [SerializeField] private GameObject platformPrefab = null;
     [SerializeField] private float distToPlatform = 40f;
 
     private GameObject[] platforms;
@@ -17,17 +16,19 @@ public class BuildController_proto : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        platforms = new GameObject[platformCount];
         builds = new GameObject[platformCount];
 
-        float deltaAngle = 360 / platformCount;
-        for (int i = 0; i < platformCount; i++)
+        platforms = new GameObject[platformCount];
+        var platformComponents = GetComponentsInChildren<Platform>();
+        if (platformComponents.Length != platformCount)
+            Debug.LogError(this.ToString() + ": platformComponents.Length = " + platforms.Length);
+        for (int i = 0; i < platformComponents.Length; i++)
         {
-            platforms[i] = Instantiate(platformPrefab, this.gameObject.transform);
-            platforms[i].transform.Rotate(0, deltaAngle * i, 0);
-            platforms[i].transform.position = new Vector3();
-            platforms[i].transform.Translate(0, 0, distToPlatform);
-            platforms[i].transform.position += this.transform.position;
+            platforms[i] = platformComponents[i].gameObject;
+            Vector3 toPlatform = (platforms[i].transform.position - transform.position).normalized * distToPlatform;
+            Vector3 platfromTranslation = (transform.position + toPlatform) - platforms[i].transform.position;
+            platfromTranslation.y = 0f;
+            platforms[i].transform.Translate(platfromTranslation, Space.World);
         }
 
         for (int i = 0; i < platformCount; i++)
@@ -43,11 +44,5 @@ public class BuildController_proto : MonoBehaviour
                     1 / platforms[i].transform.localScale.z);
             }
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
