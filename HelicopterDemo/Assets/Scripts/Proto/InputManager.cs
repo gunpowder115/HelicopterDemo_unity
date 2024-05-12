@@ -181,7 +181,11 @@ public class InputManager : MonoBehaviour
                 rotationInput.RotateToTarget(rotToTarget, inputX);
             }
             else
-                rotationInput.RotateToDirection(targetDirection, currSpeed / speed, rotateToDirection);
+            {
+                var direction = targetDirection != Vector3.zero ? targetDirection : currentDirection;
+                var speedCoef = targetDirection != Vector3.zero ? currSpeed / speed : 0f;
+                rotationInput.RotateToDirection(direction, speedCoef, rotateToDirection);
+            }
         }
 
         //camera rotation
