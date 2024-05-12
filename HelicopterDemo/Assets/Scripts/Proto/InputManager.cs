@@ -127,7 +127,8 @@ public class InputManager : MonoBehaviour
         }
 
         //movement around X, Y, Z
-        bool playerCanTranslate = playerState != PlayerStates.SelectionFarTarget && playerState != PlayerStates.SelectionAnyTarget;
+        bool playerCanTranslate = playerState != PlayerStates.SelectionFarTarget && 
+            playerState != PlayerStates.SelectionAnyTarget && playerState != PlayerStates.BuildSelection;
         if (translationInput != null)
         {
             if (inputXZ >= changeSpeedInput && !translationInput.RotToDir ||
@@ -263,7 +264,7 @@ public class InputManager : MonoBehaviour
 
     private void DoMainAction()
     {
-        if (playerState != PlayerStates.SelectionAnyTarget && playerState != PlayerStates.SelectionFarTarget)
+        if (playerState == PlayerStates.Normal || playerState == PlayerStates.Aiming)
             minigunFire = true;
     }
 
@@ -275,12 +276,13 @@ public class InputManager : MonoBehaviour
 
     private void DoMinorAction()
     {
-        if (playerState == PlayerStates.Normal)
+        if (playerState == PlayerStates.Normal && (possibleTarget || possiblePlatform))
         {
             if (possibleTarget) ChangeAimState();
             else if (possiblePlatform)
             {
                 selectedPlatform = possiblePlatform;
+                lineRenderer.enabled = false;
                 playerState = PlayerStates.BuildSelection;
             }
         }
