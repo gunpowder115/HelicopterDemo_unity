@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static InputController;
 
 public class InputManager : MonoBehaviour
 {
@@ -18,56 +19,22 @@ public class InputManager : MonoBehaviour
 
     bool rotateToDirection;
     bool cameraInAim, aiming;
-    bool minigunFire;
-    bool verticalFastMove, fastMove;
     int unguidedMissileIndex, guidedMissileIndex;
-    float vertDirection;
     float yawAngle;
     float currSpeed;
     Vector3 targetDirection;
     Vector3 currentDirection;
     Vector3 aimAngles;
-    PlayerStates playerState;
     GameObject possibleTarget, selectedTarget, possiblePlatform, selectedPlatform;
     TranslationInput translationInput;
     RotationInput rotationInput;
     CameraRotation cameraRotation;
-    TargetSelectionInput targetSelectionInput;
-    PlayerInput playerInput;
+    CrosshairController crosshairController;
     BarrelShooter minigun;
     NpcController npcController;
     PlatformController platformController;
+    InputController inputController;
     List<MissileShooter> unguidedMissiles, guidedMissiles;
-
-    private void Awake()
-    {
-        playerInput = new PlayerInput();
-
-        playerInput.Common.MainAction.performed += context => DoMainAction();
-        playerInput.Common.MainAction.canceled += context => DoMainActionCancel();
-
-        playerInput.Common.MinorAction.performed += context => DoMinorAction();
-        playerInput.Common.MinorActionHold.performed += context => DoMinorActionHold();
-
-        playerInput.Common.AnyTargetSelection.performed += context => AnyTargetSelection();
-        playerInput.Common.AnyTargetSelection.canceled += context => AnyTargetSelectionCancel();
-
-        playerInput.Player.FastMove.performed += context => FastMove();
-        playerInput.Player.FastMove.canceled += context => FastMoveCancel();
-
-        playerInput.Player.VerticalFastUp.performed += context => VerticalFastMove(1f);
-        playerInput.Player.VerticalFastDown.performed += context => VerticalFastMove(-1f);
-    }
-
-    private void OnEnable()
-    {
-        playerInput.Enable();
-    }
-
-    private void OnDisable()
-    {
-        playerInput.Disable();
-    }
 
     // Start is called before the first frame update
     void Start()
@@ -75,10 +42,22 @@ public class InputManager : MonoBehaviour
         translationInput = GetComponentInChildren<TranslationInput>();
         rotationInput = GetComponentInChildren<RotationInput>();
         cameraRotation = GetComponentInChildren<CameraRotation>();
-        targetSelectionInput = GetComponentInChildren<TargetSelectionInput>();
         minigun = GetComponentInChildren<BarrelShooter>();
-        npcController = NpcController.GetInstance();
-        platformController = PlatformController.GetInstance();
+
+        npcController = NpcController.singleton;
+        platformController = PlatformController.singleton;
+        crosshairController = CrosshairController.singleton;
+
+        inputController = InputController.singleton;
+        if (!inputController) return;
+        inputController.TryBindingToObject += TryBindingToObject;
+        inputController.TryLaunchUnguidedMissile += TryLaunchUnguidedMissile;
+        inputController.CancelBuildSelection += CancelBuildSelection;
+        inputController.TryLaunchGuidedMissile += TryLaunchGuidedMissile;
+        inputController.StartSelectionFarTarget += StartSelectionFarTarget;
+        inputController.StartSelectionAnyTarget += StartSelectionAnyTarget;
+        inputController.CancelSelectionAnytarget += CancelSelectionAnytarget;
+        inputController.CancelAiming += CancelAiming;
 
         List<MissileShooter> missiles = new List<MissileShooter>(GetComponentsInChildren<MissileShooter>());
         unguidedMissiles = new List<MissileShooter>();
@@ -98,7 +77,6 @@ public class InputManager : MonoBehaviour
         targetDirection = transform.forward;
         currentDirection = transform.forward;
         cameraInAim = aiming = false;
-        playerState = PlayerStates.Normal;
         lineRenderer.enabled = false;
         currSpeed = speed;
 
@@ -110,25 +88,21 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector2 inputDirection = GetInput();
-        Vector2 inputVerticalDirection = GetVerticalInput();
+        Vector2 inputDirection = inputController.GetInput();
+        Vector2 inputVerticalDirection = inputController.GetVerticalInput();
         float inputX = inputDirection.x;
         float inputY = inputVerticalDirection.y;
         float inputZ = inputDirection.y;
         float inputXZ = Mathf.Clamp01(new Vector3(inputX, 0f, inputZ).magnitude);
 
-        //move aim if it target selection mode
-        bool aimMovement = playerState == PlayerStates.SelectionFarTarget || playerState == PlayerStates.SelectionAnyTarget;
         Vector2 toTargetSelection = new Vector2();
-        if (targetSelectionInput && aimMovement)
+        if (crosshairController && inputController.AimMovement)
         {
-            targetSelectionInput.MoveAim(new Vector2(inputX, inputZ));
-            toTargetSelection = targetSelectionInput.ToTargetSelection;
+            crosshairController.MoveAim(new Vector2(inputX, inputZ));
+            toTargetSelection = crosshairController.ToTargetSelection;
         }
 
         //movement around X, Y, Z
-        bool playerCanTranslate = playerState != PlayerStates.SelectionFarTarget && 
-            playerState != PlayerStates.SelectionAnyTarget && playerState != PlayerStates.BuildSelection;
         if (translationInput != null)
         {
             if (inputXZ >= changeSpeedInput && !translationInput.RotToDir ||
@@ -136,20 +110,20 @@ public class InputManager : MonoBehaviour
                 rotateToDirection = translationInput.SwitchRotation();
 
             targetDirection = translationInput.TargetDirection;
-            if (translationInput.IsHeightBorder && verticalFastMove)
-                verticalFastMove = false;
+            if (translationInput.IsHeightBorder && inputController.VertFastMoving)
+                inputController.ForceStopVertFastMoving();
 
-            if (!playerCanTranslate)
+            if (!inputController.PlayerCanTranslate)
                 inputX = inputY = inputZ = 0f;
 
-            if (playerState == PlayerStates.Aiming && selectedTarget)
+            if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
             {
                 currSpeed = speed * lowSpeedCoef;
                 translationInput.TranslateRelToTarget(new Vector3(inputX, inputY, inputZ), yawAngle, currSpeed);
             }
             else
             {
-                if (fastMove)
+                if (inputController.FastMoving)
                 {
                     currSpeed = speed * highSpeedCoef;
                     inputX = (inputX == 0f ? currentDirection.x : inputX);
@@ -164,7 +138,8 @@ public class InputManager : MonoBehaviour
                 else
                     currSpeed = speed;
 
-                translationInput.TranslateGlobal(new Vector3(inputX, verticalFastMove ? vertFastCoef * vertDirection : inputY, inputZ), currSpeed);
+                translationInput.TranslateGlobal(new Vector3(inputX, 
+                    inputController.VertFastMoving ? vertFastCoef * inputController.VertDirection : inputY, inputZ), currSpeed);
             }
         }
 
@@ -175,7 +150,7 @@ public class InputManager : MonoBehaviour
             aimAngles = rotationInput.AimAngles;
             yawAngle = rotationInput.YawAngle;
 
-            if (playerState == PlayerStates.Aiming && selectedTarget)
+            if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
             {
                 Quaternion rotToTarget = Quaternion.LookRotation((selectedTarget.transform.position - this.transform.position));
                 rotationInput.RotateToTarget(rotToTarget, inputX);
@@ -192,7 +167,8 @@ public class InputManager : MonoBehaviour
         if (cameraRotation)
         {
             cameraRotation.UseNewInputSystem = useNewInputSystem;
-            bool rotateWithTargetSelection = playerState == PlayerStates.SelectionFarTarget || playerState == PlayerStates.SelectionAnyTarget;
+            bool rotateWithTargetSelection = inputController.PlayerState == PlayerStates.SelectionFarTarget ||
+                inputController.PlayerState == PlayerStates.SelectionAnyTarget;
 
             if (aiming)
                 aiming = cameraRotation.ChangeCameraState(cameraInAim, aimAngles);
@@ -208,105 +184,22 @@ public class InputManager : MonoBehaviour
             }
         }
 
-        if (minigun && minigunFire)
-            minigun.Fire(selectedTarget);
+        if (minigun)
+        {
+            if (inputController.MinigunFire)
+                minigun.Fire(selectedTarget);
+            else
+                minigun.StopFire();
+        }
 
-        if (playerState == PlayerStates.Normal)
+        if (inputController.PlayerState == PlayerStates.Normal)
             DrawLineToTarget();
 
-        if (playerState == PlayerStates.Aiming && (aimAngles.x > 45f || (selectedTarget.transform.position - transform.position).magnitude > maxDistToAim))
+        if (inputController.PlayerState == PlayerStates.Aiming &&
+            (aimAngles.x > 45f || (selectedTarget.transform.position - transform.position).magnitude > maxDistToAim))
+        {
+            inputController.ForceChangePlayerState(PlayerStates.Normal);
             ChangeAimState();
-
-        Debug.Log(playerState);
-    }
-
-    private Vector2 GetInput()
-    {
-        Vector2 input;
-        if (useNewInputSystem)
-        {
-            input = playerInput.Player.Move.ReadValue<Vector2>();
-        }
-        else
-        {
-            float inputX = Input.GetAxis("Horizontal");
-            float inputZ = Input.GetAxis("Vertical");
-            input = new Vector2(inputX, inputZ);
-        }
-        return input;
-    }
-
-    private Vector2 GetVerticalInput()
-    {
-        Vector2 input = new Vector2(0f, 0f);
-        if (useNewInputSystem)
-            input = playerInput.Player.VerticalMove.ReadValue<Vector2>();
-        return input;
-    }
-
-    private void VerticalFastMove(float dir)
-    {
-        if (playerState == PlayerStates.Normal)
-        {
-            verticalFastMove = true;
-            vertDirection = dir;
-        }
-    }
-
-    private void FastMove()
-    {
-        if (playerState == PlayerStates.Normal)
-            fastMove = true;
-        else if (playerState == PlayerStates.Aiming)
-            ChangeAimState();
-    }
-
-    private void FastMoveCancel()
-    {
-        fastMove = false;
-    }
-
-    private void DoMainAction()
-    {
-        if (playerState == PlayerStates.Normal || playerState == PlayerStates.Aiming)
-            minigunFire = true;
-    }
-
-    private void DoMainActionCancel()
-    {
-        minigunFire = false;
-        if (minigun) minigun.StopFire();
-    }
-
-    private void DoMinorAction()
-    {
-        if (playerState == PlayerStates.Normal && (possibleTarget || possiblePlatform))
-        {
-            if (possibleTarget) ChangeAimState();
-            else if (possiblePlatform)
-            {
-                selectedPlatform = possiblePlatform;
-                lineRenderer.enabled = false;
-                playerState = PlayerStates.BuildSelection;
-            }
-        }
-        else if (playerState == PlayerStates.BuildSelection)
-        {
-            selectedPlatform = null;
-            playerState = PlayerStates.Normal;
-        }
-        else if (playerState == PlayerStates.SelectionFarTarget && guidedMissiles[guidedMissileIndex].IsEnable)
-        {
-            guidedMissiles[guidedMissileIndex++].Launch(null);
-            if (guidedMissileIndex >= guidedMissiles.Count) guidedMissileIndex = 0;
-            targetSelectionInput.HideAim();
-            playerState = PlayerStates.Normal;
-        }
-        else if (playerState != PlayerStates.SelectionAnyTarget && playerState != PlayerStates.SelectionFarTarget &&
-            unguidedMissiles[unguidedMissileIndex].IsEnable)
-        {
-            unguidedMissiles[unguidedMissileIndex++].Launch(selectedTarget);
-            if (unguidedMissileIndex >= unguidedMissiles.Count) unguidedMissileIndex = 0;
         }
     }
 
@@ -314,36 +207,8 @@ public class InputManager : MonoBehaviour
     {
         cameraInAim = !cameraInAim;
         aiming = true;
-        playerState = cameraInAim ? PlayerStates.Aiming : PlayerStates.Normal;
         selectedTarget = cameraInAim ? possibleTarget : null;
-        if (playerState == PlayerStates.Aiming) lineRenderer.enabled = false;
-    }
-
-    private void DoMinorActionHold()
-    {
-        if (playerState == PlayerStates.Normal)
-        {
-            targetSelectionInput.ShowAim();
-            playerState = PlayerStates.SelectionFarTarget;
-        }
-    }
-
-    private void AnyTargetSelection()
-    {
-        if (playerState == PlayerStates.Normal)
-        {
-            targetSelectionInput.ShowAim();
-            playerState = PlayerStates.SelectionAnyTarget;
-        }
-    }
-
-    private void AnyTargetSelectionCancel()
-    {
-        if (playerState == PlayerStates.SelectionAnyTarget)
-        {
-            targetSelectionInput.HideAim();
-            playerState = PlayerStates.Normal;
-        }
+        if (cameraInAim) lineRenderer.enabled = false;
     }
 
     void DrawLineToTarget()
@@ -403,17 +268,62 @@ public class InputManager : MonoBehaviour
         }
     }
 
+    PlayerStates TryBindingToObject(PlayerStates playerState)
+    {
+        if (possibleTarget)
+        {
+            ChangeAimState();
+            return PlayerStates.Aiming;
+        }
+        else if (possiblePlatform)
+        {
+            StartBuildSelection();
+            return PlayerStates.BuildSelection;
+        }
+        else
+        {
+            TryLaunchUnguidedMissile();
+            return playerState;
+        }
+    }
+
+    void TryLaunchUnguidedMissile()
+    {
+        if (unguidedMissiles[unguidedMissileIndex].IsEnable)
+        {
+            unguidedMissiles[unguidedMissileIndex++].Launch(selectedTarget);
+            if (unguidedMissileIndex >= unguidedMissiles.Count) unguidedMissileIndex = 0;
+        }
+    }
+
+    void StartBuildSelection()
+    {
+        selectedPlatform = possiblePlatform;
+        lineRenderer.enabled = false;
+    }
+
+    void CancelBuildSelection() => selectedPlatform = null;
+
+    void TryLaunchGuidedMissile()
+    {
+        if (guidedMissiles[guidedMissileIndex].IsEnable)
+        {
+            guidedMissiles[guidedMissileIndex++].Launch(null);
+            if (guidedMissileIndex >= guidedMissiles.Count) guidedMissileIndex = 0;
+            crosshairController.HideAim();
+        }
+    }
+
+    void StartSelectionFarTarget() => crosshairController.ShowAim();
+
+    void StartSelectionAnyTarget() => crosshairController.ShowAim();
+
+    void CancelSelectionAnytarget() => crosshairController.HideAim();
+
+    void CancelAiming() => ChangeAimState();
+
     public enum Axis_Proto : int
     { X, Y, Z }
-
-    public enum PlayerStates
-    {
-        Normal,
-        Aiming,
-        SelectionFarTarget,
-        SelectionAnyTarget,
-        BuildSelection
-    }
 
     public enum TargetTypes
     {

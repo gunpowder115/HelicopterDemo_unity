@@ -1,28 +1,26 @@
 using UnityEngine;
 
-public class TargetSelectionInput : MonoBehaviour
+public class CrosshairController : MonoBehaviour
 {
     [SerializeField] float aimSpeed = 5f;
 
+    public static CrosshairController singleton { get; private set; }
     public Vector2 ToTargetSelection => toTargetSelection;
 
-    private GameObject aimItem;
-    private Camera camera;
-    private CameraRotation cameraRotation;
-    private Vector2 toTargetSelection;
+    Vector2 toTargetSelection;
+    GameObject aimItem;
+    new Camera camera;
 
-    private void Start()
+    void Awake()
     {
-        camera = GetComponent<Camera>();
-        cameraRotation = GetComponent<CameraRotation>();
-        aimItem = GameObject.FindGameObjectWithTag("Aim");
-        if (aimItem) aimItem.SetActive(false);
+        singleton = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    void Start()
     {
         camera = GetComponent<Camera>();
+        aimItem = GameObject.FindGameObjectWithTag("Aim");
+        if (aimItem) aimItem.SetActive(false);
     }
 
     public void ShowAim()
@@ -41,7 +39,7 @@ public class TargetSelectionInput : MonoBehaviour
 
     public void MoveAim(Vector2 direction)
     {
-        if (aimItem && cameraRotation)
+        if (aimItem)
         {
             float aimX, aimY;
             aimX = Limit(aimItem.transform.position.x + direction.x * aimSpeed, 0f, camera.pixelWidth);
@@ -54,7 +52,7 @@ public class TargetSelectionInput : MonoBehaviour
         }
     }
 
-    private float Limit(float value, float min, float max)
+    float Limit(float value, float min, float max)
     {
         if (value <= min) return min;
         else if (value >= max) return max;

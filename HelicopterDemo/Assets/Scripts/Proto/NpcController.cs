@@ -5,6 +5,7 @@ public class NpcController : MonoBehaviour
 {
     #region Properties
 
+    public static NpcController singleton { get; private set; }
     public List<GameObject> NPCs => npcs;
     public int EnemyAirCount => GetNpcCount(enemyAirTag);
     public int FriendlyAirCount => GetNpcCount(friendlyAirTag);
@@ -30,13 +31,6 @@ public class NpcController : MonoBehaviour
 
     static NpcController instance;
 
-    public static NpcController GetInstance()
-    {
-        if (instance == null)
-            instance = new NpcController();
-        return instance;
-    }
-
     public void Add(GameObject npc)
     {
         if (!npcs.Contains(npc))
@@ -52,7 +46,10 @@ public class NpcController : MonoBehaviour
     public SortedDictionary<float, GameObject> FindDistToEnemies(in GameObject origin) => FindDistToNpcs(in origin, true);
     public SortedDictionary<float, GameObject> FindDistToFriendlies(in GameObject origin) => FindDistToNpcs(in origin, false);
 
-    private NpcController() { }
+    void Awake()
+    {
+        singleton = this;
+    }
 
     // Start is called before the first frame update
     void Start()

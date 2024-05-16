@@ -3,20 +3,12 @@ using UnityEngine;
 
 public class PlatformController : MonoBehaviour
 {
+    public static PlatformController singleton {get; private set;}
     public List<GameObject> Platforms => platforms;
 
     readonly string platformTag = "Platform";
 
     List<GameObject> platforms;
-
-    static PlatformController instance;
-
-    public static PlatformController GetInstance()
-    {
-        if (instance == null)
-            instance = new PlatformController();
-        return instance;
-    }
 
     public SortedDictionary<float, GameObject> FindDistToPlatforms(in GameObject origin)
     {
@@ -30,16 +22,14 @@ public class PlatformController : MonoBehaviour
         return result;
     }
 
-    private PlatformController() { }
+    void Awake()
+    {
+        singleton = this;
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        if (instance == null)
-            instance = this;
-        else if (instance == this)
-            Destroy(gameObject);
-
         platforms = new List<GameObject>();
         platforms.AddRange(GameObject.FindGameObjectsWithTag(platformTag));
     }
