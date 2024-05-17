@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class NpcController : MonoBehaviour
@@ -45,6 +46,8 @@ public class NpcController : MonoBehaviour
 
     public SortedDictionary<float, GameObject> FindDistToEnemies(in GameObject origin) => FindDistToNpcs(in origin, true);
     public SortedDictionary<float, GameObject> FindDistToFriendlies(in GameObject origin) => FindDistToNpcs(in origin, false);
+    public KeyValuePair<float, GameObject> FindNearestEnemy(in GameObject origin) => FindNearestNpc(in origin, FindDistToEnemies(in origin));
+    public KeyValuePair<float, GameObject> FindNearestFriendly(in GameObject origin) => FindNearestNpc(in origin, FindDistToFriendlies(in origin));
 
     void Awake()
     {
@@ -92,5 +95,12 @@ public class NpcController : MonoBehaviour
             }
         }
         return result;
+    }
+
+    KeyValuePair<float, GameObject> FindNearestNpc(in GameObject origin, SortedDictionary<float, GameObject> npcs)
+    {
+        bool areNpcs = npcs.Count > 0;
+        KeyValuePair<float, GameObject> nearestNpc = areNpcs ? npcs.ElementAt(0) : new KeyValuePair<float, GameObject>(Mathf.Infinity, null);
+        return nearestNpc;
     }
 }

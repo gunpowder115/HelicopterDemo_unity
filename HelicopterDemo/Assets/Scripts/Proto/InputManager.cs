@@ -202,56 +202,27 @@ public class InputManager : MonoBehaviour
     {
         KeyValuePair<float, GameObject> nearest;
         TargetTypes targetType;
-        if (FindNearestObject(out nearest, out targetType))
+        var nearestNpc = npcController.FindNearestEnemy(gameObject);
+        var nearestPlatform = platformController.FindNearestPlatform(gameObject);
+
+        nearest = nearestNpc.Key < nearestPlatform.Key ? nearestNpc : nearestPlatform;
+        targetType = nearestNpc.Key < nearestPlatform.Key ? TargetTypes.Enemy : TargetTypes.Platform;
+
+        if (nearest.Key < minDistToAim)
         {
-            if (nearest.Key < minDistToAim)
-            {
-                lineRenderer.enabled = true;
-                Color lineColor = targetType == TargetTypes.Enemy ? Color.red : Color.blue;
-                lineRenderer.startColor = lineColor;
-                lineRenderer.endColor = lineColor;
-                lineRenderer.SetPosition(0, this.transform.position);
-                lineRenderer.SetPosition(1, nearest.Value.transform.position);
-                possibleTarget = targetType == TargetTypes.Enemy ? nearest.Value : null;
-                possiblePlatform = targetType == TargetTypes.Platform ? nearest.Value : null;
-            }
-            else
-            {
-                lineRenderer.enabled = false;
-                possibleTarget = possiblePlatform = null;
-            }
-        }
-    }
-
-    bool FindNearestObject(out KeyValuePair<float, GameObject> nearest, out TargetTypes targetType)
-    {
-        var distToEnemies = npcController.FindDistToEnemies(this.gameObject);
-        var distToPlatforms = platformController.FindDistToPlatforms(this.gameObject);
-        bool areEnemies = distToEnemies.Count > 0;
-        bool arePlatforms = distToPlatforms.Count > 0;
-
-        var distToNearestEnemy = areEnemies ? distToEnemies.ElementAt(0) : new KeyValuePair<float, GameObject>(Mathf.Infinity, null);
-        var distToNearestPlatform = arePlatforms ? distToPlatforms.ElementAt(0) : new KeyValuePair<float, GameObject>(Mathf.Infinity, null);
-
-        if (areEnemies || arePlatforms)
-        {
-            if (distToNearestEnemy.Key < distToNearestPlatform.Key)
-            {
-                nearest = distToNearestEnemy;
-                targetType = TargetTypes.Enemy;
-            }
-            else
-            {
-                nearest = distToNearestPlatform;
-                targetType = TargetTypes.Platform;
-            }
-            return true;
+            lineRenderer.enabled = true;
+            Color lineColor = targetType == TargetTypes.Enemy ? Color.red : Color.blue;
+            lineRenderer.startColor = lineColor;
+            lineRenderer.endColor = lineColor;
+            lineRenderer.SetPosition(0, this.transform.position);
+            lineRenderer.SetPosition(1, nearest.Value.transform.position);
+            possibleTarget = targetType == TargetTypes.Enemy ? nearest.Value : null;
+            possiblePlatform = targetType == TargetTypes.Platform ? nearest.Value : null;
         }
         else
         {
-            nearest = new KeyValuePair<float, GameObject>(Mathf.Infinity, null);
-            targetType = TargetTypes.None;
-            return false;
+            lineRenderer.enabled = false;
+            possibleTarget = possiblePlatform = null;
         }
     }
 
