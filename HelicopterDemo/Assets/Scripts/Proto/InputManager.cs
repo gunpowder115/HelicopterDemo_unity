@@ -3,6 +3,9 @@ using System.Linq;
 using UnityEngine;
 using static InputController;
 
+[RequireComponent(typeof(InputController))]
+[RequireComponent(typeof(Shooter))]
+
 public class InputManager : MonoBehaviour
 {
     [SerializeField] float changeSpeedInput = 0.7f;
@@ -19,7 +22,6 @@ public class InputManager : MonoBehaviour
 
     bool rotateToDirection;
     bool cameraInAim, aiming;
-    int unguidedMissileIndex, guidedMissileIndex;
     float yawAngle;
     float currSpeed;
     Vector3 targetDirection;
@@ -30,11 +32,10 @@ public class InputManager : MonoBehaviour
     RotationInput rotationInput;
     CameraRotation cameraRotation;
     CrosshairController crosshairController;
-    BarrelShooter minigun;
     NpcController npcController;
     PlatformController platformController;
     InputController inputController;
-    List<MissileShooter> unguidedMissiles, guidedMissiles;
+    Shooter shooter;
 
     // Start is called before the first frame update
     void Start()
@@ -42,7 +43,7 @@ public class InputManager : MonoBehaviour
         translationInput = GetComponentInChildren<TranslationInput>();
         rotationInput = GetComponentInChildren<RotationInput>();
         cameraRotation = GetComponentInChildren<CameraRotation>();
-        minigun = GetComponentInChildren<BarrelShooter>();
+        shooter = GetComponent<Shooter>();
 
         npcController = NpcController.singleton;
         platformController = PlatformController.singleton;
@@ -58,20 +59,6 @@ public class InputManager : MonoBehaviour
         inputController.StartSelectionAnyTarget += StartSelectionAnyTarget;
         inputController.CancelSelectionAnytarget += CancelSelectionAnytarget;
         inputController.CancelAiming += CancelAiming;
-
-        List<MissileShooter> missiles = new List<MissileShooter>(GetComponentsInChildren<MissileShooter>());
-        unguidedMissiles = new List<MissileShooter>();
-        guidedMissiles = new List<MissileShooter>();
-        if (missiles != null)
-        {
-            foreach (var missile in missiles)
-            {
-                if (missile.IsGuided)
-                    guidedMissiles.Add(missile);
-                else
-                    unguidedMissiles.Add(missile);
-            }
-        }
 
         rotateToDirection = false;
         targetDirection = transform.forward;
@@ -138,7 +125,7 @@ public class InputManager : MonoBehaviour
                 else
                     currSpeed = speed;
 
-                translationInput.TranslateGlobal(new Vector3(inputX, 
+                translationInput.TranslateGlobal(new Vector3(inputX,
                     inputController.VertFastMoving ? vertFastCoef * inputController.VertDirection : inputY, inputZ), currSpeed);
             }
         }
@@ -184,12 +171,12 @@ public class InputManager : MonoBehaviour
             }
         }
 
-        if (minigun)
+        if (shooter)
         {
             if (inputController.MinigunFire)
-                minigun.Fire(selectedTarget);
+                shooter.BarrelFire(selectedTarget);
             else
-                minigun.StopFire();
+                shooter.StopBarrelFire();
         }
 
         if (inputController.PlayerState == PlayerStates.Normal)
@@ -289,11 +276,7 @@ public class InputManager : MonoBehaviour
 
     void TryLaunchUnguidedMissile()
     {
-        if (unguidedMissiles[unguidedMissileIndex].IsEnable)
-        {
-            unguidedMissiles[unguidedMissileIndex++].Launch(selectedTarget);
-            if (unguidedMissileIndex >= unguidedMissiles.Count) unguidedMissileIndex = 0;
-        }
+        if (shooter) shooter.UnguidedMissileLaunch(selectedTarget);
     }
 
     void StartBuildSelection()
@@ -306,12 +289,8 @@ public class InputManager : MonoBehaviour
 
     void TryLaunchGuidedMissile()
     {
-        if (guidedMissiles[guidedMissileIndex].IsEnable)
-        {
-            guidedMissiles[guidedMissileIndex++].Launch(null);
-            if (guidedMissileIndex >= guidedMissiles.Count) guidedMissileIndex = 0;
-            crosshairController.HideAim();
-        }
+        if (shooter) shooter.GuidedMissileLaunch(selectedTarget);
+        crosshairController.HideAim();
     }
 
     void StartSelectionFarTarget() => crosshairController.ShowAim();
