@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class CrosshairController : MonoBehaviour
+public class Crosshair : MonoBehaviour
 {
     [SerializeField] float aimSpeed = 5f;
 
-    public static CrosshairController singleton { get; private set; }
+    public static Crosshair singleton { get; private set; }
     public Vector2 ToTargetSelection => toTargetSelection;
 
     Vector2 toTargetSelection;
@@ -23,7 +23,7 @@ public class CrosshairController : MonoBehaviour
         if (aimItem) aimItem.SetActive(false);
     }
 
-    public void ShowAim()
+    public void Show()
     {
         if (aimItem)
         {
@@ -32,12 +32,12 @@ public class CrosshairController : MonoBehaviour
         }
     }
 
-    public void HideAim()
+    public void Hide()
     {
         if (aimItem) aimItem.SetActive(false);
     }
 
-    public void MoveAim(Vector2 direction)
+    public void Translate(Vector2 direction)
     {
         if (aimItem)
         {

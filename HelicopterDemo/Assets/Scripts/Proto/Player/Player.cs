@@ -6,7 +6,7 @@ using static InputController;
 [RequireComponent(typeof(InputController))]
 [RequireComponent(typeof(Shooter))]
 
-public class InputManager : MonoBehaviour
+public class Player : MonoBehaviour
 {
     [SerializeField] float changeSpeedInput = 0.7f;
     [SerializeField] bool useNewInputSystem = true;
@@ -28,10 +28,10 @@ public class InputManager : MonoBehaviour
     Vector3 currentDirection;
     Vector3 aimAngles;
     GameObject possibleTarget, selectedTarget, possiblePlatform, selectedPlatform;
-    TranslationInput translationInput;
-    RotationInput rotationInput;
-    CameraRotation cameraRotation;
-    CrosshairController crosshairController;
+    Translation translation;
+    Rotation rotation;
+    PlayerCamera camera;
+    Crosshair crosshairController;
     NpcController npcController;
     PlatformController platformController;
     InputController inputController;
@@ -40,14 +40,14 @@ public class InputManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        translationInput = GetComponentInChildren<TranslationInput>();
-        rotationInput = GetComponentInChildren<RotationInput>();
-        cameraRotation = GetComponentInChildren<CameraRotation>();
+        translation = GetComponentInChildren<Translation>();
+        rotation = GetComponentInChildren<Rotation>();
+        camera = GetComponentInChildren<PlayerCamera>();
         shooter = GetComponent<Shooter>();
 
         npcController = NpcController.singleton;
         platformController = PlatformController.singleton;
-        crosshairController = CrosshairController.singleton;
+        crosshairController = Crosshair.singleton;
 
         inputController = InputController.singleton;
         if (!inputController) return;
@@ -86,19 +86,19 @@ public class InputManager : MonoBehaviour
         Vector2 toTargetSelection = new Vector2();
         if (crosshairController && inputController.AimMovement)
         {
-            crosshairController.MoveAim(new Vector2(inputX, inputZ));
+            crosshairController.Translate(new Vector2(inputX, inputZ));
             toTargetSelection = crosshairController.ToTargetSelection;
         }
 
         //movement around X, Y, Z
-        if (translationInput != null)
+        if (translation != null)
         {
-            if (inputXZ >= changeSpeedInput && !translationInput.RotToDir ||
-                inputXZ < changeSpeedInput && translationInput.RotToDir)
-                rotateToDirection = translationInput.SwitchRotation();
+            if (inputXZ >= changeSpeedInput && !translation.RotToDir ||
+                inputXZ < changeSpeedInput && translation.RotToDir)
+                rotateToDirection = translation.SwitchRotation();
 
-            targetDirection = translationInput.TargetDirection;
-            if (translationInput.IsHeightBorder && inputController.VertFastMoving)
+            targetDirection = translation.TargetDirection;
+            if (translation.IsHeightBorder && inputController.VertFastMoving)
                 inputController.ForceStopVertFastMoving();
 
             if (!inputController.PlayerCanTranslate)
@@ -107,7 +107,7 @@ public class InputManager : MonoBehaviour
             if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
             {
                 currSpeed = speed * lowSpeedCoef;
-                translationInput.TranslateRelToTarget(new Vector3(inputX, inputY, inputZ), yawAngle, currSpeed);
+                translation.TranslateRelToTarget(new Vector3(inputX, inputY, inputZ), yawAngle, currSpeed);
             }
             else
             {
@@ -126,49 +126,49 @@ public class InputManager : MonoBehaviour
                 else
                     currSpeed = speed;
 
-                translationInput.TranslateGlobal(new Vector3(inputX,
+                translation.TranslateGlobal(new Vector3(inputX,
                     inputController.VertFastMoving ? vertFastCoef * inputController.VertDirection : inputY, inputZ), currSpeed);
             }
         }
 
         //rotation around X, Y, Z
-        if (rotationInput != null)
+        if (rotation != null)
         {
-            currentDirection = rotationInput.CurrentDirection;
-            aimAngles = rotationInput.AimAngles;
-            yawAngle = rotationInput.YawAngle;
+            currentDirection = rotation.CurrentDirection;
+            aimAngles = rotation.AimAngles;
+            yawAngle = rotation.YawAngle;
 
             if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
             {
                 Quaternion rotToTarget = Quaternion.LookRotation((selectedTarget.transform.position - this.transform.position));
-                rotationInput.RotateToTarget(rotToTarget, inputX);
+                rotation.RotateToTarget(rotToTarget, inputX);
             }
             else
             {
                 var direction = targetDirection != Vector3.zero ? targetDirection : currentDirection;
                 var speedCoef = targetDirection != Vector3.zero ? currSpeed / speed : 0f;
-                rotationInput.RotateToDirection(direction, speedCoef, rotateToDirection);
+                rotation.RotateToDirection(direction, speedCoef, rotateToDirection);
             }
         }
 
         //camera rotation
-        if (cameraRotation)
+        if (camera)
         {
-            cameraRotation.UseNewInputSystem = useNewInputSystem;
+            camera.UseNewInputSystem = useNewInputSystem;
             bool rotateWithTargetSelection = inputController.PlayerState == PlayerStates.SelectionFarTarget ||
                 inputController.PlayerState == PlayerStates.SelectionAnyTarget;
 
             if (aiming)
-                aiming = cameraRotation.ChangeCameraState(cameraInAim, aimAngles);
+                aiming = camera.ChangeCameraState(cameraInAim, aimAngles);
             else
             {
                 if (!cameraInAim)
                 {
-                    cameraRotation.RotateHorizontally(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x, cameraInput.x);
-                    cameraRotation.RotateVertically(rotateWithTargetSelection ? toTargetSelection.y : 0f, cameraInput.y);
+                    camera.RotateHorizontally(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x, cameraInput.x);
+                    camera.RotateVertically(rotateWithTargetSelection ? toTargetSelection.y : 0f, cameraInput.y);
                 }
                 else
-                    cameraRotation.RotateWithPlayer(aimAngles);
+                    camera.RotateWithPlayer(aimAngles);
             }
         }
 
@@ -262,14 +262,14 @@ public class InputManager : MonoBehaviour
     void TryLaunchGuidedMissile()
     {
         if (shooter) shooter.GuidedMissileLaunch(selectedTarget);
-        crosshairController.HideAim();
+        crosshairController.Hide();
     }
 
-    void StartSelectionFarTarget() => crosshairController.ShowAim();
+    void StartSelectionFarTarget() => crosshairController.Show();
 
-    void StartSelectionAnyTarget() => crosshairController.ShowAim();
+    void StartSelectionAnyTarget() => crosshairController.Show();
 
-    void CancelSelectionAnytarget() => crosshairController.HideAim();
+    void CancelSelectionAnytarget() => crosshairController.Hide();
 
     void CancelAiming() => ChangeAimState();
 

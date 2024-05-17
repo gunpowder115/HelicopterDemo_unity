@@ -1,5 +1,4 @@
 using UnityEngine;
-using static InputManager;
 
 public class HelicopterAI : MonoBehaviour
 {
@@ -60,8 +59,8 @@ public class HelicopterAI : MonoBehaviour
         set => flightPhase = value;
     }
 
-    private TranslationInput translationInput;
-    private RotationInput rotationInput;
+    private Translation translationInput;
+    private Rotation rotationInput;
     private TargetFinder targetFinder;
     private TargetSelector targetSelector;
 
@@ -75,8 +74,8 @@ public class HelicopterAI : MonoBehaviour
 
     private void Start()
     {
-        translationInput = GetComponentInChildren<TranslationInput>();
-        rotationInput = GetComponentInChildren<RotationInput>();
+        translationInput = GetComponentInChildren<Translation>();
+        rotationInput = GetComponentInChildren<Rotation>();
         targetFinder = GetComponent<TargetFinder>();
         targetSelector = GetComponent<TargetSelector>();
         hit = new RaycastHit();
@@ -259,7 +258,7 @@ public class HelicopterAI : MonoBehaviour
 
     private void AttackSelectedTarget()
     {
-        
+
     }
 
     public enum FlightPhases

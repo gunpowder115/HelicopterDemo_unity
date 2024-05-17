@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public class TranslationInput : MonoBehaviour
+public class Translation : MonoBehaviour
 {
     [SerializeField] float maxHeight = 50.0f;
     [SerializeField] float minHeight = 10.0f;
 
-    public Vector3 TargetDirection => new Vector3(deltas[(int)InputManager.Axis_Proto.X], 0, deltas[(int)InputManager.Axis_Proto.Z]).normalized;
+    public Vector3 TargetDirection => new Vector3(deltas[(int)Player.Axis_Proto.X], 0, deltas[(int)Player.Axis_Proto.Z]).normalized;
     public float CurrSpeed { get; set; }
     public bool IsHeightBorder => this.gameObject.transform.position.y >= maxHeight || this.gameObject.transform.position.y <= minHeight;
     public bool RotToDir { get; private set; }
@@ -23,11 +23,11 @@ public class TranslationInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 movement = new Vector3(deltas[(int)InputManager.Axis_Proto.X],
+        Vector3 movement = new Vector3(deltas[(int)Player.Axis_Proto.X],
                                         0f,
-                                        deltas[(int)InputManager.Axis_Proto.Z]);
+                                        deltas[(int)Player.Axis_Proto.Z]);
         movement = Vector3.ClampMagnitude(movement, CurrSpeed);
-        movement = new Vector3(movement.x, deltas[(int)InputManager.Axis_Proto.Y], movement.z);
+        movement = new Vector3(movement.x, deltas[(int)Player.Axis_Proto.Y], movement.z);
         movement *= Time.deltaTime;
 
         if (characterContoller != null)

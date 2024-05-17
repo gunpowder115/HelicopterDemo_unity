@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CameraRotation : MonoBehaviour
+public class PlayerCamera : MonoBehaviour
 {
     [SerializeField] float maxHorizontalAngle = 30f;
     [SerializeField] float maxVerticalAngle_cameraUp = 40f;

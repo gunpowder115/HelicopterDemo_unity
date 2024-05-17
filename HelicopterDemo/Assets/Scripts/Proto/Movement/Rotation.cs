@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RotationInput : MonoBehaviour
+public class Rotation : MonoBehaviour
 {
     [SerializeField] float rotationSpeed = 3.0f;
     [SerializeField] float normAttitudeAngle = 30.0f;
