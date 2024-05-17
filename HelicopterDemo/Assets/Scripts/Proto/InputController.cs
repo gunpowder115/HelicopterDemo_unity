@@ -73,6 +73,14 @@ public class InputController : MonoBehaviour
         return input;
     }
 
+    public Vector2 GetCameraInput(bool useNewInputSystem = true)
+    {
+        Vector2 input = new Vector2(0f, 0f);
+        if (useNewInputSystem)
+            input = playerInput.Camera.Move.ReadValue<Vector2>();
+        return input;
+    }
+
     public void ForceChangePlayerState(PlayerStates newState) => PlayerState = newState;
     public void ForceStopVertFastMoving() => VertFastMoving = false;
 

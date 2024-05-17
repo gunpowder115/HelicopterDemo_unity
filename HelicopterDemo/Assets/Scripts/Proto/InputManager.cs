@@ -77,6 +77,7 @@ public class InputManager : MonoBehaviour
     {
         Vector2 inputDirection = inputController.GetInput();
         Vector2 inputVerticalDirection = inputController.GetVerticalInput();
+        Vector2 cameraInput = inputController.GetCameraInput();
         float inputX = inputDirection.x;
         float inputY = inputVerticalDirection.y;
         float inputZ = inputDirection.y;
@@ -163,8 +164,8 @@ public class InputManager : MonoBehaviour
             {
                 if (!cameraInAim)
                 {
-                    cameraRotation.RotateHorizontally(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x);
-                    cameraRotation.RotateVertically(rotateWithTargetSelection ? toTargetSelection.y : 0f);
+                    cameraRotation.RotateHorizontally(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x, cameraInput.x);
+                    cameraRotation.RotateVertically(rotateWithTargetSelection ? toTargetSelection.y : 0f, cameraInput.y);
                 }
                 else
                     cameraRotation.RotateWithPlayer(aimAngles);
