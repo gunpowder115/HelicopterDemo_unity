@@ -1857,7 +1857,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AntiAircraftGunEnemy (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2643865640747672168, guid: 9af2ae44789bbc94c94dbe57d3f11f84, type: 3}
+    - {fileID: 2995185237385537069, guid: 9af2ae44789bbc94c94dbe57d3f11f84, type: 3}
+    - {fileID: 584724847134156828, guid: 9af2ae44789bbc94c94dbe57d3f11f84, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 9af2ae44789bbc94c94dbe57d3f11f84, type: 3}
 --- !u!1001 &874808820
 PrefabInstance:
@@ -1914,7 +1917,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AntiAircraftGunEnemy
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 584724847134156828, guid: 9af2ae44789bbc94c94dbe57d3f11f84, type: 3}
+    - {fileID: 2995185237385537069, guid: 9af2ae44789bbc94c94dbe57d3f11f84, type: 3}
+    - {fileID: 2643865640747672168, guid: 9af2ae44789bbc94c94dbe57d3f11f84, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 9af2ae44789bbc94c94dbe57d3f11f84, type: 3}
 --- !u!1 &878262649
 GameObject:

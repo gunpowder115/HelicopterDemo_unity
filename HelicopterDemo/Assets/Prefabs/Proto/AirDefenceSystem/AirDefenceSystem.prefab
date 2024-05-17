@@ -185,7 +185,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: TowerGroup
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7942603905754371764, guid: 28e0f48c57444d0409f7bd6712909d02, type: 3}
+    - {fileID: 5776885701490751858, guid: 28e0f48c57444d0409f7bd6712909d02, type: 3}
+    - {fileID: 5776885702056141386, guid: 28e0f48c57444d0409f7bd6712909d02, type: 3}
+    - {fileID: 5776885701177181975, guid: 28e0f48c57444d0409f7bd6712909d02, type: 3}
+    - {fileID: 5776885700686651345, guid: 28e0f48c57444d0409f7bd6712909d02, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 28e0f48c57444d0409f7bd6712909d02, type: 3}
 --- !u!4 &5261923248748592556 stripped
 Transform:

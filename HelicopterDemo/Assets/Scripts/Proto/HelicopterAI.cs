@@ -64,7 +64,6 @@ public class HelicopterAI : MonoBehaviour
     private RotationInput rotationInput;
     private TargetFinder targetFinder;
     private TargetSelector targetSelector;
-    private ShootingController shootingController;
 
     private bool flight;
     private RaycastHit hit;
@@ -80,7 +79,6 @@ public class HelicopterAI : MonoBehaviour
         rotationInput = GetComponentInChildren<RotationInput>();
         targetFinder = GetComponent<TargetFinder>();
         targetSelector = GetComponent<TargetSelector>();
-        shootingController = GetComponentInChildren<ShootingController>();
         hit = new RaycastHit();
     }
 
@@ -261,7 +259,7 @@ public class HelicopterAI : MonoBehaviour
 
     private void AttackSelectedTarget()
     {
-        shootingController?.BarrelShot();
+        
     }
 
     public enum FlightPhases
