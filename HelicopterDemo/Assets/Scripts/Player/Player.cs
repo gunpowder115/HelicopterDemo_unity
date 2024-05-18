@@ -24,13 +24,14 @@ public class Player : MonoBehaviour
     bool cameraInAim, aiming;
     float yawAngle;
     float currSpeed;
+    float refDistToTargetEnemy;
     Vector3 targetDirection;
     Vector3 currentDirection;
     Vector3 aimAngles;
     GameObject possibleTarget, selectedTarget, possiblePlatform, selectedPlatform;
     Translation translation;
     Rotation rotation;
-    PlayerCamera camera;
+    PlayerCamera playerCamera;
     Crosshair crosshairController;
     NpcController npcController;
     PlatformController platformController;
@@ -42,7 +43,7 @@ public class Player : MonoBehaviour
     {
         translation = GetComponentInChildren<Translation>();
         rotation = GetComponentInChildren<Rotation>();
-        camera = GetComponentInChildren<PlayerCamera>();
+        playerCamera = GetComponentInChildren<PlayerCamera>();
         shooter = GetComponent<Shooter>();
 
         npcController = NpcController.singleton;
@@ -107,7 +108,10 @@ public class Player : MonoBehaviour
             if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
             {
                 currSpeed = speed * lowSpeedCoef;
-                translation.TranslateRelToTarget(new Vector3(inputX, inputY, inputZ), yawAngle, currSpeed);
+                Vector3 inputXYZ = new Vector3(inputX, inputY, inputZ);
+                //inputXYZ = FixDistToTarget(inputXYZ);
+                translation.TranslateRelToTarget(inputXYZ, yawAngle, currSpeed);
+                Debug.Log((selectedTarget.transform.position - transform.position).magnitude);
             }
             else
             {
@@ -152,23 +156,23 @@ public class Player : MonoBehaviour
         }
 
         //camera rotation
-        if (camera)
+        if (playerCamera)
         {
-            camera.UseNewInputSystem = useNewInputSystem;
+            playerCamera.UseNewInputSystem = useNewInputSystem;
             bool rotateWithTargetSelection = inputController.PlayerState == PlayerStates.SelectionFarTarget ||
                 inputController.PlayerState == PlayerStates.SelectionAnyTarget;
 
             if (aiming)
-                aiming = camera.ChangeCameraState(cameraInAim, aimAngles);
+                aiming = playerCamera.ChangeCameraState(cameraInAim, aimAngles);
             else
             {
                 if (!cameraInAim)
                 {
-                    camera.RotateHorizontally(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x, cameraInput.x);
-                    camera.RotateVertically(rotateWithTargetSelection ? toTargetSelection.y : 0f, cameraInput.y);
+                    playerCamera.RotateHorizontally(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x, cameraInput.x);
+                    playerCamera.RotateVertically(rotateWithTargetSelection ? toTargetSelection.y : 0f, cameraInput.y);
                 }
                 else
-                    camera.RotateWithPlayer(aimAngles);
+                    playerCamera.RotateWithPlayer(aimAngles);
             }
         }
 
@@ -196,6 +200,7 @@ public class Player : MonoBehaviour
         cameraInAim = !cameraInAim;
         aiming = true;
         selectedTarget = cameraInAim ? possibleTarget : null;
+        refDistToTargetEnemy = selectedTarget ? (selectedTarget.transform.position - transform.position).magnitude : 0f;
         if (cameraInAim) lineRenderer.enabled = false;
     }
 
@@ -225,6 +230,21 @@ public class Player : MonoBehaviour
             lineRenderer.enabled = false;
             possibleTarget = possiblePlatform = null;
         }
+    }
+
+    Vector3 FixDistToTarget(Vector3 input)
+    {
+        bool toTarget = (selectedTarget.transform.position - transform.position).magnitude > refDistToTargetEnemy + 1f;
+        bool fromTarget = (selectedTarget.transform.position - transform.position).magnitude < refDistToTargetEnemy - 1f;
+
+        if (toTarget && input.z == 0f)
+            input.z = 1f;
+        else if (fromTarget && input.z == 0f)
+            input.z = -1f;
+        else if (input.z != 0f)
+            refDistToTargetEnemy = (selectedTarget.transform.position - transform.position).magnitude;
+
+        return input;
     }
 
     PlayerStates TryBindingToObject(PlayerStates playerState)

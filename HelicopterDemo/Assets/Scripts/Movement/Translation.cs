@@ -6,21 +6,19 @@ public class Translation : MonoBehaviour
     [SerializeField] float minHeight = 10.0f;
 
     public Vector3 TargetDirection => new Vector3(deltas[(int)Player.Axis_Proto.X], 0, deltas[(int)Player.Axis_Proto.Z]).normalized;
-    public float CurrSpeed { get; set; }
+    public float CurrSpeed { get; private set; }
     public bool IsHeightBorder => this.gameObject.transform.position.y >= maxHeight || this.gameObject.transform.position.y <= minHeight;
     public bool RotToDir { get; private set; }
 
-    private CharacterController characterContoller;
-    private float[] deltas;
+    CharacterController characterContoller;
+    float[] deltas;
 
-    // Start is called before the first frame update
     void Start()
     {
         deltas = new float[3] { 0f, 0f, 0f };
         characterContoller = GetComponent<CharacterController>();
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector3 movement = new Vector3(deltas[(int)Player.Axis_Proto.X],

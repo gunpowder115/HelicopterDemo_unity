@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildController_proto : MonoBehaviour
+public class InitialBuilder : MonoBehaviour
 {
     public const int platformCount = 8;
 
@@ -39,7 +37,7 @@ public class BuildController_proto : MonoBehaviour
                 builds[i].transform.position = platforms[i].transform.position;
                 builds[i].transform.rotation = platforms[i].transform.rotation;
                 builds[i].transform.localScale = new Vector3(
-                    1 / platforms[i].transform.localScale.x, 
+                    1 / platforms[i].transform.localScale.x,
                     1 / platforms[i].transform.localScale.y,
                     1 / platforms[i].transform.localScale.z);
             }
