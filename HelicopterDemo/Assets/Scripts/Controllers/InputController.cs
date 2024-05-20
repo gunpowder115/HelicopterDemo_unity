@@ -43,7 +43,7 @@ public class InputController : MonoBehaviour
     public bool PlayerCanTranslate => playerState == PlayerStates.Normal || playerState == PlayerStates.Aiming;
     public bool AimMovement => playerState == PlayerStates.SelectionAnyTarget || playerState == PlayerStates.SelectionFarTarget;
     public float VertDirection { get; private set; }
-    public PlayerStates PlayerState { get => playerState; private set { } }
+    public PlayerStates PlayerState => playerState;
 
     #endregion
 
@@ -81,7 +81,7 @@ public class InputController : MonoBehaviour
         return input;
     }
 
-    public void ForceChangePlayerState(PlayerStates newState) => PlayerState = newState;
+    public void ForceChangePlayerState(PlayerStates newState) => playerState = newState;
     public void ForceStopVertFastMoving() => VertFastMoving = false;
 
     private InputController() { }

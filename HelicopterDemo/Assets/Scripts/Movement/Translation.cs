@@ -13,13 +13,44 @@ public class Translation : MonoBehaviour
     CharacterController characterContoller;
     float[] deltas;
 
+    public void TranslateGlobal(Vector3 input, float currSpeed)
+    {
+        CurrSpeed = currSpeed;
+        input *= CurrSpeed;
+        deltas[0] = input.x;
+        deltas[1] = input.y;
+        deltas[2] = input.z;
+
+        Translate();
+    }
+
+    public void TranslateRelToTarget(Vector3 input, float angle, float currSpeed)
+    {
+        CurrSpeed = currSpeed;
+        input *= CurrSpeed;
+        Vector3 temp = new Vector3(input.x, input.y, input.z);
+        Quaternion rot = Quaternion.Euler(0f, angle, 0f);
+        temp = rot * temp;
+        deltas[0] = temp.x;
+        deltas[1] = temp.y;
+        deltas[2] = temp.z;
+
+        Translate();
+    }
+
+    public bool SwitchRotation()
+    {
+        RotToDir = !RotToDir;
+        return RotToDir;
+    }
+
     void Start()
     {
         deltas = new float[3] { 0f, 0f, 0f };
         characterContoller = GetComponent<CharacterController>();
     }
 
-    void Update()
+    void Translate()
     {
         Vector3 movement = new Vector3(deltas[(int)Player.Axis_Proto.X],
                                         0f,
@@ -43,32 +74,5 @@ public class Translation : MonoBehaviour
             this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x, maxHeight, this.gameObject.transform.position.z);
         else if (this.gameObject.transform.position.y <= minHeight)
             this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x, minHeight, this.gameObject.transform.position.z);
-    }
-
-    public void TranslateGlobal(Vector3 input, float currSpeed)
-    {
-        CurrSpeed = currSpeed;
-        input *= CurrSpeed;
-        deltas[0] = input.x;
-        deltas[1] = input.y;
-        deltas[2] = input.z;
-    }
-
-    public void TranslateRelToTarget(Vector3 input, float angle, float currSpeed)
-    {
-        CurrSpeed = currSpeed;
-        input *= CurrSpeed;
-        Vector3 temp = new Vector3(input.x, input.y, input.z);
-        Quaternion rot = Quaternion.Euler(0f, angle, 0f);
-        temp = rot * temp;
-        deltas[0] = temp.x;
-        deltas[1] = temp.y;
-        deltas[2] = temp.z;
-    }
-
-    public bool SwitchRotation()
-    {
-        RotToDir = !RotToDir;
-        return RotToDir;
     }
 }

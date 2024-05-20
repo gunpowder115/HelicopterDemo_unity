@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     [SerializeField] float highSpeedCoef = 3f;
     [SerializeField] float fastSpeedReduction = 3f;
     [SerializeField] float speedReductionDead = 0.05f;
+    [SerializeField] float lateralMovingCoef = 0.1f;
     [SerializeField] LineRenderer lineRenderer;
 
     bool rotateToDirection;
@@ -109,8 +110,9 @@ public class Player : MonoBehaviour
             {
                 currSpeed = speed * lowSpeedCoef;
                 Vector3 inputXYZ = new Vector3(inputX, inputY, inputZ);
-                //inputXYZ = FixDistToTarget(inputXYZ);
+                inputXYZ = BalanceDistToTarget(inputXYZ);
                 translation.TranslateRelToTarget(inputXYZ, yawAngle, currSpeed);
+
                 Debug.Log((selectedTarget.transform.position - transform.position).magnitude);
             }
             else
@@ -232,18 +234,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    Vector3 FixDistToTarget(Vector3 input)
+    Vector3 BalanceDistToTarget(Vector3 input)
     {
-        bool toTarget = (selectedTarget.transform.position - transform.position).magnitude > refDistToTargetEnemy + 1f;
-        bool fromTarget = (selectedTarget.transform.position - transform.position).magnitude < refDistToTargetEnemy - 1f;
-
-        if (toTarget && input.z == 0f)
-            input.z = 1f;
-        else if (fromTarget && input.z == 0f)
-            input.z = -1f;
-        else if (input.z != 0f)
+        if (input.z == 0f)
+            input.z = Mathf.Abs(input.x) * lateralMovingCoef;
+        else
             refDistToTargetEnemy = (selectedTarget.transform.position - transform.position).magnitude;
-
         return input;
     }
 

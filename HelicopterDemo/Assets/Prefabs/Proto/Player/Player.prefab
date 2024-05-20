@@ -60,6 +60,7 @@ MonoBehaviour:
   highSpeedCoef: 3
   fastSpeedReduction: 3
   speedReductionDead: 0.05
+  lateralMovingCoef: 0.13
   lineRenderer: {fileID: 0}
 --- !u!143 &3309415596281561064
 CharacterController:

@@ -245,11 +245,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5817739379426018126}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa247dcb1f13dbb4b88fd6f044e8d345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  absSpeed: 20
   normalSpeed: 1
   patrolSpeed: 0.7
   patrolVerticalSpeed: 0.3
@@ -277,10 +278,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 415e5073c8781f34baf4a1dade35a55f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lowSpeed: 10
-  highSpeed: 20
   maxHeight: 70
   minHeight: 10
+  extraFrames: 1
+  extraPrefab: {fileID: 0}
 --- !u!114 &63990704278970995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -293,10 +294,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41175428f113cb24a811def3c61d2f8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attitudeRotSpeed: 6
-  yawRotSpeed: 3
-  largeAttitudeAngle: 30
-  smallAttitudeAngle: 20
+  rotationSpeed: 3
+  normAttitudeAngle: 30
 --- !u!114 &8674854711948105310
 MonoBehaviour:
   m_ObjectHideFlags: 0
