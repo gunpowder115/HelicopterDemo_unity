@@ -8,6 +8,8 @@ public class HelicopterAI : MonoBehaviour
     [SerializeField] private float patrolSpeed = 0.7f;
     [SerializeField] private float patrolVerticalSpeed = 0.3f;
     [SerializeField] private float normalVerticalSpeed = 0.5f;
+    [SerializeField] private float speed = 30f;
+    [SerializeField] private float acceleration = 2.5f;
     [Header("Borders")]
     [SerializeField] private float minHeight = 15f;
     [SerializeField] private float maxHeight = 50f;
@@ -21,6 +23,8 @@ public class HelicopterAI : MonoBehaviour
     [SerializeField] private float minAttackDistance = 10f;
     [SerializeField] private float maxAttackDistance = 20f;
     [SerializeField] private bool opportToChangeTarget = true;
+
+    Vector3 targetSpeed, currSpeed;
 
     public GameObject SelectedTarget { get; set; }
     private float DistanceToTarget
@@ -202,8 +206,10 @@ public class HelicopterAI : MonoBehaviour
 
         if (translationInput != null)
         {
-            targetDirection = translationInput.TargetDirection;
-            translationInput.TranslateGlobal(new Vector3(currentInput.x, currentInput.y, currentInput.z), absSpeed);
+            targetDirection = translationInput.TargetDirectionNorm;
+            targetSpeed = Vector3.ClampMagnitude(currentInput * speed, speed);
+            currSpeed = Vector3.Lerp(currSpeed, targetSpeed, acceleration * Time.deltaTime);
+            translationInput.SetGlobalTranslation(currSpeed);
         }
 
         if (rotationInput != null)

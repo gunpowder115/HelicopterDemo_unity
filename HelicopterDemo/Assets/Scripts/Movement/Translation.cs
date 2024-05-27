@@ -5,37 +5,30 @@ public class Translation : MonoBehaviour
     [SerializeField] float maxHeight = 50.0f;
     [SerializeField] float minHeight = 10.0f;
 
-    public Vector3 TargetDirection => new Vector3(deltas[(int)Player.Axis_Proto.X], 0, deltas[(int)Player.Axis_Proto.Z]).normalized;
-    public float CurrSpeed { get; private set; }
+    public Vector3 TargetDirectionNorm => new Vector3(speed.x, 0f, speed.z).normalized;
     public bool IsHeightBorder => this.gameObject.transform.position.y >= maxHeight || this.gameObject.transform.position.y <= minHeight;
     public bool RotToDir { get; private set; }
 
     CharacterController characterContoller;
-    float[] deltas;
+    Vector3 speed;
+    float speedAbs, verticalSpeedAbs;
 
-    public void TranslateGlobal(Vector3 input, float currSpeed)
+    public void SetGlobalTranslation(Vector3 speed)
     {
-        CurrSpeed = currSpeed;
-        input *= CurrSpeed;
-        deltas[0] = input.x;
-        deltas[1] = input.y;
-        deltas[2] = input.z;
-
-        Translate();
+        speedAbs = speed.magnitude;
+        this.speed = new Vector3(speed.x, this.speed.y, speed.z);
     }
 
-    public void TranslateRelToTarget(Vector3 input, float angle, float currSpeed)
+    public void SetRelToTargetTranslation(Vector3 speed, float angle)
     {
-        CurrSpeed = currSpeed;
-        input *= CurrSpeed;
-        Vector3 temp = new Vector3(input.x, input.y, input.z);
-        Quaternion rot = Quaternion.Euler(0f, angle, 0f);
-        temp = rot * temp;
-        deltas[0] = temp.x;
-        deltas[1] = temp.y;
-        deltas[2] = temp.z;
+        speedAbs = speed.magnitude;
+        Vector3 temp = Quaternion.Euler(0f, angle, 0f) * speed;
+        this.speed = new Vector3(temp.x, this.speed.y, temp.z);
+    }
 
-        Translate();
+    public void SetVerticalTranslation(float speed)
+    {
+        this.speed = new Vector3(this.speed.x, speed, this.speed.z);
     }
 
     public bool SwitchRotation()
@@ -44,19 +37,11 @@ public class Translation : MonoBehaviour
         return RotToDir;
     }
 
-    void Start()
+    public void Translate()
     {
-        deltas = new float[3] { 0f, 0f, 0f };
-        characterContoller = GetComponent<CharacterController>();
-    }
-
-    void Translate()
-    {
-        Vector3 movement = new Vector3(deltas[(int)Player.Axis_Proto.X],
-                                        0f,
-                                        deltas[(int)Player.Axis_Proto.Z]);
-        movement = Vector3.ClampMagnitude(movement, CurrSpeed);
-        movement = new Vector3(movement.x, deltas[(int)Player.Axis_Proto.Y], movement.z);
+        Vector3 movement = new Vector3(speed.x, 0f, speed.z);
+        movement = Vector3.ClampMagnitude(movement, speedAbs);
+        movement = new Vector3(movement.x, speed.y, movement.z);
         movement *= Time.deltaTime;
 
         if (characterContoller != null)
@@ -74,5 +59,10 @@ public class Translation : MonoBehaviour
             this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x, maxHeight, this.gameObject.transform.position.z);
         else if (this.gameObject.transform.position.y <= minHeight)
             this.gameObject.transform.position = new Vector3(this.gameObject.transform.position.x, minHeight, this.gameObject.transform.position.z);
+    }
+
+    void Start()
+    {
+        characterContoller = GetComponent<CharacterController>();
     }
 }

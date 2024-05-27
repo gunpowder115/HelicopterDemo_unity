@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using static InputController;
 
@@ -16,16 +15,16 @@ public class Player : MonoBehaviour
     [SerializeField] float speed = 20f;
     [SerializeField] float lowSpeedCoef = 0.5f;
     [SerializeField] float highSpeedCoef = 3f;
-    [SerializeField] float fastSpeedReduction = 3f;
-    [SerializeField] float speedReductionDead = 0.05f;
+    [SerializeField] float verticalSpeed = 30f;
     [SerializeField] float lateralMovingCoef = 0.1f;
+    [SerializeField] float acceleration = 1f;
     [SerializeField] LineRenderer lineRenderer;
 
     bool rotateToDirection;
     bool cameraInAim, aiming;
     float yawAngle;
-    float currSpeed;
-    float refDistToTargetEnemy;
+    float currVerticalSpeed, targetVerticalSpeed;
+    Vector3 currSpeed, targetSpeed;
     Vector3 targetDirection;
     Vector3 currentDirection;
     Vector3 aimAngles;
@@ -67,7 +66,6 @@ public class Player : MonoBehaviour
         currentDirection = transform.forward;
         cameraInAim = aiming = false;
         lineRenderer.enabled = false;
-        currSpeed = speed;
 
         //hide cursor in center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -83,100 +81,18 @@ public class Player : MonoBehaviour
         float inputX = inputDirection.x;
         float inputY = inputVerticalDirection.y;
         float inputZ = inputDirection.y;
-        float inputXZ = Mathf.Clamp01(new Vector3(inputX, 0f, inputZ).magnitude);
-
-        Vector2 toTargetSelection = new Vector2();
-        if (crosshairController && inputController.AimMovement)
-        {
-            crosshairController.Translate(new Vector2(inputX, inputZ));
-            toTargetSelection = crosshairController.ToTargetSelection;
-        }
 
         //movement around X, Y, Z
         if (translation != null)
-        {
-            if (inputXZ >= changeSpeedInput && !translation.RotToDir ||
-                inputXZ < changeSpeedInput && translation.RotToDir)
-                rotateToDirection = translation.SwitchRotation();
-
-            targetDirection = translation.TargetDirection;
-            if (translation.IsHeightBorder && inputController.VertFastMoving)
-                inputController.ForceStopVertFastMoving();
-
-            if (!inputController.PlayerCanTranslate)
-                inputX = inputY = inputZ = 0f;
-
-            if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
-            {
-                currSpeed = speed * lowSpeedCoef;
-                Vector3 inputXYZ = new Vector3(inputX, inputY, inputZ);
-                inputXYZ = BalanceDistToTarget(inputXYZ);
-                translation.TranslateRelToTarget(inputXYZ, yawAngle, currSpeed);
-
-                Debug.Log((selectedTarget.transform.position - transform.position).magnitude);
-            }
-            else
-            {
-                if (inputController.FastMoving)
-                {
-                    currSpeed = speed * highSpeedCoef;
-                    inputX = (inputX == 0f ? currentDirection.x : inputX);
-                    inputZ = (inputZ == 0f ? currentDirection.z : inputZ);
-                }
-                else if (currSpeed - speed > speedReductionDead * speed)
-                {
-                    currSpeed = Mathf.LerpUnclamped(currSpeed, speed, fastSpeedReduction * Time.deltaTime);
-                    inputX = (inputX == 0f ? currentDirection.x : inputX);
-                    inputZ = (inputZ == 0f ? currentDirection.z : inputZ);
-                }
-                else
-                    currSpeed = speed;
-
-                translation.TranslateGlobal(new Vector3(inputX,
-                    inputController.VertFastMoving ? vertFastCoef * inputController.VertDirection : inputY, inputZ), currSpeed);
-            }
-        }
+            Translate(inputX, inputY, inputZ);
 
         //rotation around X, Y, Z
         if (rotation != null)
-        {
-            currentDirection = rotation.CurrentDirection;
-            aimAngles = rotation.AimAngles;
-            yawAngle = rotation.YawAngle;
-
-            if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
-            {
-                Quaternion rotToTarget = Quaternion.LookRotation((selectedTarget.transform.position - this.transform.position));
-                rotation.RotateToTarget(rotToTarget, inputX);
-            }
-            else
-            {
-                var direction = targetDirection != Vector3.zero ? targetDirection : currentDirection;
-                var speedCoef = targetDirection != Vector3.zero ? currSpeed / speed : 0f;
-                rotation.RotateToDirection(direction, speedCoef, rotateToDirection);
-            }
-        }
+            Rotate(inputX);
 
         //camera rotation
         if (playerCamera)
-        {
-            playerCamera.UseNewInputSystem = useNewInputSystem;
-            bool rotateWithTargetSelection = inputController.PlayerState == PlayerStates.SelectionFarTarget ||
-                inputController.PlayerState == PlayerStates.SelectionAnyTarget;
-
-            if (aiming)
-                aiming = playerCamera.ChangeCameraState(cameraInAim, aimAngles);
-            else
-            {
-                if (!cameraInAim)
-                {
-                    playerCamera.RotateHorizontally(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x, cameraInput.x);
-                    playerCamera.RotateVertically(rotateWithTargetSelection ? toTargetSelection.y : 0f, cameraInput.y);
-                }
-                else
-                    playerCamera.RotateWithPlayer(aimAngles);
-            }
-        }
+            RotateCamera(cameraInput, inputX, inputZ);
 
         if (shooter)
         {
@@ -197,12 +113,110 @@ public class Player : MonoBehaviour
         }
     }
 
+    void Translate(float inputX, float inputY, float inputZ)
+    {
+        float inputXZ = Mathf.Clamp01(new Vector3(inputX, 0f, inputZ).magnitude);
+
+        if (inputXZ >= changeSpeedInput && !translation.RotToDir ||
+            inputXZ < changeSpeedInput && translation.RotToDir)
+            rotateToDirection = translation.SwitchRotation();
+
+        targetDirection = translation.TargetDirectionNorm;
+        if (translation.IsHeightBorder && inputController.VertFastMoving)
+            inputController.ForceStopVertFastMoving();
+
+        if (!inputController.PlayerCanTranslate)
+            inputX = inputY = inputZ = 0f;
+
+        if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
+        {
+            Vector3 inputXYZ = new Vector3(inputX, inputY, inputZ);
+            inputXYZ = BalanceDistToTarget(inputXYZ);
+            targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed * lowSpeedCoef, speed * lowSpeedCoef);
+            currSpeed = Vector3.Lerp(currSpeed, targetSpeed, acceleration * Time.deltaTime);
+
+            translation.SetRelToTargetTranslation(currSpeed, yawAngle);
+
+            Debug.Log((selectedTarget.transform.position - transform.position).magnitude);
+        }
+        else
+        {
+            Vector3 inputXYZ = new Vector3(inputX, inputY, inputZ);
+
+            if (inputController.FastMoving)
+            {
+                inputX = (inputX == 0f ? currentDirection.x : inputX);
+                inputZ = (inputZ == 0f ? currentDirection.z : inputZ);
+                inputXYZ = new Vector3(inputX, inputY, inputZ);
+                targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed * highSpeedCoef, speed * highSpeedCoef);
+            }
+            else if (inputXZ == 0f)
+                targetSpeed = Vector3.zero;
+            else
+                targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed, speed);
+
+            currSpeed = Vector3.Lerp(currSpeed, targetSpeed, acceleration * Time.deltaTime);
+            translation.SetGlobalTranslation(currSpeed);
+        }
+
+        targetVerticalSpeed = (inputController.VertFastMoving ? vertFastCoef * inputController.VertDirection : inputY) * verticalSpeed;
+        currVerticalSpeed = Mathf.Lerp(currVerticalSpeed, targetVerticalSpeed, acceleration * Time.deltaTime);
+        translation.SetVerticalTranslation(currVerticalSpeed);
+
+        translation.Translate();
+    }
+
+    void Rotate(float inputX)
+    {
+        currentDirection = rotation.CurrentDirection;
+        aimAngles = rotation.AimAngles;
+        yawAngle = rotation.YawAngle;
+
+        if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
+        {
+            Quaternion rotToTarget = Quaternion.LookRotation((selectedTarget.transform.position - this.transform.position));
+            rotation.RotateToTarget(rotToTarget, inputX);
+        }
+        else
+        {
+            var direction = targetDirection != Vector3.zero ? targetDirection : currentDirection;
+            var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / speed : 0f;
+            rotation.RotateToDirection(direction, speedCoef, rotateToDirection);
+        }
+    }
+
+    void RotateCamera(Vector3 cameraInput, float inputX, float inputZ)
+    {
+        Vector2 toTargetSelection = new Vector2();
+        if (crosshairController && inputController.AimMovement)
+        {
+            crosshairController.Translate(new Vector2(inputX, inputZ));
+            toTargetSelection = crosshairController.ToTargetSelection;
+        }
+
+        playerCamera.UseNewInputSystem = useNewInputSystem;
+        bool rotateWithTargetSelection = inputController.PlayerState == PlayerStates.SelectionFarTarget ||
+            inputController.PlayerState == PlayerStates.SelectionAnyTarget;
+
+        if (aiming)
+            aiming = playerCamera.ChangeCameraState(cameraInAim, aimAngles);
+        else
+        {
+            if (!cameraInAim)
+            {
+                playerCamera.RotateHorizontally(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x, cameraInput.x);
+                playerCamera.RotateVertically(rotateWithTargetSelection ? toTargetSelection.y : 0f, cameraInput.y);
+            }
+            else
+                playerCamera.RotateWithPlayer(aimAngles);
+        }
+    }
+
     void ChangeAimState()
     {
         cameraInAim = !cameraInAim;
         aiming = true;
         selectedTarget = cameraInAim ? possibleTarget : null;
-        refDistToTargetEnemy = selectedTarget ? (selectedTarget.transform.position - transform.position).magnitude : 0f;
         if (cameraInAim) lineRenderer.enabled = false;
     }
 
@@ -238,8 +252,6 @@ public class Player : MonoBehaviour
     {
         if (input.z == 0f)
             input.z = Mathf.Abs(input.x) * lateralMovingCoef;
-        else
-            refDistToTargetEnemy = (selectedTarget.transform.position - transform.position).magnitude;
         return input;
     }
 

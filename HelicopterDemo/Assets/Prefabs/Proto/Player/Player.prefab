@@ -50,17 +50,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e25422909cc19844fa03ca8d72fad2e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  changeSpeedInput: 0.7
+  changeSpeedInput: 0.9
   useNewInputSystem: 1
   vertFastCoef: 5
   minDistToAim: 35
   maxDistToAim: 40
-  speed: 20
+  speed: 30
   lowSpeedCoef: 0.5
   highSpeedCoef: 3
-  fastSpeedReduction: 3
-  speedReductionDead: 0.05
-  lateralMovingCoef: 0.13
+  verticalSpeed: 30
+  lateralMovingCoef: 0.18
+  acceleration: 2.5
   lineRenderer: {fileID: 0}
 --- !u!143 &3309415596281561064
 CharacterController:
