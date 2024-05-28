@@ -76,15 +76,13 @@ public class Player : MonoBehaviour
     void Update()
     {
         Vector2 inputDirection = inputController.GetInput();
-        Vector2 inputVerticalDirection = inputController.GetVerticalInput();
         Vector2 cameraInput = inputController.GetCameraInput();
         float inputX = inputDirection.x;
-        float inputY = inputVerticalDirection.y;
         float inputZ = inputDirection.y;
 
         //movement around X, Y, Z
         if (translation != null)
-            Translate(inputX, inputY, inputZ);
+            Translate(inputX, inputZ);
 
         //rotation around X, Y, Z
         if (rotation != null)
@@ -113,17 +111,19 @@ public class Player : MonoBehaviour
         }
     }
 
-    void Translate(float inputX, float inputY, float inputZ)
+    void Translate(float inputX, float inputZ)
     {
+        float inputVerticalDirection = inputController.VerticalMoving;
+        float inputVerticalFast = inputController.VerticalFastMoving;
+
         float inputXZ = Mathf.Clamp01(new Vector3(inputX, 0f, inputZ).magnitude);
+        float inputY = inputVerticalFast != 0f ? inputVerticalFast : inputVerticalDirection;
 
         if (inputXZ >= changeSpeedInput && !translation.RotToDir ||
             inputXZ < changeSpeedInput && translation.RotToDir)
             rotateToDirection = translation.SwitchRotation();
 
         targetDirection = translation.TargetDirectionNorm;
-        if (translation.IsHeightBorder && inputController.VertFastMoving)
-            inputController.ForceStopVertFastMoving();
 
         if (!inputController.PlayerCanTranslate)
             inputX = inputY = inputZ = 0f;
@@ -159,7 +159,8 @@ public class Player : MonoBehaviour
             translation.SetGlobalTranslation(currSpeed);
         }
 
-        targetVerticalSpeed = (inputController.VertFastMoving ? vertFastCoef * inputController.VertDirection : inputY) * verticalSpeed;
+        targetVerticalSpeed = inputY * verticalSpeed;
+        if (inputVerticalFast != 0f) targetVerticalSpeed *= vertFastCoef;
         currVerticalSpeed = Mathf.Lerp(currVerticalSpeed, targetVerticalSpeed, acceleration * Time.deltaTime);
         translation.SetVerticalTranslation(currVerticalSpeed);
 

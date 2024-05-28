@@ -21,7 +21,6 @@ public class InputController : MonoBehaviour
     public static InputController singleton { get; private set; }
     public bool MinigunFire { get; private set; }
     public bool FastMoving { get; private set; }
-    public bool VertFastMoving { get; private set; }
     public bool UnguidedMissileLaunch
     {
         get
@@ -42,12 +41,47 @@ public class InputController : MonoBehaviour
     }
     public bool PlayerCanTranslate => playerState == PlayerStates.Normal || playerState == PlayerStates.Aiming;
     public bool AimMovement => playerState == PlayerStates.SelectionAnyTarget || playerState == PlayerStates.SelectionFarTarget;
-    public float VertDirection { get; private set; }
+    public float VerticalMoving
+    {
+        get
+        {
+            bool up = ((LeftUp || RightUp) && LeftUp != RightUp) || SingleUp;
+            bool down = ((LeftDown || RightDown) && LeftDown != RightDown) || SingleDown;
+
+            if (up) return 1f;
+            if (down) return -1f;
+            return 0f;
+        }
+    }
+    public float VerticalFastMoving
+    {
+        get
+        {
+            if (fastUp) return 1f;
+            if (fastDown) return -1f;
+            return 0f;
+        }
+    }
     public PlayerStates PlayerState => playerState;
+
+    #region Private
+
+    bool LeftUp => verticalInputButtons[(int)VerticalMoveDirection.LeftUp];
+    bool RightUp => verticalInputButtons[(int)VerticalMoveDirection.RightUp];
+    bool SingleUp => verticalInputButtons[(int)VerticalMoveDirection.SingleUp];
+    bool LeftDown => verticalInputButtons[(int)VerticalMoveDirection.LeftDown];
+    bool RightDown => verticalInputButtons[(int)VerticalMoveDirection.RightDown];
+    bool SingleDown => verticalInputButtons[(int)VerticalMoveDirection.SingleDown];
 
     #endregion
 
+    #endregion
+
+    readonly int verticalInputButtonsCount = 6;
+
     bool unguidedMissileLaunch, guidedMissileLaunch;
+    bool fastUp, fastDown;
+    bool[] verticalInputButtons;
     PlayerStates playerState;
     PlayerInput playerInput;
 
@@ -65,14 +99,6 @@ public class InputController : MonoBehaviour
         return input;
     }
 
-    public Vector2 GetVerticalInput(bool useNewInputSystem = true)
-    {
-        Vector2 input = new Vector2(0f, 0f);
-        if (useNewInputSystem)
-            input = playerInput.Player.VerticalMove.ReadValue<Vector2>();
-        return input;
-    }
-
     public Vector2 GetCameraInput(bool useNewInputSystem = true)
     {
         Vector2 input = new Vector2(0f, 0f);
@@ -82,7 +108,6 @@ public class InputController : MonoBehaviour
     }
 
     public void ForceChangePlayerState(PlayerStates newState) => playerState = newState;
-    public void ForceStopVertFastMoving() => VertFastMoving = false;
 
     private InputController() { }
 
@@ -104,8 +129,29 @@ public class InputController : MonoBehaviour
         playerInput.Player.FastMove.performed += context => FastMove();
         playerInput.Player.FastMove.canceled += context => FastMoveCancel();
 
-        playerInput.Player.VerticalFastUp.performed += context => VerticalFastMove(1f);
-        playerInput.Player.VerticalFastDown.performed += context => VerticalFastMove(-1f);
+        #region Vertical Move
+
+        playerInput.Player.LeftUp.performed += context => SetVerticalMove(VerticalMoveDirection.LeftUp);
+        playerInput.Player.RightUp.performed += context => SetVerticalMove(VerticalMoveDirection.RightUp);
+        playerInput.Player.LeftDown.performed += context => SetVerticalMove(VerticalMoveDirection.LeftDown);
+        playerInput.Player.RightDown.performed += context => SetVerticalMove(VerticalMoveDirection.RightDown);
+
+        playerInput.Player.LeftUp.canceled += context => CancelVerticalMove(VerticalMoveDirection.LeftUp);
+        playerInput.Player.RightUp.canceled += context => CancelVerticalMove(VerticalMoveDirection.RightUp);
+        playerInput.Player.LeftDown.canceled += context => CancelVerticalMove(VerticalMoveDirection.LeftDown);
+        playerInput.Player.RightDown.canceled += context => CancelVerticalMove(VerticalMoveDirection.RightDown);
+
+        playerInput.Player.SingleUp.performed += context => SetVerticalMove(VerticalMoveDirection.SingleUp);
+        playerInput.Player.SingleDown.performed += context => SetVerticalMove(VerticalMoveDirection.SingleDown);
+        playerInput.Player.VertFastMod.performed += context => SetVerticalSingleFast();
+
+        playerInput.Player.SingleUp.canceled += context => CancelVerticalMove(VerticalMoveDirection.SingleUp);
+        playerInput.Player.SingleDown.canceled += context => CancelVerticalMove(VerticalMoveDirection.SingleDown);
+        playerInput.Player.VertFastMod.canceled += context => CancelVerticalSingleFast();
+
+        #endregion
+
+        verticalInputButtons = new bool[verticalInputButtonsCount];
     }
 
     void OnEnable() => playerInput.Enable();
@@ -122,7 +168,7 @@ public class InputController : MonoBehaviour
 
     void DoMinorAction()
     {
-        switch(playerState)
+        switch (playerState)
         {
             case PlayerStates.Normal:
                 playerState = (TryBindingToObject?.Invoke(playerState)).Value;
@@ -143,7 +189,7 @@ public class InputController : MonoBehaviour
 
     void DoMinorActionHold()
     {
-        switch(playerState)
+        switch (playerState)
         {
             case PlayerStates.Normal:
                 StartSelectionFarTarget?.Invoke();
@@ -154,7 +200,7 @@ public class InputController : MonoBehaviour
 
     void AnyTargetSelection()
     {
-        switch(playerState)
+        switch (playerState)
         {
             case PlayerStates.Normal:
                 StartSelectionAnyTarget?.Invoke();
@@ -165,7 +211,7 @@ public class InputController : MonoBehaviour
 
     void AnyTargetSelectionCancel()
     {
-        switch(playerState)
+        switch (playerState)
         {
             case PlayerStates.SelectionAnyTarget:
                 CancelSelectionAnytarget?.Invoke();
@@ -176,7 +222,7 @@ public class InputController : MonoBehaviour
 
     void FastMove()
     {
-        switch(playerState)
+        switch (playerState)
         {
             case PlayerStates.Normal:
                 FastMoving = true;
@@ -190,16 +236,36 @@ public class InputController : MonoBehaviour
 
     void FastMoveCancel() => FastMoving = false;
 
-    void VerticalFastMove(float dir)
+    void SetVerticalMove(VerticalMoveDirection vertMoveDir)
     {
         switch(playerState)
         {
             case PlayerStates.Normal:
-                VertFastMoving = true;
-                VertDirection = dir;
+                verticalInputButtons[(int)vertMoveDir] = true;
+                if (LeftUp && RightUp)
+                    fastUp = true;
+                else if (LeftDown && RightDown) 
+                    fastDown = true;
+                break;
+            case PlayerStates.Aiming:
+                verticalInputButtons[(int)vertMoveDir] = true;
                 break;
         }
     }
+
+    void CancelVerticalMove(VerticalMoveDirection vertMoveDir)
+    {
+        fastUp = fastDown = false;
+        verticalInputButtons[(int)vertMoveDir] = false;
+    }
+
+    void SetVerticalSingleFast()
+    {
+        if (SingleUp && !SingleDown) fastUp = true;
+        if (SingleDown && !SingleUp) fastDown = true;
+    }
+
+    void CancelVerticalSingleFast() => fastUp = fastDown = false;
 
     public enum PlayerStates
     {
@@ -208,5 +274,15 @@ public class InputController : MonoBehaviour
         SelectionFarTarget,
         SelectionAnyTarget,
         BuildSelection
+    }
+
+    enum VerticalMoveDirection : int
+    {
+        LeftUp,
+        RightUp,
+        SingleUp,
+        LeftDown,
+        RightDown,
+        SingleDown
     }
 }
