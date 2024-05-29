@@ -66,18 +66,48 @@ public class InputController : MonoBehaviour
 
     #region Private
 
-    bool LeftUp => verticalInputButtons[(int)VerticalMoveDirection.LeftUp];
-    bool RightUp => verticalInputButtons[(int)VerticalMoveDirection.RightUp];
-    bool SingleUp => verticalInputButtons[(int)VerticalMoveDirection.SingleUp];
-    bool LeftDown => verticalInputButtons[(int)VerticalMoveDirection.LeftDown];
-    bool RightDown => verticalInputButtons[(int)VerticalMoveDirection.RightDown];
-    bool SingleDown => verticalInputButtons[(int)VerticalMoveDirection.SingleDown];
+    bool LeftUp
+    {
+        get => verticalInputButtons[leftUpIndex];
+        set => verticalInputButtons[leftUpIndex] = value;
+    }
+    bool RightUp
+    {
+        get => verticalInputButtons[rightUpIndex];
+        set => verticalInputButtons[rightUpIndex] = value;
+    }
+    bool SingleUp
+    {
+        get => verticalInputButtons[singleUpIndex];
+        set => verticalInputButtons[singleUpIndex] = value;
+    }
+    bool LeftDown
+    {
+        get => verticalInputButtons[leftDownIndex];
+        set => verticalInputButtons[leftDownIndex] = value;
+    }
+    bool RightDown
+    {
+        get => verticalInputButtons[rightDownIndex];
+        set => verticalInputButtons[rightDownIndex] = value;
+    }
+    bool SingleDown
+    {
+        get => verticalInputButtons[singleDownIndex];
+        set => verticalInputButtons[singleDownIndex] = value;
+    }
 
     #endregion
 
     #endregion
 
     readonly int verticalInputButtonsCount = 6;
+    readonly int leftUpIndex = (int)VerticalMoveDirection.LeftUp;
+    readonly int rightUpIndex = (int)VerticalMoveDirection.RightUp;
+    readonly int singleUpIndex = (int)VerticalMoveDirection.SingleUp;
+    readonly int leftDownIndex = (int)VerticalMoveDirection.LeftDown;
+    readonly int rightDownIndex = (int)VerticalMoveDirection.RightDown;
+    readonly int singleDownIndex = (int)VerticalMoveDirection.SingleDown;
 
     bool unguidedMissileLaunch, guidedMissileLaunch;
     bool fastUp, fastDown;
@@ -250,6 +280,12 @@ public class InputController : MonoBehaviour
             case PlayerStates.Aiming:
                 verticalInputButtons[(int)vertMoveDir] = true;
                 break;
+        }
+        //no movement if Up & Down pressed in one time
+        if (((LeftUp || RightUp) && (LeftDown || RightDown)) || (SingleUp && SingleDown))
+        {
+            LeftUp = RightUp = LeftDown = RightDown = SingleUp = SingleDown = false;
+            fastUp = fastDown = false;
         }
     }
 

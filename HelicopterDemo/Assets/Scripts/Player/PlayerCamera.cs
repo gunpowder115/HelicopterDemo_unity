@@ -13,6 +13,7 @@ public class PlayerCamera : MonoBehaviour
 
     GameObject cameraContainer;
 
+    readonly float magnitudeError = 0.0001f;
     readonly float defaultVerticalAngle = 15f;
     readonly Vector3 cameraAimingPosition = new Vector3(2.08f, 2.26f, -0.89f);
     readonly Vector3 cameraAimingRotation = new Vector3(0f, 0f, 0f);
@@ -80,7 +81,7 @@ public class PlayerCamera : MonoBehaviour
         cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, containerRotationTarget, aimingSpeed * Time.deltaTime);
 
         Vector3 toAim = positionTarget - transform.localPosition;
-        if (toAim.magnitude <= Time.deltaTime)
+        if (toAim.magnitude <= magnitudeError)
         {
             transform.localPosition = positionTarget;
             transform.localRotation = rotationTarget;
