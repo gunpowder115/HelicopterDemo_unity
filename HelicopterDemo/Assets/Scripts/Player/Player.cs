@@ -102,6 +102,8 @@ public class Player : MonoBehaviour
 
         if (inputController.PlayerState == PlayerStates.Normal)
             DrawLineToTarget();
+        else
+            lineRenderer.enabled = false;
 
         if (inputController.PlayerState == PlayerStates.Aiming &&
             (aimAngles.x > 45f || (selectedTarget.transform.position - transform.position).magnitude > maxDistToAim))
