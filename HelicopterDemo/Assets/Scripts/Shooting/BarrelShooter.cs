@@ -26,9 +26,8 @@ public class BarrelShooter : MonoBehaviour
             Recharge();
     }
 
-    public void StopFire() => Recharge();
+    public void StopFire() => Stop();
 
-    // Start is called before the first frame update
     void Start()
     {
         firstShot = true;
@@ -37,13 +36,10 @@ public class BarrelShooter : MonoBehaviour
 
     void FirstShot()
     {
-        if (currShotDeltaTime >= firstShotDelay)
-        {
-            currShotDeltaTime = 0f;
-            firstShot = false;
-        }
-        else
-            currShotDeltaTime += Time.deltaTime;
+        if (projectilePrefab)
+            Instantiate(projectilePrefab, this.transform.position, CalculateDeflection());
+        currShotDeltaTime = 0f;
+        firstShot = false;
     }
 
     void Shoot()
@@ -73,6 +69,8 @@ public class BarrelShooter : MonoBehaviour
         else
             currRechargeTime += Time.deltaTime;
     }
+
+    void Stop() => firstShot = true;
 
     Quaternion CalculateDeflection()
     {
