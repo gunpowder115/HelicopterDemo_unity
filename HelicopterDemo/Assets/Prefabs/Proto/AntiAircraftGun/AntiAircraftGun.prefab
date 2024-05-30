@@ -106,6 +106,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8958542072398395869}
+  - component: {fileID: 7477387473898174680}
+  - component: {fileID: 6155989327583520012}
   m_Layer: 0
   m_Name: AntiAircraftGun
   m_TagString: Untagged
@@ -130,6 +132,31 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7477387473898174680
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8958542072398395810}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 4.7205443, y: 2.611259, z: 6.815181}
+  m_Center: {x: 0.014647722, y: 1.4061902, z: -0.02197218}
+--- !u!114 &6155989327583520012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8958542072398395810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3541337dad71cbc4a9fccf4cd2ac4086, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3974072946117010308
 PrefabInstance:
   m_ObjectHideFlags: 0

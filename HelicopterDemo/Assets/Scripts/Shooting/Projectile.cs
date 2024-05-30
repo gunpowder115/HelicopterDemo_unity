@@ -2,10 +2,11 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] private float speed = 10.0f;
-    [SerializeField] private float lifetime = 10.0f;
+    [SerializeField] float speed = 10.0f;
+    [SerializeField] float lifetime = 10.0f;
+    [SerializeField] float damage = 5.0f;
 
-    private float currLifetime;
+    float currLifetime;
 
     // Start is called before the first frame update
     void Start()
@@ -21,5 +22,16 @@ public class Projectile : MonoBehaviour
 
         if (currLifetime >= lifetime)
             Destroy(this.gameObject);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        Player player = other.GetComponent<Player>();
+        SimpleEnemy enemy = other.GetComponent<SimpleEnemy>();
+        if (player != null)
+            player.Hurt(damage);
+        else if (enemy != null)
+            enemy.Hurt(damage);
+        Destroy(gameObject);
     }
 }
