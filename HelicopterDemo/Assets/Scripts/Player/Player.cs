@@ -4,7 +4,9 @@ using UnityEngine;
 using static InputController;
 
 [RequireComponent(typeof(InputController))]
+[RequireComponent(typeof(Translation))]
 [RequireComponent(typeof(Shooter))]
+[RequireComponent(typeof(Health))]
 
 public class Player : MonoBehaviour
 {
@@ -25,7 +27,6 @@ public class Player : MonoBehaviour
     bool cameraInAim, aiming;
     float yawAngle;
     float currVerticalSpeed, targetVerticalSpeed;
-    float health;
     Vector3 currSpeed, targetSpeed;
     Vector3 targetDirection;
     Vector3 currentDirection;
@@ -39,13 +40,7 @@ public class Player : MonoBehaviour
     PlatformController platformController;
     InputController inputController;
     Shooter shooter;
-
-    public void Hurt(float damage)
-    {
-        health -= damage;
-        if (health <= 0f)
-            StartCoroutine(Die());
-    }
+    Health health;
 
     // Start is called before the first frame update
     void Start()
@@ -54,6 +49,7 @@ public class Player : MonoBehaviour
         rotation = GetComponentInChildren<Rotation>();
         playerCamera = GetComponentInChildren<PlayerCamera>();
         shooter = GetComponent<Shooter>();
+        health = GetComponent<Health>();
 
         npcController = NpcController.singleton;
         platformController = PlatformController.singleton;
@@ -75,7 +71,6 @@ public class Player : MonoBehaviour
         currentDirection = transform.forward;
         cameraInAim = aiming = false;
         lineRenderer.enabled = false;
-        health = 100f;
 
         //hide cursor in center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -313,16 +308,6 @@ public class Player : MonoBehaviour
     void CancelSelectionAnytarget() => crosshairController.Hide();
 
     void CancelAiming() => ChangeAimState();
-
-    IEnumerator Die()
-    {
-        transform.Rotate(-75, 0, 0);
-
-        yield return new WaitForSeconds(1.5f);
-
-        transform.position = new Vector3(0, 10, 0);
-        transform.rotation = Quaternion.Euler(0, 0, 0);
-    }
 
     public enum Axis_Proto : int
     { X, Y, Z }

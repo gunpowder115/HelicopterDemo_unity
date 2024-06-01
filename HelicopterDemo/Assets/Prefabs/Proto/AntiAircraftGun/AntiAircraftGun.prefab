@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 8958542072398395869}
   - component: {fileID: 7477387473898174680}
   - component: {fileID: 6155989327583520012}
+  - component: {fileID: 5996330826964143907}
   m_Layer: 0
   m_Name: AntiAircraftGun
   m_TagString: Untagged
@@ -157,6 +158,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3541337dad71cbc4a9fccf4cd2ac4086, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5996330826964143907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8958542072398395810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ef0f4fd4e27ad4081a6cc4ded100ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseHealth: 100
 --- !u!1001 &3974072946117010308
 PrefabInstance:
   m_ObjectHideFlags: 0
