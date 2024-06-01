@@ -17,9 +17,15 @@ public class Health : MonoBehaviour
         if (health <= 0f)
         {
             IsAlive = false;
-            if (player) RespawnPlayer();
-            else if (npc) DestroyNpc();
+            if (npc) DestroyNpc();
         }
+        if (player) Debug.Log(health);
+    }
+
+    public void SetAlive(bool isAlive)
+    {
+        IsAlive = isAlive;
+        health = isAlive ? baseHealth : 0f;
     }
 
     void Start()
@@ -35,13 +41,5 @@ public class Health : MonoBehaviour
     {
         npcController.Remove(gameObject);
         Destroy(gameObject);
-    }
-
-    void RespawnPlayer()
-    {
-        IsAlive = true;
-        health = baseHealth;
-        transform.position = new Vector3(0, 10, 0);
-        transform.rotation = Quaternion.Euler(0, 0, 0);
     }
 }

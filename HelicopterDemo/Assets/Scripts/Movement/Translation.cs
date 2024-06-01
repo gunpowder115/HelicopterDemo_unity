@@ -44,7 +44,7 @@ public class Translation : MonoBehaviour
         movement = new Vector3(movement.x, speed.y, movement.z);
         movement *= Time.deltaTime;
 
-        if (characterContoller != null)
+        if (characterContoller != null && characterContoller.enabled)
         {
             movement = transform.TransformDirection(movement);
             characterContoller.Move(movement);

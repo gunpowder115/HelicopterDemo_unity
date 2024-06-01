@@ -4,16 +4,24 @@ using UnityEngine;
 public class Shooter : MonoBehaviour
 {
     int unguidedMissileIndex, guidedMissileIndex;
-    BarrelShooter barrel;
+    List<BarrelShooter> barrels;
     List<MissileShooter> unguidedMissiles, guidedMissiles;
 
     public void BarrelFire(GameObject target)
     {
-        if (barrel) barrel.Fire(target);
+        if (barrels.Count > 0)
+        {
+            foreach(var barrel in barrels)
+                if (barrel) barrel.Fire(target);
+        }
     }
     public void StopBarrelFire()
     {
-        if (barrel) barrel.StopFire();
+        if (barrels.Count > 0)
+        {
+            foreach (var barrel in barrels)
+                if (barrel) barrel.StopFire();
+        }
     }
     public void UnguidedMissileLaunch(GameObject target)
     {
@@ -34,7 +42,8 @@ public class Shooter : MonoBehaviour
 
     void Start()
     {
-        barrel = GetComponentInChildren<BarrelShooter>();
+        barrels = new List<BarrelShooter>();
+        barrels.AddRange(GetComponentsInChildren<BarrelShooter>());
 
         List<MissileShooter> missiles = new List<MissileShooter>(GetComponentsInChildren<MissileShooter>());
         unguidedMissiles = new List<MissileShooter>();

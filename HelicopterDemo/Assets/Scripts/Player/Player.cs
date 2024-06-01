@@ -1,8 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static InputController;
 
+[RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(InputController))]
 [RequireComponent(typeof(Translation))]
 [RequireComponent(typeof(Shooter))]
@@ -41,15 +41,17 @@ public class Player : MonoBehaviour
     InputController inputController;
     Shooter shooter;
     Health health;
+    CharacterController controller;
 
     // Start is called before the first frame update
     void Start()
     {
-        translation = GetComponentInChildren<Translation>();
+        translation = GetComponent<Translation>();
         rotation = GetComponentInChildren<Rotation>();
         playerCamera = GetComponentInChildren<PlayerCamera>();
         shooter = GetComponent<Shooter>();
         health = GetComponent<Health>();
+        controller = GetComponent<CharacterController>();
 
         npcController = NpcController.singleton;
         platformController = PlatformController.singleton;
@@ -85,8 +87,13 @@ public class Player : MonoBehaviour
         float inputX = inputDirection.x;
         float inputZ = inputDirection.y;
 
-        //movement around X, Y, Z
-        if (translation != null)
+        if (!health.IsAlive)
+        {
+            controller.enabled = false;
+            Respawn();
+            health.SetAlive(true);
+        }
+        else
             Translate(inputX, inputZ);
 
         //rotation around X, Y, Z
@@ -134,6 +141,9 @@ public class Player : MonoBehaviour
 
         if (!inputController.PlayerCanTranslate)
             inputX = inputY = inputZ = 0f;
+
+        if (!controller.enabled)
+            controller.enabled = true;
 
         if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
         {
@@ -308,6 +318,12 @@ public class Player : MonoBehaviour
     void CancelSelectionAnytarget() => crosshairController.Hide();
 
     void CancelAiming() => ChangeAimState();
+
+    void Respawn()
+    {
+        transform.position = new Vector3(0, 10, 0);
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+    }
 
     public enum Axis_Proto : int
     { X, Y, Z }
