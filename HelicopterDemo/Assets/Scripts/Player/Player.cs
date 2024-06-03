@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using static InputController;
 
-[RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(InputController))]
 [RequireComponent(typeof(Translation))]
 [RequireComponent(typeof(Shooter))]
@@ -41,7 +40,6 @@ public class Player : MonoBehaviour
     InputController inputController;
     Shooter shooter;
     Health health;
-    CharacterController controller;
 
     // Start is called before the first frame update
     void Start()
@@ -51,7 +49,6 @@ public class Player : MonoBehaviour
         playerCamera = GetComponentInChildren<PlayerCamera>();
         shooter = GetComponent<Shooter>();
         health = GetComponent<Health>();
-        controller = GetComponent<CharacterController>();
 
         npcController = NpcController.singleton;
         platformController = PlatformController.singleton;
@@ -89,7 +86,7 @@ public class Player : MonoBehaviour
 
         if (!health.IsAlive)
         {
-            controller.enabled = false;
+            //controller.enabled = false; //todo
             Respawn();
             health.SetAlive(true);
         }
@@ -142,9 +139,6 @@ public class Player : MonoBehaviour
         if (!inputController.PlayerCanTranslate)
             inputX = inputY = inputZ = 0f;
 
-        if (!controller.enabled)
-            controller.enabled = true;
-
         if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
         {
             Vector3 inputXYZ = new Vector3(inputX, inputY, inputZ);
@@ -152,9 +146,7 @@ public class Player : MonoBehaviour
             targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed * lowSpeedCoef, speed * lowSpeedCoef);
             currSpeed = Vector3.Lerp(currSpeed, targetSpeed, acceleration * Time.deltaTime);
 
-            translation.SetRelToTargetTranslation(currSpeed, yawAngle);
-
-            Debug.Log((selectedTarget.transform.position - transform.position).magnitude);
+            translation.SetRelToTargetTranslation(targetSpeed, yawAngle);
         }
         else
         {
@@ -162,8 +154,6 @@ public class Player : MonoBehaviour
 
             if (inputController.FastMoving)
             {
-                inputX = (inputX == 0f ? currentDirection.x : inputX);
-                inputZ = (inputZ == 0f ? currentDirection.z : inputZ);
                 inputXYZ = new Vector3(inputX, inputY, inputZ);
                 targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed * highSpeedCoef, speed * highSpeedCoef);
             }
@@ -173,15 +163,13 @@ public class Player : MonoBehaviour
                 targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed, speed);
 
             currSpeed = Vector3.Lerp(currSpeed, targetSpeed, acceleration * Time.deltaTime);
-            translation.SetGlobalTranslation(currSpeed);
+            translation.SetGlobalTranslation(targetSpeed);
         }
 
         targetVerticalSpeed = inputY * verticalSpeed;
         if (inputVerticalFast != 0f) targetVerticalSpeed *= vertFastCoef;
         currVerticalSpeed = Mathf.Lerp(currVerticalSpeed, targetVerticalSpeed, acceleration * Time.deltaTime);
         translation.SetVerticalTranslation(currVerticalSpeed);
-
-        translation.Translate();
     }
 
     void Rotate(float inputX)

@@ -19,7 +19,6 @@ public class Health : MonoBehaviour
             IsAlive = false;
             if (npc) DestroyNpc();
         }
-        if (player) Debug.Log(health);
     }
 
     public void SetAlive(bool isAlive)
