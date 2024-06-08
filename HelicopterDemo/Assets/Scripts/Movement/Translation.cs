@@ -40,6 +40,8 @@ public class Translation : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
+        if (rigidbody)
+            rigidbody.freezeRotation = true;
     }
 
     void FixedUpdate()
