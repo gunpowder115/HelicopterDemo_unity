@@ -1,10 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static InputController;
 
 [RequireComponent(typeof(InputController))]
+[RequireComponent(typeof(Translation))]
 [RequireComponent(typeof(Shooter))]
+[RequireComponent(typeof(Health))]
 
 public class Player : MonoBehaviour
 {
@@ -25,7 +26,6 @@ public class Player : MonoBehaviour
     bool cameraInAim, aiming;
     float yawAngle;
     float currVerticalSpeed, targetVerticalSpeed;
-    float health;
     Vector3 currSpeed, targetSpeed;
     Vector3 targetDirection;
     Vector3 currentDirection;
@@ -39,21 +39,16 @@ public class Player : MonoBehaviour
     PlatformController platformController;
     InputController inputController;
     Shooter shooter;
-
-    public void Hurt(float damage)
-    {
-        health -= damage;
-        if (health <= 0f)
-            StartCoroutine(Die());
-    }
+    Health health;
 
     // Start is called before the first frame update
     void Start()
     {
-        translation = GetComponentInChildren<Translation>();
+        translation = GetComponent<Translation>();
         rotation = GetComponentInChildren<Rotation>();
         playerCamera = GetComponentInChildren<PlayerCamera>();
         shooter = GetComponent<Shooter>();
+        health = GetComponent<Health>();
 
         npcController = NpcController.singleton;
         platformController = PlatformController.singleton;
@@ -75,7 +70,6 @@ public class Player : MonoBehaviour
         currentDirection = transform.forward;
         cameraInAim = aiming = false;
         lineRenderer.enabled = false;
-        health = 100f;
 
         //hide cursor in center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -90,8 +84,13 @@ public class Player : MonoBehaviour
         float inputX = inputDirection.x;
         float inputZ = inputDirection.y;
 
-        //movement around X, Y, Z
-        if (translation != null)
+        if (!health.IsAlive)
+        {
+            //controller.enabled = false; //todo
+            Respawn();
+            health.SetAlive(true);
+        }
+        else
             Translate(inputX, inputZ);
 
         //rotation around X, Y, Z
@@ -147,9 +146,7 @@ public class Player : MonoBehaviour
             targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed * lowSpeedCoef, speed * lowSpeedCoef);
             currSpeed = Vector3.Lerp(currSpeed, targetSpeed, acceleration * Time.deltaTime);
 
-            translation.SetRelToTargetTranslation(currSpeed, yawAngle);
-
-            Debug.Log((selectedTarget.transform.position - transform.position).magnitude);
+            translation.SetRelToTargetTranslation(targetSpeed, yawAngle);
         }
         else
         {
@@ -157,8 +154,6 @@ public class Player : MonoBehaviour
 
             if (inputController.FastMoving)
             {
-                inputX = (inputX == 0f ? currentDirection.x : inputX);
-                inputZ = (inputZ == 0f ? currentDirection.z : inputZ);
                 inputXYZ = new Vector3(inputX, inputY, inputZ);
                 targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed * highSpeedCoef, speed * highSpeedCoef);
             }
@@ -168,15 +163,13 @@ public class Player : MonoBehaviour
                 targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed, speed);
 
             currSpeed = Vector3.Lerp(currSpeed, targetSpeed, acceleration * Time.deltaTime);
-            translation.SetGlobalTranslation(currSpeed);
+            translation.SetGlobalTranslation(targetSpeed);
         }
 
         targetVerticalSpeed = inputY * verticalSpeed;
         if (inputVerticalFast != 0f) targetVerticalSpeed *= vertFastCoef;
         currVerticalSpeed = Mathf.Lerp(currVerticalSpeed, targetVerticalSpeed, acceleration * Time.deltaTime);
         translation.SetVerticalTranslation(currVerticalSpeed);
-
-        translation.Translate();
     }
 
     void Rotate(float inputX)
@@ -314,12 +307,8 @@ public class Player : MonoBehaviour
 
     void CancelAiming() => ChangeAimState();
 
-    IEnumerator Die()
+    void Respawn()
     {
-        transform.Rotate(-75, 0, 0);
-
-        yield return new WaitForSeconds(1.5f);
-
         transform.position = new Vector3(0, 10, 0);
         transform.rotation = Quaternion.Euler(0, 0, 0);
     }

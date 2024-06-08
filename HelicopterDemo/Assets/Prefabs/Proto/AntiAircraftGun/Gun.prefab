@@ -73,7 +73,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6065022845105995428, guid: c90536e7b88461b4b8c245ae756cd2fd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.735
+      value: 4.31
       objectReference: {fileID: 0}
     - target: {fileID: 6065022845105995428, guid: c90536e7b88461b4b8c245ae756cd2fd, type: 3}
       propertyPath: m_LocalRotation.w
@@ -108,8 +108,8 @@ PrefabInstance:
       value: MuzzleRight
       objectReference: {fileID: 0}
     - target: {fileID: 8714384921057184524, guid: c90536e7b88461b4b8c245ae756cd2fd, type: 3}
-      propertyPath: firstShotDelay
-      value: 0.15
+      propertyPath: maxClipVolume
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c90536e7b88461b4b8c245ae756cd2fd, type: 3}
@@ -139,7 +139,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6065022845105995428, guid: c90536e7b88461b4b8c245ae756cd2fd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2.735
+      value: 4.31
       objectReference: {fileID: 0}
     - target: {fileID: 6065022845105995428, guid: c90536e7b88461b4b8c245ae756cd2fd, type: 3}
       propertyPath: m_LocalRotation.w
@@ -174,7 +174,7 @@ PrefabInstance:
       value: MuzzleLeft
       objectReference: {fileID: 0}
     - target: {fileID: 8714384921057184524, guid: c90536e7b88461b4b8c245ae756cd2fd, type: 3}
-      propertyPath: firstShotDelay
+      propertyPath: maxClipVolume
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

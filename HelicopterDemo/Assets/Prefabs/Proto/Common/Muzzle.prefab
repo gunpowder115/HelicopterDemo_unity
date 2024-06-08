@@ -45,9 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 414063744379305735, guid: 545b31a1ed007c344b97dec369c8ba8d, type: 3}
-  shotDeltaTime: 0.3
+  shotDeltaTime: 0.1
   firstShotDelay: 0
-  distToSpread: 10
-  spreadRadius: 1
+  maxDeflectionAngle: 5
   rechargeTime: 3
   maxClipVolume: 20
