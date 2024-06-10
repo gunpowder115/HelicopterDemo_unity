@@ -62,7 +62,7 @@ MonoBehaviour:
   verticalSpeed: 30
   lateralMovingCoef: 0.18
   acceleration: 2.5
-  lineRenderer: {fileID: 0}
+  lineRenderer: {fileID: 5363806959191190634, guid: 5f06e4d36b6fe34468647012698e1c2a, type: 3}
 --- !u!114 &3309415596281561067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,6 +243,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 6805662290766829008, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
+    - {fileID: 4572506328709789374, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
 --- !u!4 &1901197804846170525 stripped
 Transform:
@@ -266,11 +267,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6878582592513183703, guid: e07726d016e6690409d5aa448e69170b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11.58
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 6878582592513183703, guid: e07726d016e6690409d5aa448e69170b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -22.22
+      value: -22
       objectReference: {fileID: 0}
     - target: {fileID: 6878582592513183703, guid: e07726d016e6690409d5aa448e69170b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -303,6 +304,10 @@ PrefabInstance:
     - target: {fileID: 6878582592513183706, guid: e07726d016e6690409d5aa448e69170b, type: 3}
       propertyPath: m_Name
       value: Main Camera
+      objectReference: {fileID: 0}
+    - target: {fileID: 6878582592513183706, guid: e07726d016e6690409d5aa448e69170b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e07726d016e6690409d5aa448e69170b, type: 3}

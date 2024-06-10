@@ -191,7 +191,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void RotateCamera(Vector3 cameraInput, float inputX, float inputZ)
+    void RotateCamera(Vector2 cameraInput, float inputX, float inputZ)
     {
         Vector2 toTargetSelection = new Vector2();
         if (crosshairController && inputController.AimMovement)
@@ -200,7 +200,6 @@ public class Player : MonoBehaviour
             toTargetSelection = crosshairController.ToTargetSelection;
         }
 
-        playerCamera.UseNewInputSystem = useNewInputSystem;
         bool rotateWithTargetSelection = inputController.PlayerState == PlayerStates.SelectionFarTarget ||
             inputController.PlayerState == PlayerStates.SelectionAnyTarget;
 

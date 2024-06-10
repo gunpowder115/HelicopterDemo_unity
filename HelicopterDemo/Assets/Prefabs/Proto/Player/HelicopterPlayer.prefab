@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1717436508, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.3169999
+      objectReference: {fileID: 0}
     - target: {fileID: 818397311789654871, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -19,6 +23,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2804678730384318202, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.8130001
+      objectReference: {fileID: 0}
     - target: {fileID: 4390593786501460224, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
       propertyPath: m_Enabled
       value: 0
@@ -27,6 +35,14 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: a882fc75ccd87084795ab46db1faf895, type: 2}
+    - target: {fileID: 5817739378989029454, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.023000121
+      objectReference: {fileID: 0}
+    - target: {fileID: 5817739379262408647, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.5269996
+      objectReference: {fileID: 0}
     - target: {fileID: 5817739379426018126, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
       propertyPath: m_Name
       value: HelicopterPlayer
@@ -78,6 +94,22 @@ PrefabInstance:
     - target: {fileID: 5817739379426018127, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6189041329838252050, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.08100009
+      objectReference: {fileID: 0}
+    - target: {fileID: 6627093786929473880, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.08100009
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516879532461583435, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.17000008
+      objectReference: {fileID: 0}
+    - target: {fileID: 7516879532963122376, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.17
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3868398541665046078, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}

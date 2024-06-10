@@ -17,8 +17,11 @@ public class PlatformController : MonoBehaviour
 
         foreach (var platform in platforms)
         {
-            float distTo = Vector3.Magnitude(platform.transform.position - origin.transform.position);
-            result.Add(distTo, platform);
+            if (!result.ContainsValue(platform))
+            {
+                float distTo = Vector3.Magnitude(platform.transform.position - origin.transform.position);
+                result.Add(distTo, platform);
+            }
         }
         return result;
     }

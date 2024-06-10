@@ -16,9 +16,9 @@ public class PlayerCamera : MonoBehaviour
     readonly float magnitudeError = 0.0001f;
     readonly float defaultVerticalAngle = 15f;
     readonly Vector3 cameraAimingPosition = new Vector3(2.08f, 2.26f, -0.89f);
-    readonly Vector3 cameraAimingRotation = new Vector3(0f, 0f, 0f);
-    readonly Vector3 cameraDefaultPosition = new Vector3(0f, 11.58f, -22.22f);
-    readonly Vector3 cameraDefaultRotation = new Vector3(15f, 0f, 0f);
+    readonly Vector3 cameraAimingRotation = new Vector3(0, 0, 0);
+    readonly Vector3 cameraDefaultPosition = new Vector3(0, 11, -22);
+    readonly Vector3 cameraDefaultRotation = new Vector3(15, 0, 0);
 
     void Start()
     {

@@ -1,5 +1,7 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
+
 public class Translation : MonoBehaviour
 {
     [SerializeField] float maxHeight = 50.0f;
@@ -10,7 +12,7 @@ public class Translation : MonoBehaviour
     public bool RotToDir { get; private set; }
 
     Rigidbody rigidbody;
-    Vector3 speed;
+    Vector3 speed, movement;
     float speedAbs, verticalSpeedAbs;
 
     public void SetGlobalTranslation(Vector3 speed)
@@ -40,19 +42,18 @@ public class Translation : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
-        if (rigidbody)
-            rigidbody.freezeRotation = true;
+        rigidbody.freezeRotation = true;
+    }
+
+    private void Update()
+    {
+        movement = new Vector3(speed.x, 0f, speed.z);
+        movement = Vector3.ClampMagnitude(movement, speedAbs);
+        movement = new Vector3(movement.x, speed.y, movement.z);
     }
 
     void FixedUpdate()
     {
-        Vector3 movement = new Vector3(speed.x, 0f, speed.z);
-        movement = Vector3.ClampMagnitude(movement, speedAbs);
-        movement = new Vector3(movement.x, speed.y, movement.z);
-        if (rigidbody)
-        {
-            rigidbody.AddForce(movement, ForceMode.Force);
-            Debug.Log(rigidbody.velocity.magnitude);
-        }
+        rigidbody.AddForce(movement, ForceMode.Force);
     }
 }
