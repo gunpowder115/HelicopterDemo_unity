@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 3309415595700181817}
   - component: {fileID: 5560057670961145403}
   - component: {fileID: 772855177222925074}
+  - component: {fileID: 5528006066804392675}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -130,6 +131,19 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!65 &5528006066804392675
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3309415596281561061}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.0870035, y: 2.255228, z: 7.5608397}
+  m_Center: {x: 0.012940526, y: -0.01941061, z: 0.01941061}
 --- !u!1 &8019078245452962039
 GameObject:
   m_ObjectHideFlags: 0
@@ -236,6 +250,10 @@ PrefabInstance:
     - target: {fileID: 4003434706837008607, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
       propertyPath: m_Name
       value: HelicopterPlayer
+      objectReference: {fileID: 0}
+    - target: {fileID: 4003434708279061466, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6472959871105664727, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
       propertyPath: shotDeltaTime
