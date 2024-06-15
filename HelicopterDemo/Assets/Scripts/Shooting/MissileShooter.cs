@@ -16,7 +16,7 @@ public class MissileShooter : MonoBehaviour
     public void Launch(GameObject target)
     {
         if (missilePrefab)
-            Instantiate(missilePrefab, this.transform.position, CalculateRotToTarget(target));
+            Instantiate(missilePrefab, transform.position + transform.forward * 1.5f, CalculateRotToTarget(target));
         else
             Debug.Log(this.ToString() + ": missilePrefab is NULL!");
         StartCoroutine(MissileActivity());
