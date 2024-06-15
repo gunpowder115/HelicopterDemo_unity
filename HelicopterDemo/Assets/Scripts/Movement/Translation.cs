@@ -1,4 +1,5 @@
 using UnityEngine;
+using static InputController;
 
 [RequireComponent(typeof(Rigidbody))]
 
@@ -11,9 +12,9 @@ public class Translation : MonoBehaviour
     public bool IsHeightBorder => this.gameObject.transform.position.y >= maxHeight || this.gameObject.transform.position.y <= minHeight;
     public bool RotToDir { get; private set; }
 
-    Rigidbody rigidbody;
-    Vector3 speed, movement;
-    float speedAbs, verticalSpeedAbs;
+    private new Rigidbody rigidbody;
+    private Vector3 speed, movement;
+    private float speedAbs, verticalSpeedAbs;
 
     public void SetGlobalTranslation(Vector3 speed)
     {
@@ -42,7 +43,6 @@ public class Translation : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
-        rigidbody.freezeRotation = true;
     }
 
     private void Update()
@@ -54,6 +54,6 @@ public class Translation : MonoBehaviour
 
     void FixedUpdate()
     {
-        rigidbody.AddForce(movement, ForceMode.Force);
+        rigidbody.velocity = movement;
     }
 }

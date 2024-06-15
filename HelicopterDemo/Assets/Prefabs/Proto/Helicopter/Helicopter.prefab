@@ -204,7 +204,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5817739379426018127}
   - component: {fileID: 3868398541665046078}
-  - component: {fileID: 8060781396489575223}
   - component: {fileID: 63990704278970995}
   - component: {fileID: 8674854711948105310}
   - component: {fileID: 4610042945844860153}
@@ -255,6 +254,8 @@ MonoBehaviour:
   patrolSpeed: 0.7
   patrolVerticalSpeed: 0.3
   normalVerticalSpeed: 0.7
+  speed: 30
+  acceleration: 2.5
   minHeight: 15
   maxHeight: 50
   minDistance: 40
@@ -266,22 +267,6 @@ MonoBehaviour:
   minAttackDistance: 30
   maxAttackDistance: 40
   opportToChangeTarget: 1
---- !u!114 &8060781396489575223
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5817739379426018126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 415e5073c8781f34baf4a1dade35a55f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHeight: 70
-  minHeight: 10
-  extraFrames: 1
-  extraPrefab: {fileID: 0}
 --- !u!114 &63990704278970995
 MonoBehaviour:
   m_ObjectHideFlags: 0

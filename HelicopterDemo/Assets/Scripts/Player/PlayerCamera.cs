@@ -9,9 +9,11 @@ public class PlayerCamera : MonoBehaviour
     [SerializeField] float rotSpeedManual = 1f;
     [SerializeField] float aimingSpeed = 3f;
 
-    public bool UseNewInputSystem { get; set; }
-
-    GameObject cameraContainer;
+    private bool aiming;
+    private Vector2 input, direction;
+    private Vector3 aimAngles;
+    private GameObject cameraContainer;
+    private InputController inputController;
 
     readonly float magnitudeError = 0.0001f;
     readonly float defaultVerticalAngle = 15f;
@@ -20,13 +22,41 @@ public class PlayerCamera : MonoBehaviour
     readonly Vector3 cameraDefaultPosition = new Vector3(0, 11, -22);
     readonly Vector3 cameraDefaultRotation = new Vector3(15, 0, 0);
 
-    void Start()
+    public void SetCameraParams(bool aiming, Vector2 direction, Vector3 aimAngles)
     {
-        cameraContainer = GameObject.FindGameObjectWithTag("CameraContainer");
+        this.aiming = aiming;
+        this.direction = direction;
+        this.aimAngles = aimAngles;
     }
 
-    public void RotateHorizontally(float playerDirX, float inputHor)
+    public void CameraMove(ref bool aimingProcess)
     {
+        input = inputController.GetCameraInput();
+
+        if (aimingProcess)
+            aimingProcess = ChangeCameraState();
+        else
+        {
+            if (!aiming)
+            {
+                RotateHorizontally();
+                RotateVertically();
+            }
+            else
+                RotateWithPlayer();
+        }
+    }
+
+    private void Start()
+    {
+        cameraContainer = GameObject.FindGameObjectWithTag("CameraContainer");
+        inputController = InputController.singleton;
+    }
+
+    private void RotateHorizontally()
+    {
+        float playerDirX = direction.x;
+        float inputHor = input.x;
         playerDirX += inputHor;
 
         float targetCameraHorRot = playerDirX * maxHorizontalAngle;
@@ -39,8 +69,10 @@ public class PlayerCamera : MonoBehaviour
         transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, currRotSpeed * Time.deltaTime);
     }
 
-    public void RotateVertically(float playerDirZ, float inputVert)
+    private void RotateVertically()
     {
+        float playerDirZ = direction.y;
+        float inputVert = input.y;
         playerDirZ -= inputVert;
 
         float targetCameraVertRot;
@@ -59,15 +91,15 @@ public class PlayerCamera : MonoBehaviour
         transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, currRotSpeed * Time.deltaTime);
     }
 
-    public bool ChangeCameraState(bool needToAim, Vector3 targetRotation)
+    private bool ChangeCameraState()
     {
         Quaternion rotationTarget, containerRotationTarget;
         Vector3 positionTarget;
-        if (needToAim)
+        if (aiming)
         {
             rotationTarget = Quaternion.Euler(cameraAimingRotation);
             positionTarget = cameraAimingPosition;
-            containerRotationTarget = Quaternion.Euler(targetRotation);
+            containerRotationTarget = Quaternion.Euler(aimAngles);
         }
         else
         {
@@ -92,8 +124,8 @@ public class PlayerCamera : MonoBehaviour
             return true;
     }
 
-    public void RotateWithPlayer(Vector3 targetRotation)
+    private void RotateWithPlayer()
     {
-        cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, Quaternion.Euler(targetRotation), aimingSpeed * Time.deltaTime);
+        cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, Quaternion.Euler(aimAngles), aimingSpeed * Time.deltaTime);
     }
 }

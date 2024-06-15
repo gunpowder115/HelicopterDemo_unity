@@ -2202,6 +2202,18 @@ PrefabInstance:
       propertyPath: lineRenderer
       value: 
       objectReference: {fileID: 1583913506}
+    - target: {fileID: 3309415596281561070, guid: 8ababed77351a4f4c955b2acb57a6e4f, type: 3}
+      propertyPath: cameraMovement
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5277823874151451041, guid: 8ababed77351a4f4c955b2acb57a6e4f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8019078245452962039, guid: 8ababed77351a4f4c955b2acb57a6e4f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8ababed77351a4f4c955b2acb57a6e4f, type: 3}
 --- !u!1001 &3923561477172712448

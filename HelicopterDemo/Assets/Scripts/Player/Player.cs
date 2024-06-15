@@ -23,7 +23,7 @@ public class Player : MonoBehaviour
     [SerializeField] LineRenderer lineRenderer;
 
     bool rotateToDirection;
-    bool cameraInAim, aiming;
+    bool aiming, aimingProcess;
     float yawAngle;
     float currVerticalSpeed, targetVerticalSpeed;
     Vector3 currSpeed, targetSpeed;
@@ -68,7 +68,6 @@ public class Player : MonoBehaviour
         rotateToDirection = false;
         targetDirection = transform.forward;
         currentDirection = transform.forward;
-        cameraInAim = aiming = false;
         lineRenderer.enabled = false;
 
         //hide cursor in center of screen
@@ -146,7 +145,7 @@ public class Player : MonoBehaviour
             targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed * lowSpeedCoef, speed * lowSpeedCoef);
             currSpeed = Vector3.Lerp(currSpeed, targetSpeed, acceleration * Time.deltaTime);
 
-            translation.SetRelToTargetTranslation(targetSpeed, yawAngle);
+            translation.SetRelToTargetTranslation(currSpeed, yawAngle);
         }
         else
         {
@@ -163,7 +162,7 @@ public class Player : MonoBehaviour
                 targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed, speed);
 
             currSpeed = Vector3.Lerp(currSpeed, targetSpeed, acceleration * Time.deltaTime);
-            translation.SetGlobalTranslation(targetSpeed);
+            translation.SetGlobalTranslation(currSpeed);
         }
 
         targetVerticalSpeed = inputY * verticalSpeed;
@@ -203,26 +202,19 @@ public class Player : MonoBehaviour
         bool rotateWithTargetSelection = inputController.PlayerState == PlayerStates.SelectionFarTarget ||
             inputController.PlayerState == PlayerStates.SelectionAnyTarget;
 
-        if (aiming)
-            aiming = playerCamera.ChangeCameraState(cameraInAim, aimAngles);
-        else
-        {
-            if (!cameraInAim)
-            {
-                playerCamera.RotateHorizontally(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x, cameraInput.x);
-                playerCamera.RotateVertically(rotateWithTargetSelection ? toTargetSelection.y : 0f, cameraInput.y);
-            }
-            else
-                playerCamera.RotateWithPlayer(aimAngles);
-        }
+        Vector2 cameraDir = new Vector2(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x, 
+            rotateWithTargetSelection ? toTargetSelection.y : 0f);
+
+        playerCamera.SetCameraParams(aiming, cameraDir, aimAngles);
+        playerCamera.CameraMove(ref aimingProcess);
     }
 
     void ChangeAimState()
     {
-        cameraInAim = !cameraInAim;
-        aiming = true;
-        selectedTarget = cameraInAim ? possibleTarget : null;
-        if (cameraInAim) lineRenderer.enabled = false;
+        aiming = !aiming;
+        aimingProcess = true;
+        selectedTarget = aiming ? possibleTarget : null;
+        if (aiming) lineRenderer.enabled = false;
     }
 
     void DrawLineToTarget()
