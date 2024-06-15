@@ -2,55 +2,57 @@ using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
-    [SerializeField] float maxHorizontalAngle = 30f;
-    [SerializeField] float maxVerticalAngle_cameraUp = 40f;
-    [SerializeField] float maxVerticalAngle_cameraDown = 5f;
-    [SerializeField] float rotSpeed = 1f;
-    [SerializeField] float rotSpeedManual = 1f;
-    [SerializeField] float aimingSpeed = 3f;
+    [SerializeField] private float maxHorizontalAngle = 30f;
+    [SerializeField] private float maxVerticalAngle_cameraUp = 40f;
+    [SerializeField] private float maxVerticalAngle_cameraDown = 5f;
+    [SerializeField] private float rotSpeed = 1f;
+    [SerializeField] private float rotSpeedManual = 1f;
+    [SerializeField] private float aimingSpeed = 3f;
+    [SerializeField] private Player player;
 
-    private bool aiming;
     private Vector2 input, direction;
-    private Vector3 aimAngles;
     private GameObject cameraContainer;
     private InputController inputController;
+    private Crosshair crosshair;
 
-    readonly float magnitudeError = 0.0001f;
     readonly float defaultVerticalAngle = 15f;
     readonly Vector3 cameraAimingPosition = new Vector3(2.08f, 2.26f, -0.89f);
     readonly Vector3 cameraAimingRotation = new Vector3(0, 0, 0);
     readonly Vector3 cameraDefaultPosition = new Vector3(0, 11, -22);
     readonly Vector3 cameraDefaultRotation = new Vector3(15, 0, 0);
 
-    public void SetCameraParams(bool aiming, Vector2 direction, Vector3 aimAngles)
-    {
-        this.aiming = aiming;
-        this.direction = direction;
-        this.aimAngles = aimAngles;
-    }
-
-    public void CameraMove(ref bool aimingProcess)
-    {
-        input = inputController.GetCameraInput();
-
-        if (aimingProcess)
-            aimingProcess = ChangeCameraState();
-        else
-        {
-            if (!aiming)
-            {
-                RotateHorizontally();
-                RotateVertically();
-            }
-            else
-                RotateWithPlayer();
-        }
-    }
+    private bool Aiming => player.Aiming;
+    private Vector3 AimAngles => player.AimAngles;
+    private Vector3 PlayerDir => player.CurrentDirection;
 
     private void Start()
     {
         cameraContainer = GameObject.FindGameObjectWithTag("CameraContainer");
         inputController = InputController.singleton;
+        crosshair = Crosshair.singleton;
+    }
+
+    private void Update()
+    {
+        input = inputController.GetCameraInput();
+
+        Vector2 toTargetSelection = new Vector2();
+        if (inputController.AimMovement)
+        {
+            crosshair.Translate(inputController.GetInput());
+            toTargetSelection = crosshair.ToTargetSelection;
+        }
+        direction = new Vector2(inputController.AimMovement ? toTargetSelection.x : PlayerDir.x,
+            inputController.AimMovement ? toTargetSelection.y : 0f);
+
+        if (!Aiming)
+        {
+            RotateHorizontally();
+            RotateVertically();
+            SetDefault();
+        }
+        else
+            RotateWithPlayer();
     }
 
     private void RotateHorizontally()
@@ -61,12 +63,12 @@ public class PlayerCamera : MonoBehaviour
 
         float targetCameraHorRot = playerDirX * maxHorizontalAngle;
 
-        Vector3 eulerAnglesCurrent = transform.rotation.eulerAngles;
+        Vector3 eulerAnglesCurrent = transform.localRotation.eulerAngles;
         float currRotSpeed = inputHor != 0f ? rotSpeedManual : rotSpeed;
         Vector3 eulerAnglesTarget = new Vector3(eulerAnglesCurrent.x, targetCameraHorRot, eulerAnglesCurrent.z);
 
         Quaternion rotationTarget = Quaternion.Euler(eulerAnglesTarget);
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, currRotSpeed * Time.deltaTime);
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, rotationTarget, currRotSpeed * Time.deltaTime);
     }
 
     private void RotateVertically()
@@ -83,49 +85,24 @@ public class PlayerCamera : MonoBehaviour
         else
             targetCameraVertRot = defaultVerticalAngle;
 
-        Vector3 eulerAnglesCurrent = transform.rotation.eulerAngles;
+        Vector3 eulerAnglesCurrent = transform.localRotation.eulerAngles;
         float currRotSpeed = rotSpeedManual;
         Vector3 eulerAnglesTarget = new Vector3(targetCameraVertRot, eulerAnglesCurrent.y, eulerAnglesCurrent.z);
 
         Quaternion rotationTarget = Quaternion.Euler(eulerAnglesTarget);
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotationTarget, currRotSpeed * Time.deltaTime);
-    }
-
-    private bool ChangeCameraState()
-    {
-        Quaternion rotationTarget, containerRotationTarget;
-        Vector3 positionTarget;
-        if (aiming)
-        {
-            rotationTarget = Quaternion.Euler(cameraAimingRotation);
-            positionTarget = cameraAimingPosition;
-            containerRotationTarget = Quaternion.Euler(aimAngles);
-        }
-        else
-        {
-            rotationTarget = Quaternion.Euler(cameraDefaultRotation);
-            positionTarget = cameraDefaultPosition;
-            containerRotationTarget = Quaternion.Euler(0f, 0f, 0f);
-        }
-
-        transform.localRotation = Quaternion.Lerp(transform.localRotation, rotationTarget, aimingSpeed * Time.deltaTime);
-        transform.localPosition = Vector3.Lerp(transform.localPosition, positionTarget, aimingSpeed * Time.deltaTime);
-        cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, containerRotationTarget, aimingSpeed * Time.deltaTime);
-
-        Vector3 toAim = positionTarget - transform.localPosition;
-        if (toAim.magnitude <= magnitudeError)
-        {
-            transform.localPosition = positionTarget;
-            transform.localRotation = rotationTarget;
-            cameraContainer.transform.rotation = containerRotationTarget;
-            return false;
-        }
-        else
-            return true;
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, rotationTarget, currRotSpeed * Time.deltaTime);
     }
 
     private void RotateWithPlayer()
     {
-        cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, Quaternion.Euler(aimAngles), aimingSpeed * Time.deltaTime);
+        cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, Quaternion.Euler(AimAngles), aimingSpeed * Time.deltaTime);
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(cameraAimingRotation), aimingSpeed * Time.deltaTime);
+        transform.localPosition = Vector3.Lerp(transform.localPosition, cameraAimingPosition, aimingSpeed * Time.deltaTime);
+    }
+
+    private void SetDefault()
+    {
+        transform.localPosition = Vector3.Lerp(transform.localPosition, cameraDefaultPosition, aimingSpeed * Time.deltaTime);
+        cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, Quaternion.Euler(0f, 0f, 0f), aimingSpeed * Time.deltaTime);
     }
 }

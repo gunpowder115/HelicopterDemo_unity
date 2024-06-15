@@ -23,17 +23,13 @@ public class Player : MonoBehaviour
     [SerializeField] LineRenderer lineRenderer;
 
     bool rotateToDirection;
-    bool aiming, aimingProcess;
     float yawAngle;
     float currVerticalSpeed, targetVerticalSpeed;
     Vector3 currSpeed, targetSpeed;
     Vector3 targetDirection;
-    Vector3 currentDirection;
-    Vector3 aimAngles;
     GameObject possibleTarget, selectedTarget, possiblePlatform, selectedPlatform;
     Translation translation;
     Rotation rotation;
-    PlayerCamera playerCamera;
     Crosshair crosshairController;
     NpcController npcController;
     PlatformController platformController;
@@ -41,12 +37,15 @@ public class Player : MonoBehaviour
     Shooter shooter;
     Health health;
 
+    public bool Aiming { get; private set; }
+    public Vector3 AimAngles { get; private set; }
+    public Vector3 CurrentDirection { get; private set; }
+
     // Start is called before the first frame update
     void Start()
     {
         translation = GetComponent<Translation>();
         rotation = GetComponentInChildren<Rotation>();
-        playerCamera = GetComponentInChildren<PlayerCamera>();
         shooter = GetComponent<Shooter>();
         health = GetComponent<Health>();
 
@@ -67,7 +66,7 @@ public class Player : MonoBehaviour
 
         rotateToDirection = false;
         targetDirection = transform.forward;
-        currentDirection = transform.forward;
+        CurrentDirection = transform.forward;
         lineRenderer.enabled = false;
 
         //hide cursor in center of screen
@@ -79,7 +78,6 @@ public class Player : MonoBehaviour
     void Update()
     {
         Vector2 inputDirection = inputController.GetInput();
-        Vector2 cameraInput = inputController.GetCameraInput();
         float inputX = inputDirection.x;
         float inputZ = inputDirection.y;
 
@@ -96,10 +94,6 @@ public class Player : MonoBehaviour
         if (rotation != null)
             Rotate(inputX);
 
-        //camera rotation
-        if (playerCamera)
-            RotateCamera(cameraInput, inputX, inputZ);
-
         if (shooter)
         {
             if (inputController.MinigunFire)
@@ -114,7 +108,7 @@ public class Player : MonoBehaviour
             lineRenderer.enabled = false;
 
         if (inputController.PlayerState == PlayerStates.Aiming &&
-            (!selectedTarget || aimAngles.x > 45f || (selectedTarget.transform.position - transform.position).magnitude > maxDistToAim))
+            (!selectedTarget || AimAngles.x > 45f || (selectedTarget.transform.position - transform.position).magnitude > maxDistToAim))
         {
             inputController.ForceChangePlayerState(PlayerStates.Normal);
             ChangeAimState();
@@ -173,8 +167,8 @@ public class Player : MonoBehaviour
 
     void Rotate(float inputX)
     {
-        currentDirection = rotation.CurrentDirection;
-        aimAngles = rotation.AimAngles;
+        CurrentDirection = rotation.CurrentDirection;
+        AimAngles = rotation.AimAngles;
         yawAngle = rotation.YawAngle;
 
         if (inputController.PlayerState == PlayerStates.Aiming && selectedTarget)
@@ -184,37 +178,17 @@ public class Player : MonoBehaviour
         }
         else
         {
-            var direction = targetDirection != Vector3.zero ? targetDirection : currentDirection;
+            var direction = targetDirection != Vector3.zero ? targetDirection : CurrentDirection;
             var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / speed : 0f;
             rotation.RotateToDirection(direction, speedCoef, rotateToDirection);
         }
     }
 
-    void RotateCamera(Vector2 cameraInput, float inputX, float inputZ)
-    {
-        Vector2 toTargetSelection = new Vector2();
-        if (crosshairController && inputController.AimMovement)
-        {
-            crosshairController.Translate(new Vector2(inputX, inputZ));
-            toTargetSelection = crosshairController.ToTargetSelection;
-        }
-
-        bool rotateWithTargetSelection = inputController.PlayerState == PlayerStates.SelectionFarTarget ||
-            inputController.PlayerState == PlayerStates.SelectionAnyTarget;
-
-        Vector2 cameraDir = new Vector2(rotateWithTargetSelection ? toTargetSelection.x : currentDirection.x, 
-            rotateWithTargetSelection ? toTargetSelection.y : 0f);
-
-        playerCamera.SetCameraParams(aiming, cameraDir, aimAngles);
-        playerCamera.CameraMove(ref aimingProcess);
-    }
-
     void ChangeAimState()
     {
-        aiming = !aiming;
-        aimingProcess = true;
-        selectedTarget = aiming ? possibleTarget : null;
-        if (aiming) lineRenderer.enabled = false;
+        Aiming = !Aiming;
+        selectedTarget = Aiming ? possibleTarget : null;
+        if (Aiming) lineRenderer.enabled = false;
     }
 
     void DrawLineToTarget()
