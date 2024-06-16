@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
+    [SerializeField] private bool twoShoulders = false;
     [SerializeField] private float maxHorizontalAngle = 30f;
     [SerializeField] private float maxVerticalAngle_cameraUp = 40f;
     [SerializeField] private float maxVerticalAngle_cameraDown = 5f;
@@ -11,12 +12,14 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private Player player;
     [SerializeField] private GameObject cameraContainer;
 
-    private Vector2 input, direction;
+    private Vector2 input, direction, playerInput;
+    private Vector3 cameraAimingPosition;
     private InputController inputController;
     private Crosshair crosshair;
 
     readonly float defaultVerticalAngle = 15f;
-    readonly Vector3 cameraAimingPosition = new Vector3(2.08f, 2.26f, -0.89f);
+    readonly Vector3 cameraAimingPositionRight = new Vector3(2.8f, 2.35f, -3.35f);
+    readonly Vector3 cameraAimingPositionLeft = new Vector3(-2.8f, 2.35f, -3.35f);
     readonly Vector3 cameraAimingRotation = new Vector3(0, 0, 0);
     readonly Vector3 cameraDefaultPosition = new Vector3(0, 11, -22);
     readonly Vector3 cameraDefaultRotation = new Vector3(15, 0, 0);
@@ -29,16 +32,18 @@ public class CameraMovement : MonoBehaviour
     {
         inputController = InputController.singleton;
         crosshair = Crosshair.singleton;
+        cameraAimingPosition = cameraAimingPositionRight;
     }
 
     private void Update()
     {
         input = inputController.GetCameraInput();
+        playerInput = inputController.GetInput();
 
         Vector2 toTargetSelection = new Vector2();
         if (inputController.AimMovement)
         {
-            crosshair.Translate(inputController.GetInput());
+            crosshair.Translate(playerInput);
             toTargetSelection = crosshair.ToTargetSelection;
         }
         direction = new Vector2(inputController.AimMovement ? toTargetSelection.x : PlayerDir.x,
@@ -96,6 +101,16 @@ public class CameraMovement : MonoBehaviour
     {
         cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, Quaternion.Euler(AimAngles), aimingSpeed * Time.deltaTime);
         transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(cameraAimingRotation), aimingSpeed * Time.deltaTime);
+
+        if (twoShoulders)
+        {
+            if (playerInput.x > 0f)
+                cameraAimingPosition = cameraAimingPositionRight;
+            else if (playerInput.x < 0f)
+                cameraAimingPosition = cameraAimingPositionLeft;
+        }
+        else
+            cameraAimingPosition = cameraAimingPositionRight;
         transform.localPosition = Vector3.Lerp(transform.localPosition, cameraAimingPosition, aimingSpeed * Time.deltaTime);
     }
 
