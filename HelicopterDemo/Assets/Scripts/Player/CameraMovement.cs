@@ -9,9 +9,9 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] private float rotSpeedManual = 1f;
     [SerializeField] private float aimingSpeed = 3f;
     [SerializeField] private Player player;
+    [SerializeField] private GameObject cameraContainer;
 
     private Vector2 input, direction;
-    private GameObject cameraContainer;
     private InputController inputController;
     private Crosshair crosshair;
 
@@ -27,7 +27,6 @@ public class CameraMovement : MonoBehaviour
 
     private void Start()
     {
-        cameraContainer = GameObject.FindGameObjectWithTag("CameraContainer");
         inputController = InputController.singleton;
         crosshair = Crosshair.singleton;
     }

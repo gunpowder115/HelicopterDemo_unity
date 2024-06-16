@@ -13,9 +13,7 @@ GameObject:
   - component: {fileID: 3309415596281561067}
   - component: {fileID: 3309415595700181812}
   - component: {fileID: 3309415595700181817}
-  - component: {fileID: 5560057670961145403}
   - component: {fileID: 772855177222925074}
-  - component: {fileID: 5540479355754174270}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -64,6 +62,7 @@ MonoBehaviour:
   lateralMovingCoef: 0.18
   acceleration: 2.5
   lineRenderer: {fileID: 5363806959191190634, guid: 5f06e4d36b6fe34468647012698e1c2a, type: 3}
+  health: {fileID: 3284091122562222563}
 --- !u!114 &3309415596281561067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,19 +101,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 249e88c79374bbb4991e7aa56922b92b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5560057670961145403
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3309415596281561061}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7ef0f4fd4e27ad4081a6cc4ded100ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  baseHealth: 100
 --- !u!54 &772855177222925074
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -131,19 +117,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!65 &5540479355754174270
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3309415596281561061}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.9705389, y: 2.2293487, z: 7.5608397}
-  m_Center: {x: 0.006470084, y: -0.019410849, z: 0.032351375}
 --- !u!1 &8019078245452962039
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,7 +128,7 @@ GameObject:
   - component: {fileID: 2528605729030680890}
   m_Layer: 0
   m_Name: CameraContainer
-  m_TagString: CameraContainer
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -202,6 +175,10 @@ PrefabInstance:
     - target: {fileID: 2369090265771889126, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
       propertyPath: largeAttitudeAngle
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 3304910598464917764, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4003434706837008606, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
       propertyPath: m_RootOrder
@@ -263,6 +240,24 @@ PrefabInstance:
     - {fileID: 0}
     - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
+--- !u!1 &1901197804846170524 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4003434706837008607, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
+  m_PrefabInstance: {fileID: 3309415594627346755}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3284091122562222563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1901197804846170524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ef0f4fd4e27ad4081a6cc4ded100ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseHealth: 100
 --- !u!4 &1901197804846170525 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4003434706837008606, guid: dc3d17aa2ba379a4f879d4b2b7b2bf06, type: 3}
@@ -279,6 +274,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 3309415596281561070}
+    - target: {fileID: 3422478316054150462, guid: e07726d016e6690409d5aa448e69170b, type: 3}
+      propertyPath: cameraContainer
+      value: 
+      objectReference: {fileID: 8019078245452962039}
     - target: {fileID: 6878582592513183703, guid: e07726d016e6690409d5aa448e69170b, type: 3}
       propertyPath: m_RootOrder
       value: 0

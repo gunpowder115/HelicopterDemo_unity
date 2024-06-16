@@ -2,12 +2,11 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-    [SerializeField] float baseHealth = 100f;
+    [SerializeField] private float baseHealth = 100f;
 
-    float health;
-    NpcController npcController;
-    Player player;
-    SimpleNpc npc;
+    private float health;
+    private NpcController npcController;
+    private SimpleNpc npc;
 
     public bool IsAlive { get; private set; }
 
@@ -27,16 +26,15 @@ public class Health : MonoBehaviour
         health = isAlive ? baseHealth : 0f;
     }
 
-    void Start()
+    private void Start()
     {
         IsAlive = true;
         health = baseHealth;
         npcController = NpcController.singleton;
-        player = GetComponent<Player>();
         npc = GetComponent<SimpleNpc>();
     }
 
-    void DestroyNpc()
+    private void DestroyNpc()
     {
         npcController.Remove(gameObject);
         Destroy(gameObject);

@@ -5,7 +5,6 @@ using static InputController;
 [RequireComponent(typeof(InputController))]
 [RequireComponent(typeof(Translation))]
 [RequireComponent(typeof(Shooter))]
-[RequireComponent(typeof(Health))]
 
 public class Player : MonoBehaviour
 {
@@ -21,6 +20,7 @@ public class Player : MonoBehaviour
     [SerializeField] float lateralMovingCoef = 0.1f;
     [SerializeField] float acceleration = 1f;
     [SerializeField] LineRenderer lineRenderer;
+    [SerializeField] Health health;
 
     bool rotateToDirection;
     float yawAngle;
@@ -35,7 +35,6 @@ public class Player : MonoBehaviour
     PlatformController platformController;
     InputController inputController;
     Shooter shooter;
-    Health health;
 
     public bool Aiming { get; private set; }
     public Vector3 AimAngles { get; private set; }
@@ -47,7 +46,6 @@ public class Player : MonoBehaviour
         translation = GetComponent<Translation>();
         rotation = GetComponentInChildren<Rotation>();
         shooter = GetComponent<Shooter>();
-        health = GetComponent<Health>();
 
         npcController = NpcController.singleton;
         platformController = PlatformController.singleton;
