@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9112825553204389491}
   - component: {fileID: -8641184250342525596}
+  - component: {fileID: 7124969194775171756}
   m_Layer: 0
   m_Name: GuidedMissileItem
   m_TagString: Untagged
@@ -48,6 +49,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 30
   lifetime: 10
+  damage: 5
+--- !u!65 &7124969194775171756
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9112825553204389488}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.2938795, y: 0.2771338, z: 1.8177603}
+  m_Center: {x: 0.0013954605, y: -0.0069776988, z: 0.07954359}
 --- !u!1 &9112825554286059668
 GameObject:
   m_ObjectHideFlags: 0
@@ -59,7 +74,6 @@ GameObject:
   - component: {fileID: 9112825554286059671}
   - component: {fileID: 9112825554286059672}
   - component: {fileID: 9112825554286059673}
-  - component: {fileID: 9112825554286059670}
   m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
@@ -132,19 +146,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &9112825554286059670
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9112825554286059668}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &9112825554999040488
 GameObject:
   m_ObjectHideFlags: 0
@@ -156,7 +157,6 @@ GameObject:
   - component: {fileID: 9112825554999040491}
   - component: {fileID: 9112825554999040492}
   - component: {fileID: 9112825554999040493}
-  - component: {fileID: 9112825554999040490}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -229,16 +229,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &9112825554999040490
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9112825554999040488}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
