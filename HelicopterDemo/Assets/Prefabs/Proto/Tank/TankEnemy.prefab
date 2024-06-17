@@ -15,6 +15,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TankEnemy
       objectReference: {fileID: 0}
+    - target: {fileID: 4815723278743428566, guid: 2be1199387909e44e992074ec37d7f1f, type: 3}
+      propertyPath: m_TagString
+      value: EnemyGround
+      objectReference: {fileID: 0}
     - target: {fileID: 4815723278743428567, guid: 2be1199387909e44e992074ec37d7f1f, type: 3}
       propertyPath: m_RootOrder
       value: 0

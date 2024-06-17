@@ -275,6 +275,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3309415596281561070}
     - target: {fileID: 3422478316054150462, guid: e07726d016e6690409d5aa448e69170b, type: 3}
+      propertyPath: twoShoulders
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3422478316054150462, guid: e07726d016e6690409d5aa448e69170b, type: 3}
       propertyPath: cameraContainer
       value: 
       objectReference: {fileID: 8019078245452962039}
