@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee9354240fb869340a02f04645f61262, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 414063744379305735, guid: 545b31a1ed007c344b97dec369c8ba8d, type: 3}
+  projectilePrefab: {fileID: 365423850167827603, guid: e45a7075be468e54483e3d6125d9d7fb, type: 3}
   shotDeltaTime: 0.1
   firstShotDelay: 0
   maxDeflectionAngle: 5
