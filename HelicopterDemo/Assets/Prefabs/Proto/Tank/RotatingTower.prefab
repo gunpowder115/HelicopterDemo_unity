@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4934953988619785431}
   - component: {fileID: 4934953988619785428}
-  - component: {fileID: -7156176601669162022}
   m_Layer: 0
   m_Name: RotatingTower
   m_TagString: Untagged
@@ -51,21 +50,6 @@ MonoBehaviour:
   speed: 5
   minLookDistance: 30
   maxLookDistance: 50
---- !u!114 &-7156176601669162022
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4934953988619785430}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee7bc7de93393324ba81aff938ba0738, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 414063744379305735, guid: f1b1ac5546ce97243a7cd5cfde477a1a, type: 3}
-  shotDelay: 2
-  maxClipVolume: 1
 --- !u!1 &4934953988885670360
 GameObject:
   m_ObjectHideFlags: 0

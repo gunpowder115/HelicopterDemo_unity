@@ -5,7 +5,6 @@ public class BarrelShooter : MonoBehaviour
 {
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] float shotDeltaTime = 0.5f;
-    [SerializeField] float firstShotDelay = 0f;
     [SerializeField] float maxDeflectionAngle = 15f;
     [SerializeField] float rechargeTime = 5f;
     [SerializeField] int maxClipVolume = 1;
@@ -18,9 +17,7 @@ public class BarrelShooter : MonoBehaviour
     public void Fire(GameObject target)
     {
         this.target = target;
-        if (firstShot)
-            FirstShot();
-        else if (currClipVolume >= 0f)
+        if (currClipVolume >= 0f)
             Shoot();
         else
             Recharge();
@@ -32,14 +29,6 @@ public class BarrelShooter : MonoBehaviour
     {
         firstShot = true;
         currClipVolume = maxClipVolume;
-    }
-
-    void FirstShot()
-    {
-        if (projectilePrefab)
-            Instantiate(projectilePrefab, this.transform.position, CalculateDeflection());
-        currShotDeltaTime = 0f;
-        firstShot = false;
     }
 
     void Shoot()
