@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bacde925d76a4b34ba974378b3feb109, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxDeflectionAngle: 3
   missilePrefab: {fileID: 9112825553204389488, guid: 79c6cdb6227fb854e9b12221e4dcce36, type: 3}
   rechargeTime: 8
   guided: 1

@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class MissileShooter : MonoBehaviour
+public class MissileLauncher : BaseLauncher
 {
     public bool IsGuided => guided;
     public bool IsEnable => isEnable;
@@ -15,8 +15,9 @@ public class MissileShooter : MonoBehaviour
 
     public void Launch(GameObject target)
     {
+        this.target = target;
         if (missilePrefab)
-            Instantiate(missilePrefab, transform.position + transform.forward * 1.5f, CalculateRotToTarget(target));
+            Instantiate(missilePrefab, transform.position + transform.forward * 1.5f, CalculateDeflection());
         else
             Debug.Log(this.ToString() + ": missilePrefab is NULL!");
         StartCoroutine(MissileActivity());
@@ -41,13 +42,5 @@ public class MissileShooter : MonoBehaviour
         foreach (var obj in childObjects)
             obj.SetActive(true);
         isEnable = true;
-    }
-
-    Quaternion CalculateRotToTarget(GameObject target)
-    {
-        if (target && !guided)
-            return Quaternion.LookRotation(target.transform.position - transform.position);
-        else
-            return transform.rotation;
     }
 }

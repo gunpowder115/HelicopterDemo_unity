@@ -1,18 +1,15 @@
-using System.Collections;
 using UnityEngine;
 
-public class BarrelShooter : MonoBehaviour
+public class BarrelLauncher : BaseLauncher
 {
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] float shotDeltaTime = 0.5f;
-    [SerializeField] float maxDeflectionAngle = 15f;
     [SerializeField] float rechargeTime = 5f;
     [SerializeField] int maxClipVolume = 1;
 
     bool firstShot;
     int currClipVolume;
     float currShotDeltaTime, currRechargeTime;
-    GameObject target;
 
     public void Fire(GameObject target)
     {
@@ -60,22 +57,4 @@ public class BarrelShooter : MonoBehaviour
     }
 
     void Stop() => firstShot = true;
-
-    Quaternion CalculateDeflection()
-    {
-        float deflectionHor = Random.Range(-maxDeflectionAngle, maxDeflectionAngle);
-        float deflectionVert = Random.Range(-maxDeflectionAngle, maxDeflectionAngle);
-
-        Vector3 euler = CalculateRotToTarget().eulerAngles;
-        euler = new Vector3(euler.x + deflectionHor, euler.y + deflectionVert, euler.z);
-        return Quaternion.Euler(euler);
-    }
-
-    Quaternion CalculateRotToTarget()
-    {
-        if (target)
-            return Quaternion.LookRotation(target.transform.position - transform.position);
-        else
-            return transform.rotation;
-    }
 }
