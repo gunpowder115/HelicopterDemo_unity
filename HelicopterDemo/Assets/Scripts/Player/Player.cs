@@ -81,7 +81,6 @@ public class Player : MonoBehaviour
 
         if (!health.IsAlive)
         {
-            //controller.enabled = false; //todo
             Respawn();
             health.SetAlive(true);
         }
@@ -92,13 +91,8 @@ public class Player : MonoBehaviour
         if (rotation != null)
             Rotate(inputX);
 
-        if (shooter)
-        {
-            if (inputController.MinigunFire)
-                shooter.BarrelFire(selectedTarget);
-            else
-                shooter.StopBarrelFire();
-        }
+        if (shooter && inputController.MinigunFire)
+            shooter.BarrelFire(selectedTarget);
 
         if (inputController.PlayerState == PlayerStates.Normal)
             DrawLineToTarget();

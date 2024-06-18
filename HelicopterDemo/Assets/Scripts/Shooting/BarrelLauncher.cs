@@ -7,7 +7,6 @@ public class BarrelLauncher : BaseLauncher
     [SerializeField] float rechargeTime = 5f;
     [SerializeField] int maxClipVolume = 1;
 
-    bool firstShot;
     int currClipVolume;
     float currShotDeltaTime, currRechargeTime;
 
@@ -20,11 +19,8 @@ public class BarrelLauncher : BaseLauncher
             Recharge();
     }
 
-    public void StopFire() => Stop();
-
     void Start()
     {
-        firstShot = true;
         currClipVolume = maxClipVolume;
     }
 
@@ -49,12 +45,9 @@ public class BarrelLauncher : BaseLauncher
         if (currRechargeTime >= rechargeTime)
         {
             currClipVolume = maxClipVolume;
-            firstShot = true;
             currRechargeTime = 0f;
         }
         else
             currRechargeTime += Time.deltaTime;
     }
-
-    void Stop() => firstShot = true;
 }
