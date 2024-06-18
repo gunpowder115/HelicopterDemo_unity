@@ -18,7 +18,15 @@ public class SimpleRotation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Rotate(deltaRotation);
+        if (gameObject.activeSelf)
+            transform.Rotate(deltaRotation);
+        else
+        {
+            float x = axis == Axes.X ? 0f : transform.eulerAngles.x;
+            float y = axis == Axes.Y ? 0f : transform.eulerAngles.y;
+            float z = axis == Axes.Z ? 0f : transform.eulerAngles.z;
+            transform.eulerAngles = new Vector3(x, y, z);
+        }
     }
 
     public enum Axes

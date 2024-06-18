@@ -51,7 +51,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   changeSpeedInput: 0.9
-  useNewInputSystem: 1
   vertFastCoef: 5
   minDistToAim: 35
   maxDistToAim: 40
@@ -61,7 +60,7 @@ MonoBehaviour:
   verticalSpeed: 30
   lateralMovingCoef: 0.18
   acceleration: 2.5
-  lineRenderer: {fileID: 5363806959191190634, guid: 5f06e4d36b6fe34468647012698e1c2a, type: 3}
+  lineRenderer: {fileID: 0}
   health: {fileID: 3284091122562222563}
 --- !u!114 &3309415596281561067
 MonoBehaviour:

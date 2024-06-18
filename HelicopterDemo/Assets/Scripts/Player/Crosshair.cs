@@ -3,12 +3,15 @@ using UnityEngine;
 public class Crosshair : MonoBehaviour
 {
     [SerializeField] float aimSpeed = 5f;
+    [SerializeField] float rayRadius = 1f;
+    [SerializeField] float maxDistance = 100f;
+    [SerializeField] GameObject aimItem;
+    [SerializeField] GameObject targetAimItem;
 
     public static Crosshair singleton { get; private set; }
     public Vector2 ToTargetSelection => toTargetSelection;
 
     Vector2 toTargetSelection;
-    GameObject aimItem;
     new Camera camera;
 
     void Awake()
@@ -19,8 +22,8 @@ public class Crosshair : MonoBehaviour
     void Start()
     {
         camera = GetComponent<Camera>();
-        aimItem = GameObject.FindGameObjectWithTag("Aim");
-        if (aimItem) aimItem.SetActive(false);
+        aimItem.SetActive(false);
+        targetAimItem.SetActive(false);
     }
 
     public void Show()
@@ -34,7 +37,8 @@ public class Crosshair : MonoBehaviour
 
     public void Hide()
     {
-        if (aimItem) aimItem.SetActive(false);
+        aimItem.SetActive(false);
+        targetAimItem.SetActive(false);
     }
 
     public void Translate(Vector2 direction)
@@ -49,6 +53,23 @@ public class Crosshair : MonoBehaviour
             float cameraCoefX = 2f * aimX / camera.pixelWidth - 1f;
             float cameraCoefY = 2f * aimY / camera.pixelHeight - 1f;
             toTargetSelection = new Vector2(cameraCoefX, -cameraCoefY);
+
+            Ray ray = camera.ScreenPointToRay(aimItem.transform.position);
+            var raycastHits = Physics.SphereCastAll(ray, rayRadius, maxDistance);
+            bool hitEnemy = false;
+            foreach(var hit in raycastHits)
+            {
+                var hitObject = hit.transform.gameObject;
+                if (hitObject.GetComponent<SimpleNpc>())
+                {
+                    targetAimItem.SetActive(true);
+                    var targetScreenPos = camera.WorldToScreenPoint(hitObject.transform.position);
+                    targetAimItem.transform.position = new Vector3(targetScreenPos.x, targetScreenPos.y, targetAimItem.transform.position.z);
+                    hitEnemy = true;
+                    break;
+                }
+            }
+            if (!hitEnemy) targetAimItem.SetActive(false);
         }
     }
 
