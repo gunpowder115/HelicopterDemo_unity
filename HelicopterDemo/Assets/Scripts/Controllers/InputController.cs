@@ -115,27 +115,9 @@ public class InputController : MonoBehaviour
     PlayerStates playerState;
     PlayerInput playerInput;
 
-    public Vector2 GetInput(bool useNewInputSystem = true)
-    {
-        Vector2 input;
-        if (useNewInputSystem)
-            input = playerInput.Player.Move.ReadValue<Vector2>();
-        else
-        {
-            float inputX = Input.GetAxis("Horizontal");
-            float inputZ = Input.GetAxis("Vertical");
-            input = new Vector2(inputX, inputZ);
-        }
-        return input;
-    }
+    public Vector2 GetInput() => playerInput.Player.Move.ReadValue<Vector2>();
 
-    public Vector2 GetCameraInput(bool useNewInputSystem = true)
-    {
-        Vector2 input = new Vector2(0f, 0f);
-        if (useNewInputSystem)
-            input = playerInput.Camera.Move.ReadValue<Vector2>();
-        return input;
-    }
+    public Vector2 GetCameraInput() => playerInput.Camera.Move.ReadValue<Vector2>();
 
     public void ForceChangePlayerState(PlayerStates newState) => playerState = newState;
 
@@ -268,13 +250,13 @@ public class InputController : MonoBehaviour
 
     void SetVerticalMove(VerticalMoveDirection vertMoveDir)
     {
-        switch(playerState)
+        switch (playerState)
         {
             case PlayerStates.Normal:
                 verticalInputButtons[(int)vertMoveDir] = true;
                 if (LeftUp && RightUp)
                     fastUp = true;
-                else if (LeftDown && RightDown) 
+                else if (LeftDown && RightDown)
                     fastDown = true;
                 break;
             case PlayerStates.Aiming:

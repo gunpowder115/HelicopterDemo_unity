@@ -9,7 +9,6 @@ using static InputController;
 public class Player : MonoBehaviour
 {
     [SerializeField] float changeSpeedInput = 0.7f;
-    [SerializeField] bool useNewInputSystem = true;
     [SerializeField] float vertFastCoef = 5f;
     [SerializeField] float minDistToAim = 17f;
     [SerializeField] float maxDistToAim = 20f;
