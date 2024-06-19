@@ -2229,7 +2229,7 @@ PrefabInstance:
       objectReference: {fileID: 1184585702}
     - target: {fileID: 1368601606728995115, guid: 8ababed77351a4f4c955b2acb57a6e4f, type: 3}
       propertyPath: rayRadius
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1368601606728995115, guid: 8ababed77351a4f4c955b2acb57a6e4f, type: 3}
       propertyPath: targetAimItem

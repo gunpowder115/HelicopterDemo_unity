@@ -2,17 +2,17 @@ using UnityEngine;
 
 public class Crosshair : MonoBehaviour
 {
-    [SerializeField] float aimSpeed = 5f;
-    [SerializeField] float rayRadius = 1f;
-    [SerializeField] float maxDistance = 100f;
-    [SerializeField] GameObject aimItem;
-    [SerializeField] GameObject targetAimItem;
+    [SerializeField] private float aimSpeed = 5f;
+    [SerializeField] private float rayRadius = 1f;
+    [SerializeField] private float maxDistance = 100f;
+    [SerializeField] private GameObject aimItem;
+    [SerializeField] private GameObject targetAimItem;
 
     public static Crosshair singleton { get; private set; }
     public Vector2 ToTargetSelection => toTargetSelection;
 
-    Vector2 toTargetSelection;
-    new Camera camera;
+    private Vector2 toTargetSelection;
+    private Camera mainCamera;
 
     void Awake()
     {
@@ -21,7 +21,7 @@ public class Crosshair : MonoBehaviour
 
     void Start()
     {
-        camera = GetComponent<Camera>();
+        mainCamera = GetComponent<Camera>();
         aimItem.SetActive(false);
         targetAimItem.SetActive(false);
     }
@@ -31,7 +31,7 @@ public class Crosshair : MonoBehaviour
         if (aimItem)
         {
             aimItem.SetActive(true);
-            aimItem.transform.position = new Vector3(camera.pixelWidth / 2f, camera.pixelHeight / 2f, 0f);
+            aimItem.transform.position = new Vector3(mainCamera.pixelWidth / 2f, mainCamera.pixelHeight / 2f, 0f);
         }
     }
 
@@ -46,34 +46,45 @@ public class Crosshair : MonoBehaviour
         if (aimItem)
         {
             float aimX, aimY;
-            aimX = Limit(aimItem.transform.position.x + direction.x * aimSpeed, 0f, camera.pixelWidth);
-            aimY = Limit(aimItem.transform.position.y + direction.y * aimSpeed, 0f, camera.pixelHeight);
+            aimX = Limit(aimItem.transform.position.x + direction.x * aimSpeed, 0f, mainCamera.pixelWidth);
+            aimY = Limit(aimItem.transform.position.y + direction.y * aimSpeed, 0f, mainCamera.pixelHeight);
             aimItem.transform.position = new Vector3(aimX, aimY, 0f);
 
-            float cameraCoefX = 2f * aimX / camera.pixelWidth - 1f;
-            float cameraCoefY = 2f * aimY / camera.pixelHeight - 1f;
+            float cameraCoefX = 2f * aimX / mainCamera.pixelWidth - 1f;
+            float cameraCoefY = 2f * aimY / mainCamera.pixelHeight - 1f;
             toTargetSelection = new Vector2(cameraCoefX, -cameraCoefY);
 
-            Ray ray = camera.ScreenPointToRay(aimItem.transform.position);
-            var raycastHits = Physics.SphereCastAll(ray, rayRadius, maxDistance);
-            bool hitEnemy = false;
-            foreach(var hit in raycastHits)
+            SetTargetAim();
+        }
+    }
+
+    private void SetTargetAim()
+    {
+        Ray ray = mainCamera.ScreenPointToRay(aimItem.transform.position);
+        var raycastHits = Physics.SphereCastAll(ray, rayRadius, maxDistance);
+        bool hitEnemy = false;
+        foreach (var hit in raycastHits)
+        {
+            var hitObject = hit.transform.gameObject;
+            if (hitObject.GetComponent<SimpleNpc>())
             {
-                var hitObject = hit.transform.gameObject;
-                if (hitObject.GetComponent<SimpleNpc>())
+                var screenPos = mainCamera.WorldToScreenPoint(hitObject.transform.position);
+                Ray rayCenter = mainCamera.ScreenPointToRay(screenPos);
+                Physics.Raycast(rayCenter, out RaycastHit hitCenter);
+                var hitCenterObject = hitCenter.transform.gameObject;
+                if (hitObject == hitCenterObject)
                 {
                     targetAimItem.SetActive(true);
-                    var targetScreenPos = camera.WorldToScreenPoint(hitObject.transform.position);
-                    targetAimItem.transform.position = new Vector3(targetScreenPos.x, targetScreenPos.y, targetAimItem.transform.position.z);
+                    targetAimItem.transform.position = new Vector3(screenPos.x, screenPos.y, targetAimItem.transform.position.z);
                     hitEnemy = true;
                     break;
                 }
             }
-            if (!hitEnemy) targetAimItem.SetActive(false);
         }
+        if (!hitEnemy) targetAimItem.SetActive(false);
     }
 
-    float Limit(float value, float min, float max)
+    private float Limit(float value, float min, float max)
     {
         if (value <= min) return min;
         else if (value >= max) return max;
