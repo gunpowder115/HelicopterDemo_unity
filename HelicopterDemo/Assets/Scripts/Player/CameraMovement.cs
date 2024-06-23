@@ -1,4 +1,5 @@
 using UnityEngine;
+using static InputController;
 
 public class CameraMovement : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class CameraMovement : MonoBehaviour
     readonly Vector3 cameraAimingRotation = new Vector3(0, 0, 0);
     readonly Vector3 cameraDefaultPosition = new Vector3(0, 11, -22);
     readonly Vector3 cameraDefaultRotation = new Vector3(15, 0, 0);
+    readonly Vector3 cameraTgtSelPosition = new Vector3(0, 15, -40);
 
     private bool Aiming => player.Aiming;
     private Vector3 AimAngles => player.AimAngles;
@@ -116,7 +118,8 @@ public class CameraMovement : MonoBehaviour
 
     private void SetDefault()
     {
-        transform.localPosition = Vector3.Lerp(transform.localPosition, cameraDefaultPosition, aimingSpeed * Time.deltaTime);
+        Vector3 cameraPos = inputController.AimMovement ? cameraTgtSelPosition : cameraDefaultPosition;
+        transform.localPosition = Vector3.Lerp(transform.localPosition, cameraPos, aimingSpeed * Time.deltaTime);
         cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, Quaternion.Euler(0f, 0f, 0f), aimingSpeed * Time.deltaTime);
     }
 }
