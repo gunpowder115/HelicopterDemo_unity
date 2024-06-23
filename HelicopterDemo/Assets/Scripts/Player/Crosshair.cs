@@ -9,8 +9,9 @@ public class Crosshair : MonoBehaviour
     [SerializeField] private GameObject aimItem;
     [SerializeField] private GameObject targetAimItem;
 
-    public static Crosshair singleton { get; private set; }
     public Vector2 ToTargetSelection => toTargetSelection;
+    public Vector3 HitPoint { get; private set; }
+    public static Crosshair singleton { get; private set; }
 
     private float currHoldTime;
     private Vector2 toTargetSelection, targetScreenPos;
@@ -62,9 +63,10 @@ public class Crosshair : MonoBehaviour
         Ray ray = mainCamera.ScreenPointToRay(aimItem.transform.position);
         var raycastHits = Physics.SphereCastAll(ray, rayRadius, maxDistance);
         bool hitEnemy = false;
-        foreach (var hit in raycastHits)
+        for (int i = 0; i < raycastHits.Length; i++)
         {
-            var hitObject = hit.transform.gameObject;
+            if (i == 0) HitPoint = raycastHits[i].point;
+            var hitObject = raycastHits[i].transform.gameObject;
             if (hitObject.GetComponent<SimpleNpc>())
             {
                 targetScreenPos = mainCamera.WorldToScreenPoint(hitObject.transform.position);
@@ -75,6 +77,7 @@ public class Crosshair : MonoBehaviour
                 {
                     currHoldTime = targetHoldTime;
                     selectedTarget = hitObject;
+                    HitPoint = hitObject.transform.position;
                     hitEnemy = true;
                     break;
                 }
@@ -85,6 +88,7 @@ public class Crosshair : MonoBehaviour
         {
             if ((currHoldTime -= Time.deltaTime) > 0f && selectedTarget)
             {
+                HitPoint = selectedTarget.transform.position;
                 targetScreenPos = mainCamera.WorldToScreenPoint(selectedTarget.transform.position);
                 targetAimItem.transform.position = new Vector3(targetScreenPos.x, targetScreenPos.y, targetAimItem.transform.position.z);
                 targetAimItem.SetActive(true);

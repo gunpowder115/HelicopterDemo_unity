@@ -167,6 +167,11 @@ public class Player : MonoBehaviour
             Quaternion rotToTarget = Quaternion.LookRotation((selectedTarget.transform.position - this.transform.position));
             rotation.RotateToTarget(rotToTarget, inputX);
         }
+        else if (inputController.AimMovement)
+        {
+            var direction = crosshairController.HitPoint - transform.position;
+            rotation.RotateToDirection(direction, 0f, true);
+        }
         else
         {
             var direction = targetDirection != Vector3.zero ? targetDirection : CurrentDirection;

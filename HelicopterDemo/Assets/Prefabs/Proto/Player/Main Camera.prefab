@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9e0a03487111734cb3d2a6aa0786844, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  twoShoulders: 0
+  twoShoulders: 1
   maxHorizontalAngle: 25
   maxVerticalAngle_cameraUp: 40
   maxVerticalAngle_cameraDown: 5
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   aimSpeed: 5
   rayRadius: 1
-  maxDistance: 100
+  maxDistance: 200
   targetHoldTime: 2
   aimItem: {fileID: 0}
   targetAimItem: {fileID: 0}
