@@ -98,12 +98,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9e0a03487111734cb3d2a6aa0786844, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  twoShoulders: 0
   maxHorizontalAngle: 25
   maxVerticalAngle_cameraUp: 40
   maxVerticalAngle_cameraDown: 5
   rotSpeed: 0.5
   rotSpeedManual: 1
   aimingSpeed: 6
+  player: {fileID: 0}
+  cameraContainer: {fileID: 0}
 --- !u!114 &8973785694044723657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,3 +120,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aimSpeed: 5
+  rayRadius: 1
+  maxDistance: 100
+  targetHoldTime: 2
+  aimItem: {fileID: 0}
+  targetAimItem: {fileID: 0}
