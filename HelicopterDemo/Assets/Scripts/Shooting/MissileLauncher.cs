@@ -17,7 +17,16 @@ public class MissileLauncher : BaseLauncher
     {
         this.target = target;
         if (missilePrefab)
-            Instantiate(missilePrefab, transform.position + transform.forward * 1.5f, CalculateDeflection());
+        {
+            if (guided)
+            {
+                var missileItem = Instantiate(missilePrefab, transform.position + transform.forward * 1.5f, transform.rotation);
+                GuidedMissile guidedMissile = missileItem.GetComponent<GuidedMissile>();
+                if (guidedMissile) guidedMissile.SelectedTarget = target;
+            }
+            else
+                Instantiate(missilePrefab, transform.position + transform.forward * 1.5f, CalculateDeflection());
+        }
         else
             Debug.Log(this.ToString() + ": missilePrefab is NULL!");
         StartCoroutine(MissileActivity());

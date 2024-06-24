@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9112825553204389491}
   - component: {fileID: -8641184250342525596}
   - component: {fileID: 7124969194775171756}
+  - component: {fileID: 4383334780537233917}
   m_Layer: 0
   m_Name: GuidedMissileItem
   m_TagString: Untagged
@@ -42,7 +43,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9112825553204389488}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2a58cf9687a85b949a1ab9cc0f78ea98, type: 3}
   m_Name: 
@@ -63,6 +64,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.2938795, y: 0.2771338, z: 1.8177603}
   m_Center: {x: 0.0013954605, y: -0.0069776988, z: 0.07954359}
+--- !u!114 &4383334780537233917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9112825553204389488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae94e0b837f68c64ba18d0731afd18f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 30
+  lifetime: 10
+  damage: 5
+  minDistToEmpty: 1
+  emptyMissleTargetPrefab: {fileID: 7350188529549901888, guid: cc8245b875c02bd4ea33aed736d80908, type: 3}
 --- !u!1 &9112825554286059668
 GameObject:
   m_ObjectHideFlags: 0

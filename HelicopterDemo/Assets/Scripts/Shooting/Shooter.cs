@@ -27,7 +27,7 @@ public class Shooter : MonoBehaviour
     {
         if (guidedMissiles.Count > 0 && guidedMissiles[guidedMissileIndex].IsEnable)
         {
-            guidedMissiles[guidedMissileIndex++].Launch(null);
+            guidedMissiles[guidedMissileIndex++].Launch(target);
             if (guidedMissileIndex >= guidedMissiles.Count) guidedMissileIndex = 0;
         }
     }

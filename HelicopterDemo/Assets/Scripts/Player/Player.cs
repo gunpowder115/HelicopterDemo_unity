@@ -253,7 +253,7 @@ public class Player : MonoBehaviour
 
     void TryLaunchGuidedMissile()
     {
-        if (crosshairController.SelectedTarget) shooter.GuidedMissileLaunch(selectedTarget);
+        if (crosshairController.SelectedTarget) shooter.GuidedMissileLaunch(crosshairController.SelectedTarget);
         crosshairController.Hide();
     }
 
