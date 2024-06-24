@@ -11,12 +11,12 @@ public class Crosshair : MonoBehaviour
 
     public Vector2 ToTargetSelection => toTargetSelection;
     public Vector3 HitPoint { get; private set; }
+    public GameObject SelectedTarget { get; private set; }
     public static Crosshair singleton { get; private set; }
 
     private float currHoldTime;
     private Vector2 toTargetSelection, targetScreenPos;
     private Camera mainCamera;
-    private GameObject selectedTarget;
 
     void Awake()
     {
@@ -40,7 +40,7 @@ public class Crosshair : MonoBehaviour
     {
         aimItem.SetActive(false);
         targetAimItem.SetActive(false);
-        selectedTarget = null;
+        SelectedTarget = null;
         currHoldTime = 0f;
     }
 
@@ -76,7 +76,7 @@ public class Crosshair : MonoBehaviour
                 if (hitObject == hitCenterObject)
                 {
                     currHoldTime = targetHoldTime;
-                    selectedTarget = hitObject;
+                    SelectedTarget = hitObject;
                     HitPoint = hitObject.transform.position;
                     hitEnemy = true;
                     break;
@@ -86,15 +86,18 @@ public class Crosshair : MonoBehaviour
 
         if (!hitEnemy)
         {
-            if ((currHoldTime -= Time.deltaTime) > 0f && selectedTarget)
+            if ((currHoldTime -= Time.deltaTime) > 0f && SelectedTarget)
             {
-                HitPoint = selectedTarget.transform.position;
-                targetScreenPos = mainCamera.WorldToScreenPoint(selectedTarget.transform.position);
+                HitPoint = SelectedTarget.transform.position;
+                targetScreenPos = mainCamera.WorldToScreenPoint(SelectedTarget.transform.position);
                 targetAimItem.transform.position = new Vector3(targetScreenPos.x, targetScreenPos.y, targetAimItem.transform.position.z);
                 targetAimItem.SetActive(true);
             }
             else
+            {
+                SelectedTarget = null;
                 targetAimItem.SetActive(false);
+            }
         }
         else
         {

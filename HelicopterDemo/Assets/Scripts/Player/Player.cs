@@ -90,7 +90,7 @@ public class Player : MonoBehaviour
         if (rotation != null)
             Rotate(inputX);
 
-        if (shooter && inputController.MinigunFire)
+        if (inputController.MinigunFire)
             shooter.BarrelFire(selectedTarget);
 
         if (inputController.PlayerState == PlayerStates.Normal)
@@ -241,10 +241,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void TryLaunchUnguidedMissile()
-    {
-        if (shooter) shooter.UnguidedMissileLaunch(selectedTarget);
-    }
+    void TryLaunchUnguidedMissile() => shooter.UnguidedMissileLaunch(selectedTarget);
 
     void StartBuildSelection()
     {
@@ -256,7 +253,7 @@ public class Player : MonoBehaviour
 
     void TryLaunchGuidedMissile()
     {
-        if (shooter) shooter.GuidedMissileLaunch(selectedTarget);
+        if (crosshairController.SelectedTarget) shooter.GuidedMissileLaunch(selectedTarget);
         crosshairController.Hide();
     }
 
