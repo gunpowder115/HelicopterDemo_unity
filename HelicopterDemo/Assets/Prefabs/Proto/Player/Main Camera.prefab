@@ -98,13 +98,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9e0a03487111734cb3d2a6aa0786844, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  twoShoulders: 1
+  twoShoulders: 0
+  defaultVerticalAngle: 15
   maxHorizontalAngle: 25
   maxVerticalAngle_cameraUp: 40
   maxVerticalAngle_cameraDown: 5
   rotSpeed: 0.5
   rotSpeedManual: 1
   aimingSpeed: 6
+  cameraDefaultPos: {x: 0, y: 11, z: -22}
+  cameraDefaultRot: {x: 15, y: 0, z: 0}
+  cameraAimPosCenter: {x: 3, y: 3.8, z: -8}
+  cameraAimPosRight: {x: 3, y: 3.8, z: -8}
+  cameraAimingRot: {x: 0, y: 0, z: 0}
+  cameraTgtSelPos: {x: 0, y: 15, z: -40}
   player: {fileID: 0}
   cameraContainer: {fileID: 0}
 --- !u!114 &8973785694044723657

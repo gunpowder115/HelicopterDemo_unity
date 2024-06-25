@@ -7,7 +7,7 @@ public class Rotation : MonoBehaviour
 
     public float YawAngle => transform.rotation.eulerAngles.y;
     public Vector3 CurrentDirection  => new Vector3(transform.forward.x, 0f, transform.forward.z);
-    public Vector3 AimAngles => new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z);
+    public Vector3 AimAngles => new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0f);
 
     public void RotateToDirection(Vector3 targetDirection, float speedCoef, bool rotateToDirection)
     {

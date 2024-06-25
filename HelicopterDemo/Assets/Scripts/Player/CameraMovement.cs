@@ -4,27 +4,30 @@ using static InputController;
 public class CameraMovement : MonoBehaviour
 {
     [SerializeField] private bool twoShoulders = false;
+    [SerializeField] private float defaultVerticalAngle = 15f;
     [SerializeField] private float maxHorizontalAngle = 30f;
     [SerializeField] private float maxVerticalAngle_cameraUp = 40f;
     [SerializeField] private float maxVerticalAngle_cameraDown = 5f;
     [SerializeField] private float rotSpeed = 1f;
     [SerializeField] private float rotSpeedManual = 1f;
     [SerializeField] private float aimingSpeed = 3f;
+
+    [Header("Camera positions & rotations")]
+    [SerializeField] private Vector3 cameraDefaultPos = new Vector3(0, 11, -22);
+    [SerializeField] private Vector3 cameraDefaultRot = new Vector3(15, 0, 0); //unused
+    [SerializeField] private Vector3 cameraAimPosCenter = new Vector3(0f, 3.8f, -8f);
+    [SerializeField] private Vector3 cameraAimPosRight = new Vector3(3f, 3.8f, -8f);
+    [SerializeField] private Vector3 cameraAimingRot = new Vector3(0, 0, 0);
+    [SerializeField] private Vector3 cameraTgtSelPos = new Vector3(0, 15, -40);
+
     [SerializeField] private Player player;
     [SerializeField] private GameObject cameraContainer;
 
     private Vector2 input, direction, playerInput;
-    private Vector3 cameraAimingPosition;
+    private Vector3 cameraAimPosLeft;
+    private Vector3 cameraAimPos;
     private InputController inputController;
     private Crosshair crosshair;
-
-    readonly float defaultVerticalAngle = 15f;
-    readonly Vector3 cameraAimingPositionRight = new Vector3(2.8f, 2.35f, -3.35f);
-    readonly Vector3 cameraAimingPositionLeft = new Vector3(-2.8f, 2.35f, -3.35f);
-    readonly Vector3 cameraAimingRotation = new Vector3(0, 0, 0);
-    readonly Vector3 cameraDefaultPosition = new Vector3(0, 11, -22);
-    readonly Vector3 cameraDefaultRotation = new Vector3(15, 0, 0);
-    readonly Vector3 cameraTgtSelPosition = new Vector3(0, 15, -40);
 
     private bool Aiming => player.Aiming;
     private Vector3 AimAngles => player.AimAngles;
@@ -34,7 +37,7 @@ public class CameraMovement : MonoBehaviour
     {
         inputController = InputController.singleton;
         crosshair = Crosshair.singleton;
-        cameraAimingPosition = cameraAimingPositionRight;
+        cameraAimPos = cameraAimPosRight;
     }
 
     private void Update()
@@ -102,23 +105,28 @@ public class CameraMovement : MonoBehaviour
     private void RotateWithPlayer()
     {
         cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, Quaternion.Euler(AimAngles), aimingSpeed * Time.deltaTime);
-        transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(cameraAimingRotation), aimingSpeed * Time.deltaTime);
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(cameraAimingRot), aimingSpeed * Time.deltaTime);
 
         if (twoShoulders)
         {
             if (playerInput.x > 0f)
-                cameraAimingPosition = cameraAimingPositionRight;
+                cameraAimPos = cameraAimPosRight;
             else if (playerInput.x < 0f)
-                cameraAimingPosition = cameraAimingPositionLeft;
+            {
+                cameraAimPosLeft = new Vector3(-cameraAimPosRight.x, cameraAimPosRight.y, cameraAimPosRight.z);
+                cameraAimPos = cameraAimPosLeft;
+            }
+            else
+                cameraAimPos = cameraAimPosCenter;
         }
         else
-            cameraAimingPosition = cameraAimingPositionRight;
-        transform.localPosition = Vector3.Lerp(transform.localPosition, cameraAimingPosition, aimingSpeed * Time.deltaTime);
+            cameraAimPos = cameraAimPosRight;
+        transform.localPosition = Vector3.Lerp(transform.localPosition, cameraAimPos, aimingSpeed * Time.deltaTime);
     }
 
     private void SetDefault()
     {
-        Vector3 cameraPos = inputController.AimMovement ? cameraTgtSelPosition : cameraDefaultPosition;
+        Vector3 cameraPos = inputController.AimMovement ? cameraTgtSelPos : cameraDefaultPos;
         transform.localPosition = Vector3.Lerp(transform.localPosition, cameraPos, aimingSpeed * Time.deltaTime);
         cameraContainer.transform.rotation = Quaternion.Lerp(cameraContainer.transform.rotation, Quaternion.Euler(0f, 0f, 0f), aimingSpeed * Time.deltaTime);
     }
