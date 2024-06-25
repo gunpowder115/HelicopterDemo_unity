@@ -4,6 +4,7 @@ public class EmptyMissileTarget : MonoBehaviour
 {
     [SerializeField] private float speed = 2f;
     [SerializeField] private float standTime = 1f;
+    [SerializeField] private float minDistToTgt = 1f;
 
     private float currStandTime;
 
@@ -17,11 +18,17 @@ public class EmptyMissileTarget : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (SelectedTarget && (currStandTime -= Time.deltaTime) <= 0f)
+        Vector3 toSelTarget = SelectedTarget.transform.position - transform.position;
+
+        if (currStandTime <= 0f)
         {
-            Vector3 toSelTarget = SelectedTarget.transform.position - transform.position;
-            transform.rotation = Quaternion.LookRotation(toSelTarget.normalized);
+            if (SelectedTarget)
+                transform.rotation = Quaternion.LookRotation(toSelTarget.normalized);
+
+            if (toSelTarget.magnitude > minDistToTgt)
+                transform.Translate(0f, 0f, speed * Time.deltaTime);
         }
-        transform.Translate(0f, 0f, speed * Time.deltaTime);
+        else
+            currStandTime -= Time.deltaTime;
     }
 }
