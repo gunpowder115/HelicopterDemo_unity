@@ -1,7 +1,4 @@
 using UnityEngine;
-using static InputController;
-
-[RequireComponent(typeof(Rigidbody))]
 
 public class Translation : MonoBehaviour
 {
@@ -50,10 +47,16 @@ public class Translation : MonoBehaviour
         movement = new Vector3(speed.x, 0f, speed.z);
         movement = Vector3.ClampMagnitude(movement, speedAbs);
         movement = new Vector3(movement.x, speed.y, movement.z);
+
+        if (!rigidbody)
+        {
+            movement = transform.InverseTransformDirection(movement);
+            transform.Translate(movement * Time.deltaTime);
+        }
     }
 
     void FixedUpdate()
     {
-        rigidbody.velocity = movement;
+        if (rigidbody) rigidbody.velocity = movement;
     }
 }

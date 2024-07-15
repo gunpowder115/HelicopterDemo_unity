@@ -203,10 +203,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5817739379426018127}
-  - component: {fileID: 3868398541665046078}
   - component: {fileID: 63990704278970995}
-  - component: {fileID: 8674854711948105310}
-  - component: {fileID: 4610042945844860153}
+  - component: {fileID: 5666814190121743709}
+  - component: {fileID: 2259622194852320878}
+  - component: {fileID: 6955722784293376980}
+  - component: {fileID: 3507282769396997829}
+  - component: {fileID: 8183908897375322973}
+  - component: {fileID: 8985188253269644281}
   m_Layer: 0
   m_Name: Helicopter
   m_TagString: Untagged
@@ -237,36 +240,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3868398541665046078
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5817739379426018126}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa247dcb1f13dbb4b88fd6f044e8d345, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  absSpeed: 20
-  normalSpeed: 1
-  patrolSpeed: 0.7
-  patrolVerticalSpeed: 0.3
-  normalVerticalSpeed: 0.7
-  speed: 30
-  acceleration: 2.5
-  minHeight: 15
-  maxHeight: 50
-  minDistance: 40
-  maxDistance: 60
-  absBorderX: 200
-  absBorderZ: 200
-  minPursuitDistance: 60
-  maxPursuitDistance: 70
-  minAttackDistance: 30
-  maxAttackDistance: 40
-  opportToChangeTarget: 1
 --- !u!114 &63990704278970995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -281,7 +254,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 3
   normAttitudeAngle: 30
---- !u!114 &8674854711948105310
+--- !u!114 &5666814190121743709
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -290,13 +263,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5817739379426018126}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 85a66101f88a876408696b9effee6994, type: 3}
+  m_Script: {fileID: 11500000, guid: 415e5073c8781f34baf4a1dade35a55f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  findDeltaTime: 1
-  minFindDist: 30
-  maxFindDist: 50
---- !u!114 &4610042945844860153
+  maxHeight: 50
+  minHeight: 10
+--- !u!114 &2259622194852320878
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -305,10 +277,61 @@ MonoBehaviour:
   m_GameObject: {fileID: 5817739379426018126}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba9b371a4e51f074f94839fc72c6ff63, type: 3}
+  m_Script: {fileID: 11500000, guid: 6467bb5296aa4b645ae7e4ec359c736f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  findDeltaTime: 1
+  maxMoveTime: 10
+  stopTime: 3
+--- !u!114 &6955722784293376980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5817739379426018126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 334580511bba2ef4ba8a80e50b498615, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3507282769396997829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5817739379426018126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b456389afe2684438b9fa6feea6e72b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8183908897375322973
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5817739379426018126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 619776e034de7b145938a6b596f54ff5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8985188253269644281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5817739379426018126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98a3cbb3ce5dae144944e1af4466a2ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 30
+  acceleration: 2.5
 --- !u!1001 &1104868747
 PrefabInstance:
   m_ObjectHideFlags: 0
