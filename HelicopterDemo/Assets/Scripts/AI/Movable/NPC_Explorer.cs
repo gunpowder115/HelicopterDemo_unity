@@ -9,8 +9,11 @@ public class NPC_Explorer : MonoBehaviour
     [SerializeField] private float stopTime = 1f;
     [SerializeField] private float absBorderX = 200f;
     [SerializeField] private float absBorderZ = 200f;
+    [SerializeField] private float minHeight = 15f;
+    [SerializeField] private float maxHeight = 50f;
 
     private float currMoveTime, currStopTime;
+    private float targetHeight, targetVerticalSpeed, currVerticalSpeed;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
     private Translation translation;
@@ -19,6 +22,8 @@ public class NPC_Explorer : MonoBehaviour
 
     private bool IsGround => NPC_Mover.IsGround;
     private float Speed => NPC_Mover.Speed;
+    private float VerticalSpeed => NPC_Mover.VerticalSpeed;
+    private float HeightDelta => NPC_Mover.HeightDelta;
     private float Acceleration => NPC_Mover.Acceleration;
 
     void Start()
@@ -36,6 +41,8 @@ public class NPC_Explorer : MonoBehaviour
             currMoveTime = maxMoveTime;
 
         Translate();
+        if (!IsGround)
+            VerticalTranslate();
         Rotate();
     }
 
@@ -44,6 +51,16 @@ public class NPC_Explorer : MonoBehaviour
         targetSpeed = Vector3.ClampMagnitude((IsGround ? rotation.CurrentDirection : targetDirection) * Speed, Speed);
         currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
         translation.SetGlobalTranslation(currSpeed);
+    }
+
+    private void VerticalTranslate()
+    {
+        float vertDir = 0f;
+        if (Mathf.Abs(targetHeight - transform.position.y) > HeightDelta)
+            vertDir = targetHeight > transform.position.y ? 1f : -1f;
+        targetVerticalSpeed = vertDir * VerticalSpeed;
+        currVerticalSpeed = Mathf.Lerp(currVerticalSpeed, targetVerticalSpeed, Acceleration * Time.deltaTime);
+        translation.SetVerticalTranslation(currVerticalSpeed);
     }
 
     private void Rotate()
@@ -68,6 +85,7 @@ public class NPC_Explorer : MonoBehaviour
                 do
                 {
                     targetDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
+                    targetHeight = Random.Range(minHeight, maxHeight);
                     CheckBorders();
                 } while (CheckObstacles());
                 currMoveTime = 0f;

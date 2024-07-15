@@ -9,6 +9,8 @@ public class NPC_Mover : MonoBehaviour
 {
     [SerializeField] private bool isGround = false;
     [SerializeField] private float speed = 20f;
+    [SerializeField] private float verticalSpeed = 20f;
+    [SerializeField] private float heightDelta = 1f;
     [SerializeField] private float acceleration = 1f;
 
     private NpcState npcState;
@@ -19,6 +21,8 @@ public class NPC_Mover : MonoBehaviour
 
     public bool IsGround => isGround;
     public float Speed => speed;
+    public float VerticalSpeed => verticalSpeed;
+    public float HeightDelta => heightDelta;
     public float Acceleration => acceleration;
 
     void Start()
