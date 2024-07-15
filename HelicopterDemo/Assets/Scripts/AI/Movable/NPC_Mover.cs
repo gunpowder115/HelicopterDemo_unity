@@ -7,6 +7,7 @@ using UnityEngine;
 
 public class NPC_Mover : MonoBehaviour
 {
+    [SerializeField] private bool isGround = false;
     [SerializeField] private float speed = 20f;
     [SerializeField] private float acceleration = 1f;
 
@@ -15,6 +16,10 @@ public class NPC_Mover : MonoBehaviour
     private NPC_Patroller NPC_Patroller;
     private NPC_MoveRelTarget NPC_MoveRelTarget;
     private NPC_MoveAttack NPC_MoveAttack;
+
+    public bool IsGround => isGround;
+    public float Speed => speed;
+    public float Acceleration => acceleration;
 
     void Start()
     {
@@ -39,7 +44,7 @@ public class NPC_Mover : MonoBehaviour
 
                 break;
             case NpcState.Exploring:
-                NPC_Explorer.Move(speed, acceleration);
+                NPC_Explorer.Move();
                 break;
             case NpcState.MoveRelTarget:
 

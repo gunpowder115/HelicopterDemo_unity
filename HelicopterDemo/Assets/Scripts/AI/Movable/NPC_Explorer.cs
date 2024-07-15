@@ -7,42 +7,54 @@ public class NPC_Explorer : MonoBehaviour
 {
     [SerializeField] private float maxMoveTime = 10f;
     [SerializeField] private float stopTime = 1f;
+    [SerializeField] private float absBorderX = 200f;
+    [SerializeField] private float absBorderZ = 200f;
 
     private float currMoveTime, currStopTime;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
     private Translation translation;
     private Rotation rotation;
+    private NPC_Mover NPC_Mover;
+
+    private bool IsGround => NPC_Mover.IsGround;
+    private float Speed => NPC_Mover.Speed;
+    private float Acceleration => NPC_Mover.Acceleration;
 
     void Start()
     {
         translation = GetComponent<Translation>();
         rotation = GetComponent<Rotation>();
+        NPC_Mover = GetComponent<NPC_Mover>();
         currMoveTime = maxMoveTime;
     }
 
-    public void Move(float speed, float accel)
+    public void Move()
     {
         SetDirection();
         if (CheckObstacles())
             currMoveTime = maxMoveTime;
 
-        Translate(speed, accel);
-        Rotate(speed);
+        Translate();
+        Rotate();
     }
 
-    private void Translate(float speed, float accel)
+    private void Translate()
     {
-        targetSpeed = Vector3.ClampMagnitude(targetDirection * speed, speed);
-        currSpeed = Vector3.Lerp(currSpeed, targetSpeed, accel * Time.deltaTime);
+        targetSpeed = Vector3.ClampMagnitude((IsGround ? rotation.CurrentDirection : targetDirection) * Speed, Speed);
+        currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
         translation.SetGlobalTranslation(currSpeed);
     }
 
-    private void Rotate(float speed)
+    private void Rotate()
     {
         var direction = targetDirection != Vector3.zero ? targetDirection : rotation.CurrentDirection;
-        var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / speed : 0f;
-        rotation.RotateToDirection(direction, speedCoef, true);
+        var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
+
+        if (IsGround)
+            rotation.RotateByYaw(direction);
+        else
+            rotation.RotateToDirection(direction, speedCoef, true);
     }
 
     private void SetDirection()
@@ -56,6 +68,7 @@ public class NPC_Explorer : MonoBehaviour
                 do
                 {
                     targetDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
+                    CheckBorders();
                 } while (CheckObstacles());
                 currMoveTime = 0f;
             }
@@ -85,5 +98,14 @@ public class NPC_Explorer : MonoBehaviour
             return hitObject.CompareTag("Obstacle") && hit.distance < 20.0f;
         }
         return false;
+    }
+
+    private void CheckBorders()
+    {
+        if (transform.position.x > absBorderX || transform.position.x < -absBorderX)
+            targetDirection = new Vector3(-targetDirection.x, targetDirection.y, targetDirection.z);
+
+        if (transform.position.z > absBorderZ || transform.position.z < -absBorderZ)
+            targetDirection = new Vector3(targetDirection.x, targetDirection.y, -targetDirection.z);
     }
 }
