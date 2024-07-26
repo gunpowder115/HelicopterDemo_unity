@@ -5,7 +5,7 @@ using UnityEngine;
 public class CargoHelicopter : MonoBehaviour
 {
     [SerializeField] private GameObject cargoPrefab;
-    [SerializeField] private CargoPlatform.CargoType cargoType = CargoPlatform.CargoType.helicopter;
+    [SerializeField] private CargoPlatform.CargoType cargoType = CargoPlatform.CargoType.Air;
     [SerializeField] private float speed = 5f;
     [SerializeField] private float minDistance = 80f;
     [SerializeField] private float maxDistance = 120f;

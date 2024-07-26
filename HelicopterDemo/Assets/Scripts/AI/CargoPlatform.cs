@@ -1,78 +1,98 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+[RequireComponent(typeof(Building))]
 
 public class CargoPlatform : MonoBehaviour
 {
     [SerializeField] private GameObject cargoHelicopterPrefab;
     [SerializeField] private GameObject cargoPrefab;
-    [SerializeField] private CargoType cargoType = CargoType.helicopter;
+    [SerializeField] private CargoType cargoType = CargoType.Air;
 
+    private Building building;
     private GameObject cargoHelicopterItem;
     private GameObject cargoItem;
     private CargoHelicopter cargoHelicopter;
     private HelicopterAI helicopter;
-    private CargoPlatformState cargoPlatformState;
+    private CargoState cargoState;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        cargoPlatformState = CargoPlatformState.cargoIsLost;
+        building = GetComponent<Building>();
+
+        cargoItem = Instantiate(cargoPrefab, gameObject.transform.position, gameObject.transform.rotation);
+        cargoState = CargoState.Works;
+        CargoItem cargoItemComp = cargoItem.GetComponent<CargoItem>();
+        if (cargoItemComp)
+            cargoItemComp.SetBuilding(building);
     }
 
     // Update is called once per frame
     void Update()
     {
-        switch(cargoPlatformState)
+        //SimpleCargoCall();
+    }
+
+    private void SimpleCargoCall()
+    {
+        switch (cargoState)
         {
-            case CargoPlatformState.cargoIsOk:
+            case CargoState.Works:
                 if (cargoItem.gameObject == null)
-                    cargoPlatformState = CargoPlatformState.cargoIsLost;
+                    cargoState = CargoState.Lost;
                 break;
-            case CargoPlatformState.cargoIsLost:
+            case CargoState.Lost:
+                cargoItem = Instantiate(cargoPrefab, gameObject.transform.position, gameObject.transform.rotation);
+                cargoState = CargoState.Works;
+
+                CargoItem cargoItemComp = cargoItem.GetComponent<CargoItem>();
+                if (cargoItemComp)
+                    cargoItemComp.SetBuilding(building);
+
+                break;
+        }
+    }
+
+    private void CargoCall()
+    {
+        switch (cargoState)
+        {
+            case CargoState.Works:
+                if (cargoItem.gameObject == null)
+                    cargoState = CargoState.Lost;
+                break;
+            case CargoState.Lost:
                 cargoHelicopterItem = Instantiate(cargoHelicopterPrefab);
                 cargoHelicopter = cargoHelicopterItem.GetComponent<CargoHelicopter>();
                 cargoHelicopter.Init(this.gameObject.transform.position);
-                cargoPlatformState = CargoPlatformState.cargoIsExpected;
+                cargoState = CargoState.Expecting;
                 break;
-            case CargoPlatformState.cargoIsExpected:
+            case CargoState.Expecting:
                 if (cargoHelicopter.CargoIsDelivered)
-                    cargoPlatformState = CargoPlatformState.cargoDelivered;
+                    cargoState = CargoState.Delivered;
                 break;
-            case CargoPlatformState.cargoDelivered:
+            case CargoState.Delivered:
                 cargoItem = Instantiate(cargoPrefab, this.gameObject.transform.position, cargoHelicopterItem.transform.rotation);
                 helicopter = cargoItem.GetComponent<HelicopterAI>();
                 if (helicopter)
                     helicopter.StartFlight();
-                cargoPlatformState = CargoPlatformState.cargoIsOk;
+                cargoState = CargoState.Works;
                 //StartCoroutine(DestroyHelicopter());
                 break;
         }
     }
 
-    private void CallForCargo(CargoType cargoType)
+    public enum CargoState
     {
-
-    }
-
-    private IEnumerator DestroyHelicopter()
-    {
-        yield return new WaitForSeconds(5);
-        Destroy(cargoItem.gameObject);
-    }
-
-    public enum CargoPlatformState
-    {
-        cargoIsOk,
-        cargoIsLost,
-        cargoIsExpected,
-        cargoDelivered
+        Works,
+        Lost,
+        Expecting,
+        Delivered
     }
 
     public enum CargoType
     {
-        helicopter,
-        tank,
-        nuclearBomb
+        Air,
+        Ground,
+        Drop
     }
 }
