@@ -8,8 +8,6 @@ public class NPC_Patroller : MonoBehaviour
     [SerializeField] private float patrolDist = 20f;
 
     private int currPatrolPosIndex;
-    private float currStopTime;
-    private float targetVerticalSpeed, currVerticalSpeed;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
     private List<Vector3> patrolPositions;
@@ -17,7 +15,6 @@ public class NPC_Patroller : MonoBehaviour
 
     private bool IsGround => NPC_Mover.IsGround;
     private float Speed => NPC_Mover.LowSpeed;
-    private float VerticalSpeed => NPC_Mover.VerticalSpeed;
     private float HeightDelta => NPC_Mover.HeightDelta;
     private float Acceleration => NPC_Mover.Acceleration;
     private Translation Translation => NPC_Mover.Translation;
