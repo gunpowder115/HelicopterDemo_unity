@@ -197,6 +197,8 @@ public class Player : MonoBehaviour
         nearest = nearestNpc.Key < nearestPlatform.Key ? nearestNpc : nearestPlatform;
         targetType = nearestNpc.Key < nearestPlatform.Key ? TargetTypes.Enemy : TargetTypes.Platform;
 
+        var aimOrigin = nearest.Value.GetComponentInChildren<AimOrigin>();
+
         if (nearest.Key < minDistToAim)
         {
             lineRenderer.enabled = true;
@@ -204,7 +206,7 @@ public class Player : MonoBehaviour
             lineRenderer.startColor = lineColor;
             lineRenderer.endColor = lineColor;
             lineRenderer.SetPosition(0, this.transform.position);
-            lineRenderer.SetPosition(1, nearest.Value.transform.position);
+            lineRenderer.SetPosition(1, aimOrigin ? aimOrigin.gameObject.transform.position : nearest.Value.transform.position);
             possibleTarget = targetType == TargetTypes.Enemy ? nearest.Value : null;
             possiblePlatform = targetType == TargetTypes.Platform ? nearest.Value : null;
         }
