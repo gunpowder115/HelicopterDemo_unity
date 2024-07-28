@@ -84,7 +84,7 @@ public class NPC_Mover : MonoBehaviour
 
                 break;
             case NpcState.Attack:
-
+                NPC_MoveAttack.Move();
                 break;
         }
     }
@@ -95,6 +95,22 @@ public class NPC_Mover : MonoBehaviour
         {
             case NpcState.Takeoff:
                 if (NPC_Takeoff.Check_ToPatrolling()) npcState = NpcState.Patrolling;
+                break;
+            case NpcState.Patrolling: //todo
+                if (NPC_Patroller.Check_ToExploring()) npcState = NpcState.Exploring;
+                if (NPC_Patroller.Check_ToMoveRelTarget()) npcState = NpcState.MoveRelTarget;
+                break;
+            case NpcState.Exploring: //todo
+                if (NPC_Explorer.Check_ToPatrolling()) npcState = NpcState.Patrolling;
+                if (NPC_Explorer.Check_ToMoveRelTarget()) npcState = NpcState.MoveRelTarget;
+                break;
+            case NpcState.MoveRelTarget: //todo
+                if (NPC_MoveRelTarget.Check_ToAttack()) npcState = NpcState.Attack;
+                if (NPC_MoveRelTarget.Check_ToPatrolling()) npcState = NpcState.Patrolling;
+                if (NPC_MoveRelTarget.Check_ToExploring()) npcState = NpcState.Exploring;
+                break;
+            case NpcState.Attack: //todo
+                if (NPC_MoveAttack.Check_ToMoveRelTarget()) npcState = NpcState.MoveRelTarget;
                 break;
         }
     }

@@ -1,18 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NPC_MoveRelTarget : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public bool Check_ToPatrolling()
     {
-        
+        //todo
+        return false;
     }
 
-    // Update is called once per frame
-    void Update()
+    public bool Check_ToExploring()
     {
-        
+        //todo
+        return false;
+    }
+
+    public bool Check_ToAttack()
+    {
+        //todo
+        return false;
     }
 }

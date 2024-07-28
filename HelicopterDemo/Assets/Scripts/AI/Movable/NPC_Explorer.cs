@@ -41,6 +41,18 @@ public class NPC_Explorer : MonoBehaviour
         Rotate();
     }
 
+    public bool Check_ToPatrolling()
+    {
+        //todo
+        return false;
+    }
+
+    public bool Check_ToMoveRelTarget()
+    {
+        //todo
+        return false;
+    }
+
     private void Translate()
     {
         targetSpeed = Vector3.ClampMagnitude((IsGround ? Rotation.CurrentDirection : targetDirection) * Speed, Speed);
