@@ -145,7 +145,6 @@ public class NPC_Mover : MonoBehaviour
                 if (NPC_MoveAttack.Check_ToMoveRelTarget()) npcState = NpcState.MoveRelTarget;
                 break;
         }
-        Debug.Log(npcState);
     }
 
     private void SelectTarget()

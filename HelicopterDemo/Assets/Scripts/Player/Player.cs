@@ -98,8 +98,7 @@ public class Player : MonoBehaviour
         else
             lineRenderer.enabled = false;
 
-        if (inputController.PlayerState == PlayerStates.Aiming &&
-            (!selectedTarget || AimAngles.x > 45f || (selectedTarget.transform.position - transform.position).magnitude > maxDistToAim))
+        if (inputController.PlayerState == PlayerStates.Aiming && !selectedTarget)
         {
             inputController.ForceChangePlayerState(PlayerStates.Normal);
             ChangeAimState();

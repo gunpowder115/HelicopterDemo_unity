@@ -212,6 +212,10 @@ GameObject:
   - component: {fileID: 8985188253269644281}
   - component: {fileID: 4474653529649748138}
   - component: {fileID: 419729732646519309}
+  - component: {fileID: 8925645585097127647}
+  - component: {fileID: 6670872994761767698}
+  - component: {fileID: 1389377731252226711}
+  - component: {fileID: 4485110919488551111}
   m_Layer: 0
   m_Name: Helicopter
   m_TagString: Untagged
@@ -378,6 +382,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f6465ea79b1a71409348b111641c37c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8925645585097127647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5817739379426018126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 249e88c79374bbb4991e7aa56922b92b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6670872994761767698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5817739379426018126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7ef0f4fd4e27ad4081a6cc4ded100ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseHealth: 100
+--- !u!114 &1389377731252226711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5817739379426018126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3541337dad71cbc4a9fccf4cd2ac4086, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!65 &4485110919488551111
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5817739379426018126}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2.1082568, y: 2.2902067, z: 7.5999207}
+  m_Center: {x: -0.0082704425, y: 1.290207, z: 0.05789447}
 --- !u!1001 &1104868747
 PrefabInstance:
   m_ObjectHideFlags: 0
