@@ -326,6 +326,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 619776e034de7b145938a6b596f54ff5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxHorMoveTime: 3
+  maxVertMoveTime: 0.5
+  lateralMovingCoef: 0.18
 --- !u!114 &8985188253269644281
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -338,6 +341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98a3cbb3ce5dae144944e1af4466a2ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isFriendly: 1
   isGround: 0
   speed: 30
   lowSpeedCoef: 0.5
@@ -346,6 +350,10 @@ MonoBehaviour:
   acceleration: 2.5
   minHeight: 15
   maxHeight: 50
+  minPursuitDist: 40
+  maxPursuitDist: 50
+  minAttackDist: 10
+  maxAttackDist: 20
 --- !u!114 &4474653529649748138
 MonoBehaviour:
   m_ObjectHideFlags: 0

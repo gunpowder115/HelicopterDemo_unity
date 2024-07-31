@@ -25,9 +25,11 @@ public class NpcController : MonoBehaviour
     readonly string friendlyGroundTag = "FriendlyGround";
     readonly string enemyBuildTag = "EnemyBuild";
     readonly string friendlyBuildTag = "FriendlyBuild";
+    readonly string playerTag = "Player";
 
     #endregion
 
+    private GameObject player;
     List<GameObject> npcs;
 
     static NpcController instance;
@@ -48,6 +50,11 @@ public class NpcController : MonoBehaviour
     public SortedDictionary<float, GameObject> FindDistToFriendlies(in GameObject origin) => FindDistToNpcs(in origin, false);
     public KeyValuePair<float, GameObject> FindNearestEnemy(in GameObject origin) => FindNearestNpc(in origin, FindDistToEnemies(in origin));
     public KeyValuePair<float, GameObject> FindNearestFriendly(in GameObject origin) => FindNearestNpc(in origin, FindDistToFriendlies(in origin));
+    public KeyValuePair<float, GameObject> GetPlayer(in GameObject origin)
+    {
+        float distTo = Vector3.Magnitude(player.transform.position - origin.transform.position);
+        return new KeyValuePair<float, GameObject>(distTo, player);
+    }
 
     void Awake()
     {
@@ -69,6 +76,7 @@ public class NpcController : MonoBehaviour
         npcs.AddRange(GameObject.FindGameObjectsWithTag(friendlyGroundTag));
         npcs.AddRange(GameObject.FindGameObjectsWithTag(enemyBuildTag));
         npcs.AddRange(GameObject.FindGameObjectsWithTag(friendlyBuildTag));
+        player = GameObject.FindGameObjectWithTag(playerTag);
     }
 
     int GetNpcCount(string tag)

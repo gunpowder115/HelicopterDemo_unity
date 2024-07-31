@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(NPC_Explorer))]
@@ -10,6 +11,7 @@ using UnityEngine;
 
 public class NPC_Mover : MonoBehaviour
 {
+    [SerializeField] private bool isFriendly = true;
     [SerializeField] private bool isGround = false;
     [SerializeField] private float speed = 20f;
     [SerializeField] private float lowSpeedCoef = 0.5f;
@@ -18,6 +20,10 @@ public class NPC_Mover : MonoBehaviour
     [SerializeField] private float acceleration = 1f;
     [SerializeField] private float minHeight = 15f;
     [SerializeField] private float maxHeight = 50f;
+    [SerializeField] private float minPursuitDist = 40f;
+    [SerializeField] private float maxPursuitDist = 50f;
+    [SerializeField] private float minAttackDist = 10f;
+    [SerializeField] private float maxAttackDist = 20f;
 
     private NpcState npcState;
     private NPC_Takeoff NPC_Takeoff;
@@ -26,6 +32,9 @@ public class NPC_Mover : MonoBehaviour
     private NPC_MoveRelTarget NPC_MoveRelTarget;
     private NPC_MoveAttack NPC_MoveAttack;
     private CargoItem thisItem;
+    private NpcController npcController;
+    private GameObject selectedTarget;
+    private LineRenderer lineToTarget;
 
     #region Properties
 
@@ -37,6 +46,21 @@ public class NPC_Mover : MonoBehaviour
     public float Acceleration => acceleration;
     public float MinHeight => minHeight;
     public float MaxHeight => maxHeight;
+    public float MinPursuitDist => minPursuitDist;
+    public float MaxPursuitDist => maxPursuitDist;
+    public float MinAttackDist => minAttackDist;
+    public float MaxAttackDist => minPursuitDist;
+    public float HorDistToTgt
+    {
+        get
+        {
+            Vector3 toTgt = selectedTarget.transform.position - transform.position;
+            toTgt.y = 0f;
+            return toTgt.magnitude;
+        }
+    }
+    public GameObject SelectedTarget => selectedTarget;
+    public LineRenderer LineToTarget => lineToTarget;
     public Translation Translation { get; private set; }
     public Rotation Rotation { get; private set; }
     public Building Building => thisItem.Building;
@@ -54,6 +78,10 @@ public class NPC_Mover : MonoBehaviour
         Translation = GetComponent<Translation>();
         Rotation = GetComponent<Rotation>();
         thisItem = GetComponent<CargoItem>();
+
+        npcController = NpcController.singleton;
+        lineToTarget = gameObject.AddComponent<LineRenderer>();
+        lineToTarget.enabled = false;
     }
 
     void Start()
@@ -63,12 +91,14 @@ public class NPC_Mover : MonoBehaviour
 
     void Update()
     {
-        Move();
+        SelectTarget();
         ChangeState();
+        Move();
     }
 
     private void Move()
     {
+        EraseLine();
         switch (npcState)
         {
             case NpcState.Takeoff:
@@ -81,9 +111,11 @@ public class NPC_Mover : MonoBehaviour
                 NPC_Explorer.Move();
                 break;
             case NpcState.MoveRelTarget:
-
+                DrawLine(Color.blue);
+                NPC_MoveRelTarget.Move();
                 break;
             case NpcState.Attack:
+                DrawLine(Color.red);
                 NPC_MoveAttack.Move();
                 break;
         }
@@ -109,11 +141,39 @@ public class NPC_Mover : MonoBehaviour
                 if (NPC_MoveRelTarget.Check_ToPatrolling()) npcState = NpcState.Patrolling;
                 if (NPC_MoveRelTarget.Check_ToExploring()) npcState = NpcState.Exploring;
                 break;
-            case NpcState.Attack: //todo
+            case NpcState.Attack:
                 if (NPC_MoveAttack.Check_ToMoveRelTarget()) npcState = NpcState.MoveRelTarget;
                 break;
         }
+        Debug.Log(npcState);
     }
+
+    private void SelectTarget()
+    {
+        KeyValuePair<float, GameObject> nearest;
+        if (isFriendly)
+        {
+            nearest = npcController.FindNearestEnemy(gameObject);
+        }
+        else
+        {
+            nearest = npcController.FindNearestFriendly(gameObject);
+            var player = npcController.GetPlayer(gameObject);
+            nearest = player.Key < nearest.Key ? player : nearest;
+        }
+        selectedTarget = nearest.Value;
+    }
+
+    private void DrawLine(Color color)
+    {
+        LineToTarget.enabled = true;
+        LineToTarget.startColor = color;
+        LineToTarget.endColor = color;
+        LineToTarget.SetPosition(0, transform.position);
+        LineToTarget.SetPosition(1, selectedTarget.transform.position);
+    }
+
+    private void EraseLine() => LineToTarget.enabled = false;
 
     public enum NpcState
     {
