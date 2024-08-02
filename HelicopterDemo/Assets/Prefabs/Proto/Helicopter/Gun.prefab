@@ -159,11 +159,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8714384921057184524, guid: c90536e7b88461b4b8c245ae756cd2fd, type: 3}
       propertyPath: rechargeTime
-      value: 0
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8714384921057184524, guid: c90536e7b88461b4b8c245ae756cd2fd, type: 3}
       propertyPath: maxClipVolume
-      value: 0
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 8714384921057184524, guid: c90536e7b88461b4b8c245ae756cd2fd, type: 3}
       propertyPath: maxDeflectionAngle

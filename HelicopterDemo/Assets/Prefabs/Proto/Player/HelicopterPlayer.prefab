@@ -107,6 +107,14 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4532696239507813702, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+      propertyPath: rechargeTime
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4532696239507813702, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
+      propertyPath: maxClipVolume
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5817739378989029451, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
       propertyPath: m_Enabled
       value: 0

@@ -8,10 +8,12 @@ public class MissileLauncher : BaseLauncher
 
     [SerializeField] GameObject missilePrefab;
     [SerializeField] float rechargeTime = 5f;
+    [SerializeField] float shotDeltaTime = 0.5f;
     [SerializeField] bool guided = false;
 
-    bool isEnable;
-    GameObject[] childObjects;
+    private bool isEnable;
+    private float currShotDeltaTime;
+    private GameObject[] childObjects;
 
     public void Launch(GameObject target)
     {
@@ -25,11 +27,14 @@ public class MissileLauncher : BaseLauncher
                 if (guidedMissile) guidedMissile.SelectedTarget = target;
             }
             else
+            {
                 Instantiate(missilePrefab, transform.position + transform.forward * 1.5f, CalculateDeflection());
+            }
         }
         else
             Debug.Log(this.ToString() + ": missilePrefab is NULL!");
         StartCoroutine(MissileActivity());
+        currShotDeltaTime = 0f;
     }
 
     void Start()

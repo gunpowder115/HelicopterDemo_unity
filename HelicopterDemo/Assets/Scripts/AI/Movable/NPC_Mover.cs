@@ -8,6 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(CargoItem))]
 [RequireComponent(typeof(Translation))]
 [RequireComponent(typeof(Rotation))]
+[RequireComponent(typeof(Shooter))]
 
 public class NPC_Mover : MonoBehaviour
 {
@@ -35,6 +36,7 @@ public class NPC_Mover : MonoBehaviour
     private NpcController npcController;
     private GameObject selectedTarget;
     private LineRenderer lineToTarget;
+    private Shooter shooter;
 
     #region Properties
 
@@ -64,6 +66,7 @@ public class NPC_Mover : MonoBehaviour
     public Translation Translation { get; private set; }
     public Rotation Rotation { get; private set; }
     public Building Building => thisItem.Building;
+    public Shooter Shooter => shooter;
     public Platform[] BasePlatforms => thisItem.BaseCenter.Platforms;
 
     #endregion
@@ -78,6 +81,7 @@ public class NPC_Mover : MonoBehaviour
         Translation = GetComponent<Translation>();
         Rotation = GetComponent<Rotation>();
         thisItem = GetComponent<CargoItem>();
+        shooter = GetComponent<Shooter>();
 
         npcController = NpcController.singleton;
         lineToTarget = gameObject.AddComponent<LineRenderer>();
@@ -111,12 +115,11 @@ public class NPC_Mover : MonoBehaviour
                 NPC_Explorer.Move();
                 break;
             case NpcState.MoveRelTarget:
-                DrawLine(Color.blue);
                 NPC_MoveRelTarget.Move();
                 break;
             case NpcState.Attack:
-                DrawLine(Color.red);
                 NPC_MoveAttack.Move();
+                NPC_MoveAttack.Shoot();
                 break;
         }
     }

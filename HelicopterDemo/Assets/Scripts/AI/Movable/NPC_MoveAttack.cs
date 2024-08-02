@@ -24,6 +24,7 @@ public class NPC_MoveAttack : MonoBehaviour
     private GameObject Target => NPC_Mover.SelectedTarget;
     private Translation Translation => NPC_Mover.Translation;
     private Rotation Rotation => NPC_Mover.Rotation;
+    private Shooter Shooter => NPC_Mover.Shooter;
 
     void Start()
     {
@@ -39,6 +40,11 @@ public class NPC_MoveAttack : MonoBehaviour
         if (!IsGround)
             VerticalTranslate();
         Rotate();
+    }
+
+    public void Shoot()
+    {
+        Shooter.BarrelFire(Target);
     }
 
     public bool Check_ToMoveRelTarget()

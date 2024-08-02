@@ -29,7 +29,7 @@ public class CargoPlatform : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //SimpleCargoCall();
+        SimpleCargoCall();
     }
 
     private void SimpleCargoCall()
