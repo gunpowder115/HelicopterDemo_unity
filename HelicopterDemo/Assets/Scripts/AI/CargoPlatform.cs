@@ -13,11 +13,13 @@ public class CargoPlatform : MonoBehaviour
     private GameObject cargoItem;
     private CargoHelicopter cargoHelicopter;
     private HelicopterAI helicopter;
+    private NpcController npcController;
     private CargoState cargoState;
 
     private void Awake()
     {
         building = GetComponent<Building>();
+        npcController = NpcController.singleton;
 
         cargoItem = Instantiate(cargoPrefab, gameObject.transform.position, gameObject.transform.rotation);
         cargoState = CargoState.Works;
@@ -43,6 +45,7 @@ public class CargoPlatform : MonoBehaviour
             case CargoState.Lost:
                 cargoItem = Instantiate(cargoPrefab, gameObject.transform.position, gameObject.transform.rotation);
                 cargoState = CargoState.Works;
+                npcController.Add(cargoItem);
 
                 CargoItem cargoItemComp = cargoItem.GetComponent<CargoItem>();
                 if (cargoItemComp)
