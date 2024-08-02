@@ -9,10 +9,12 @@ public class Health : MonoBehaviour
     private SimpleNpc npc;
 
     public bool IsAlive { get; private set; }
+    public bool IsHurt { get; set; }
 
     public void Hurt(float damage)
     {
         health -= damage;
+        IsHurt = true;
         if (health <= 0f)
         {
             IsAlive = false;

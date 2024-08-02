@@ -4,14 +4,18 @@ public class NPC_MoveAttack : MonoBehaviour
 {
     [SerializeField] private float maxHorMoveTime = 3f;
     [SerializeField] private float maxVertMoveTime = 0.5f;
+    [SerializeField] private float moveTime = 3f;
     [SerializeField] private float lateralMovingCoef = 0.1f;
+    [SerializeField] private float targetHeightDelta = 20f;
 
+    private bool isMoving;
     private bool horWait, vertWait;
-    private float currHorTime, endHorTime, currVertTime, endVertTime;
+    private float currHorTime, endHorTime, currVertTime, endVertTime, currMoveTime;
     private float targetVerticalSpeed, currVerticalSpeed, targetVerticalDir;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
     private NPC_Mover NPC_Mover;
+    private Health health;
 
     private bool IsGround => NPC_Mover.IsGround;
     private float LowSpeed => NPC_Mover.LowSpeed;
@@ -29,13 +33,37 @@ public class NPC_MoveAttack : MonoBehaviour
     void Start()
     {
         NPC_Mover = GetComponent<NPC_Mover>();
+        health = GetComponent<Health>();
     }
 
     public void Move()
     {
-        SetHorizontalDirection();
-        SetVerticalDirection();
+        if (health.IsHurt && !isMoving)
+        {
+            isMoving = true;
+            health.IsHurt = false;
 
+            float dir = Random.Range(0, 2) == 0 ? 1 : -1;
+            targetDirection = new Vector3(dir, 0f, 0f);
+        }
+
+        if (isMoving)
+        {
+            if (currMoveTime < moveTime)
+            {
+                SetHorizontalDirection();
+                currMoveTime += Time.deltaTime;
+            }
+            else
+            {
+                targetDirection = Vector3.zero;
+                targetVerticalDir = 0f;
+                currMoveTime = 0f;
+                isMoving = false;
+            }
+        }
+
+        SetVerticalDirection();
         Translate();
         if (!IsGround)
             VerticalTranslate();
@@ -98,10 +126,12 @@ public class NPC_MoveAttack : MonoBehaviour
                     targetVerticalDir = -1f;
                 else if (transform.position.y < MinHeight)
                     targetVerticalDir = 1f;
-                else if (Mathf.Abs(Target.transform.position.y - transform.position.y) > 20f)
+                else if (Mathf.Abs(Target.transform.position.y - transform.position.y) > targetHeightDelta)
                     targetVerticalDir = Mathf.Sign(Target.transform.position.y - transform.position.y);
-                else if (Mathf.Abs(Target.transform.position.y - transform.position.y) > HeightDelta)
+                else if (Mathf.Abs(Target.transform.position.y - transform.position.y) > HeightDelta && isMoving)
                     targetVerticalDir = Target.transform.position.y > transform.position.y ? 1f : -1f;
+                else
+                    targetVerticalDir = 0f;
 
                 vertWait = false;
             }
@@ -122,7 +152,7 @@ public class NPC_MoveAttack : MonoBehaviour
         {
             if (horWait)
             {
-                float dir = Random.Range(-1f, 1f);
+                float dir = Random.Range(0, 2) == 0 ? 1 : -1;
                 targetDirection = new Vector3(dir, 0f, 0f);
 
                 horWait = false;
