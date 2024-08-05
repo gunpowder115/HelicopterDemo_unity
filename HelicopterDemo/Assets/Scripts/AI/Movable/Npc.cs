@@ -10,6 +10,7 @@ using UnityEngine;
 public abstract class Npc : MonoBehaviour
 {
     [SerializeField] protected bool isFriendly = true;
+    [SerializeField] protected bool isGround = false;
     [SerializeField] protected float speed = 20f;
     [SerializeField] protected float lowSpeedCoef = 0.5f;
     [SerializeField] protected float highSpeedCoef = 1.5f;

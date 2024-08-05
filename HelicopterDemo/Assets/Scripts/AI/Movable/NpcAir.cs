@@ -37,7 +37,7 @@ public class NpcAir : Npc
 
     #endregion
 
-    public bool IsGround => true;
+    public bool IsGround => isGround;
     public float Speed => speed;
     public float LowSpeed => speed * lowSpeedCoef;
     public float HighSpeed => speed * highSpeedCoef;
@@ -54,9 +54,14 @@ public class NpcAir : Npc
     {
         get
         {
-            Vector3 toTgt = selectedTarget.transform.position - transform.position;
-            toTgt.y = 0f;
-            return toTgt.magnitude;
+            if (selectedTarget)
+            {
+                Vector3 toTgt = selectedTarget.transform.position - transform.position;
+                toTgt.y = 0f;
+                return toTgt.magnitude;
+            }
+            else
+                return Mathf.Infinity;
         }
     }
     public GameObject SelectedTarget => selectedTarget;
