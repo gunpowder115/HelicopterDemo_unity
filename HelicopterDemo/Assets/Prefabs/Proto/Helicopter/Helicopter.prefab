@@ -347,6 +347,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isFriendly: 1
+  isGround: 0
   speed: 30
   lowSpeedCoef: 0.5
   highSpeedCoef: 1.5
