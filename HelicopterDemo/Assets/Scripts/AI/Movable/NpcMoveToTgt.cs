@@ -1,25 +1,28 @@
 using UnityEngine;
 
-public class NPC_MoveRelTarget : MonoBehaviour
+public class NpcMoveToTgt : MonoBehaviour
 {
     private float targetVerticalSpeed, currVerticalSpeed, targetVerticalDir;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
-    private NPC_Mover NPC_Mover;
+    private NpcAir NpcAir;
+    private Health health;
 
-    private bool IsGround => NPC_Mover.IsGround;
-    private float Speed => NPC_Mover.Speed;
-    private float VerticalSpeed => NPC_Mover.VerticalSpeed;
-    private float HeightDelta => NPC_Mover.HeightDelta;
-    private float Acceleration => NPC_Mover.Acceleration;
-    private float HorDistToTgt => NPC_Mover.HorDistToTgt;
-    private GameObject Target => NPC_Mover.SelectedTarget;
-    private Translation Translation => NPC_Mover.Translation;
-    private Rotation Rotation => NPC_Mover.Rotation;
+    private bool IsGround => NpcAir.IsGround;
+    private float Speed => NpcAir.Speed;
+    private float HighSpeed => NpcAir.HighSpeed;
+    private float VerticalSpeed => NpcAir.VerticalSpeed;
+    private float HeightDelta => NpcAir.HeightDelta;
+    private float Acceleration => NpcAir.Acceleration;
+    private float HorDistToTgt => NpcAir.HorDistToTgt;
+    private GameObject Target => NpcAir.SelectedTarget;
+    private Translation Translation => NpcAir.Translation;
+    private Rotation Rotation => NpcAir.Rotation;
 
     void Start()
     {
-        NPC_Mover = GetComponent<NPC_Mover>();
+        NpcAir = GetComponent<NpcAir>();
+        health = GetComponent<Health>();
     }
 
     public void Move()
@@ -39,12 +42,14 @@ public class NPC_MoveRelTarget : MonoBehaviour
 
     public bool Check_ToExploring()
     {
-        return HorDistToTgt > NPC_Mover.MaxPursuitDist;
+        var check = HorDistToTgt > NpcAir.MaxPursuitDist;
+        //if (check) NpcAir.RemoveTarget();
+        return check;
     }
 
     public bool Check_ToAttack()
     {
-        return HorDistToTgt <= NPC_Mover.MinAttackDist;
+        return HorDistToTgt <= NpcAir.MinAttackDist;
     }
 
     private void Translate()

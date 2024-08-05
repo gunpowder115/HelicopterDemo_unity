@@ -6,7 +6,7 @@ public class Health : MonoBehaviour
 
     private float health;
     private NpcController npcController;
-    private SimpleNpc npc;
+    private Npc npc;
 
     public bool IsAlive { get; private set; }
     public bool IsHurt { get; set; }
@@ -33,7 +33,7 @@ public class Health : MonoBehaviour
         IsAlive = true;
         health = baseHealth;
         npcController = NpcController.singleton;
-        npc = GetComponent<SimpleNpc>();
+        npc = GetComponent<Npc>();
     }
 
     private void DestroyNpc()

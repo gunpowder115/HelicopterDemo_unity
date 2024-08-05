@@ -1,6 +1,8 @@
 using UnityEngine;
 
-public class NPC_MoveAttack : MonoBehaviour
+[RequireComponent(typeof(Shooter))]
+
+public class NpcAttack : MonoBehaviour
 {
     [SerializeField] private float maxHorMoveTime = 3f;
     [SerializeField] private float maxVertMoveTime = 0.5f;
@@ -14,26 +16,27 @@ public class NPC_MoveAttack : MonoBehaviour
     private float targetVerticalSpeed, currVerticalSpeed, targetVerticalDir;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
-    private NPC_Mover NPC_Mover;
+    private NpcAir NpcAir;
     private Health health;
+    private Shooter shooter;
 
-    private bool IsGround => NPC_Mover.IsGround;
-    private float LowSpeed => NPC_Mover.LowSpeed;
-    private float VerticalSpeed => NPC_Mover.VerticalSpeed;
-    private float HeightDelta => NPC_Mover.HeightDelta;
-    private float Acceleration => NPC_Mover.Acceleration;
-    private float MinHeight => NPC_Mover.MinHeight;
-    private float MaxHeight => NPC_Mover.MaxHeight;
-    private float HorDistToTgt => NPC_Mover.HorDistToTgt;
-    private GameObject Target => NPC_Mover.SelectedTarget;
-    private Translation Translation => NPC_Mover.Translation;
-    private Rotation Rotation => NPC_Mover.Rotation;
-    private Shooter Shooter => NPC_Mover.Shooter;
+    private bool IsGround => NpcAir.IsGround;
+    private float LowSpeed => NpcAir.LowSpeed;
+    private float VerticalSpeed => NpcAir.VerticalSpeed;
+    private float HeightDelta => NpcAir.HeightDelta;
+    private float Acceleration => NpcAir.Acceleration;
+    private float MinHeight => NpcAir.MinHeight;
+    private float MaxHeight => NpcAir.MaxHeight;
+    private float HorDistToTgt => NpcAir.HorDistToTgt;
+    private GameObject Target => NpcAir.SelectedTarget;
+    private Translation Translation => NpcAir.Translation;
+    private Rotation Rotation => NpcAir.Rotation;
 
     void Start()
     {
-        NPC_Mover = GetComponent<NPC_Mover>();
+        NpcAir = GetComponent<NpcAir>();
         health = GetComponent<Health>();
+        shooter = GetComponent<Shooter>();
     }
 
     public void Move()
@@ -72,12 +75,12 @@ public class NPC_MoveAttack : MonoBehaviour
 
     public void Shoot()
     {
-        Shooter.BarrelFire(Target);
+        shooter.BarrelFire(Target);
     }
 
-    public bool Check_ToMoveRelTarget()
+    public bool Check_ToMoveToTarget()
     {
-        return HorDistToTgt > NPC_Mover.MaxAttackDist;
+        return HorDistToTgt > NpcAir.MaxAttackDist;
     }
 
     private void Translate()

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NPC_Patroller : MonoBehaviour
+public class NpcPatroller : MonoBehaviour
 {
     [SerializeField] private float stopTime = 1f;
     [SerializeField] private float height = 30f;
@@ -11,27 +11,27 @@ public class NPC_Patroller : MonoBehaviour
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
     private List<Vector3> patrolPositions;
-    private NPC_Mover NPC_Mover;
+    private NpcAir NpcAir;
 
-    private bool IsGround => NPC_Mover.IsGround;
-    private float Speed => NPC_Mover.LowSpeed;
-    private float HeightDelta => NPC_Mover.HeightDelta;
-    private float Acceleration => NPC_Mover.Acceleration;
-    private float MinPursuitDist => NPC_Mover.MinPursuitDist;
-    private float HorDistToTgt => NPC_Mover.HorDistToTgt;
-    private Translation Translation => NPC_Mover.Translation;
-    private Rotation Rotation => NPC_Mover.Rotation;
+    private bool IsGround => NpcAir.IsGround;
+    private float Speed => NpcAir.LowSpeed;
+    private float HeightDelta => NpcAir.HeightDelta;
+    private float Acceleration => NpcAir.Acceleration;
+    private float MinPursuitDist => NpcAir.MinPursuitDist;
+    private float HorDistToTgt => NpcAir.HorDistToTgt;
+    private Translation Translation => NpcAir.Translation;
+    private Rotation Rotation => NpcAir.Rotation;
 
     private void Awake()
     {
-        NPC_Mover = GetComponent<NPC_Mover>();
+        NpcAir = GetComponent<NpcAir>();
     }
 
     void Start()
     {
         patrolPositions = new List<Vector3>();
         currPatrolPosIndex = 0;
-        foreach (var platform in NPC_Mover.BasePlatforms)
+        foreach (var platform in NpcAir.BasePlatforms)
         {
             patrolPositions.Add(platform.gameObject.transform.position + platform.gameObject.transform.forward * patrolDist);
         }

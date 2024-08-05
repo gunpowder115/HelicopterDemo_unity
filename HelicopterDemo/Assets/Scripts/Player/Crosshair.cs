@@ -67,7 +67,7 @@ public class Crosshair : MonoBehaviour
         {
             if (i == 0) HitPoint = raycastHits[i].point;
             var hitObject = raycastHits[i].transform.gameObject;
-            if (hitObject.GetComponent<SimpleNpc>())
+            if (hitObject.GetComponent<Npc>())
             {
                 targetScreenPos = mainCamera.WorldToScreenPoint(hitObject.transform.position);
                 Ray rayCenter = mainCamera.ScreenPointToRay(targetScreenPos);

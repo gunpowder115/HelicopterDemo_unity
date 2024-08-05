@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class NPC_Explorer : MonoBehaviour
+public class NpcExplorer : MonoBehaviour
 {
     [SerializeField] private float maxMoveTime = 10f;
     [SerializeField] private float stopTime = 1f;
@@ -11,23 +11,23 @@ public class NPC_Explorer : MonoBehaviour
     private float targetHeight, targetVerticalSpeed, currVerticalSpeed;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
-    private NPC_Mover NPC_Mover;
+    private NpcAir NpcAir;
 
-    private bool IsGround => NPC_Mover.IsGround;
-    private float Speed => NPC_Mover.Speed;
-    private float VerticalSpeed => NPC_Mover.VerticalSpeed;
-    private float HeightDelta => NPC_Mover.HeightDelta;
-    private float Acceleration => NPC_Mover.Acceleration;
-    private float MinHeight => NPC_Mover.MinHeight;
-    private float MaxHeight => NPC_Mover.MaxHeight;
-    private float MinPursuitDist => NPC_Mover.MinPursuitDist;
-    private float HorDistToTgt => NPC_Mover.HorDistToTgt;
-    private Translation Translation => NPC_Mover.Translation;
-    private Rotation Rotation => NPC_Mover.Rotation;
+    private bool IsGround => NpcAir.IsGround;
+    private float Speed => NpcAir.Speed;
+    private float VerticalSpeed => NpcAir.VerticalSpeed;
+    private float HeightDelta => NpcAir.HeightDelta;
+    private float Acceleration => NpcAir.Acceleration;
+    private float MinHeight => NpcAir.MinHeight;
+    private float MaxHeight => NpcAir.MaxHeight;
+    private float MinPursuitDist => NpcAir.MinPursuitDist;
+    private float HorDistToTgt => NpcAir.HorDistToTgt;
+    private Translation Translation => NpcAir.Translation;
+    private Rotation Rotation => NpcAir.Rotation;
 
     void Start()
     {
-        NPC_Mover = GetComponent<NPC_Mover>();
+        NpcAir = GetComponent<NpcAir>();
         currMoveTime = maxMoveTime;
     }
 

@@ -108,7 +108,6 @@ GameObject:
   - component: {fileID: 4815723278743428567}
   - component: {fileID: 7510672770419816641}
   - component: {fileID: 7613461374194508106}
-  - component: {fileID: 9106653860222569577}
   - component: {fileID: 523831717605499186}
   - component: {fileID: 4620548215925688030}
   - component: {fileID: 6517955647374307812}
@@ -116,7 +115,6 @@ GameObject:
   - component: {fileID: 5621319573990279275}
   - component: {fileID: 6245792500775087599}
   - component: {fileID: 5487336110079689121}
-  - component: {fileID: 5654260661170594857}
   - component: {fileID: 2481775775924781296}
   m_Layer: 0
   m_Name: Tank
@@ -168,18 +166,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseHealth: 100
---- !u!114 &9106653860222569577
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4815723278743428566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3541337dad71cbc4a9fccf4cd2ac4086, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &523831717605499186
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -276,26 +262,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 619776e034de7b145938a6b596f54ff5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5654260661170594857
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4815723278743428566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 98a3cbb3ce5dae144944e1af4466a2ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  isGround: 1
-  speed: 5
-  lowSpeedCoef: 0.5
-  verticalSpeed: 20
-  heightDelta: 1
-  acceleration: 3
-  minHeight: 15
-  maxHeight: 50
+  maxHorMoveTime: 3
+  maxVertMoveTime: 0.5
+  moveTime: 3
+  lateralMovingCoef: 0.1
+  targetHeightDelta: 20
 --- !u!114 &2481775775924781296
 MonoBehaviour:
   m_ObjectHideFlags: 0

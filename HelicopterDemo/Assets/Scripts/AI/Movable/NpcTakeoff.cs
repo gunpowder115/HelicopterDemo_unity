@@ -1,29 +1,29 @@
 using UnityEngine;
 
-public class NPC_Takeoff : MonoBehaviour
+public class NpcTakeoff : MonoBehaviour
 {
     private float targetVerticalSpeed, currVerticalSpeed;
-    private NPC_Mover NPC_Mover;
+    private NpcAir NpcAir;
 
-    private float VerticalSpeed => NPC_Mover.VerticalSpeed;
-    private float Acceleration => NPC_Mover.Acceleration;
-    private float MinHeight => NPC_Mover.MinHeight;
-    private Translation Translation => NPC_Mover.Translation;
+    private float VerticalSpeed => NpcAir.VerticalSpeed;
+    private float Acceleration => NpcAir.Acceleration;
+    private float MinHeight => NpcAir.MinHeight;
+    private Translation translation => NpcAir.Translation;
+
+    public bool EndOfTakeoff => transform.position.y > MinHeight && currVerticalSpeed == 0f;
 
     private void Start()
     {
-        NPC_Mover = GetComponent<NPC_Mover>();
+        NpcAir = GetComponent<NpcAir>();
     }
 
     public void Move() => VerticalTranslate();
-
-    public bool Check_ToPatrolling() => transform.position.y > MinHeight && currVerticalSpeed == 0f;
 
     private void VerticalTranslate()
     {
         targetVerticalSpeed = transform.position.y <= MinHeight ? VerticalSpeed : 0f;
         currVerticalSpeed = (Mathf.Abs(currVerticalSpeed - targetVerticalSpeed) < Acceleration && targetVerticalSpeed == 0f) ? 
             0f : Mathf.Lerp(currVerticalSpeed, targetVerticalSpeed, Acceleration * Time.deltaTime);
-        Translation.SetVerticalTranslation(currVerticalSpeed);
+        translation.SetVerticalTranslation(currVerticalSpeed);
     }
 }
