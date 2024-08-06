@@ -11,7 +11,7 @@ public class PlatformController : MonoBehaviour
 
     List<GameObject> platforms;
 
-    public SortedDictionary<float, GameObject> FindDistToPlatforms(in GameObject origin)
+    public SortedDictionary<float, GameObject> FindDistToPlatforms(in Vector3 origin)
     {
         SortedDictionary<float, GameObject> result = new SortedDictionary<float, GameObject>();
 
@@ -19,13 +19,13 @@ public class PlatformController : MonoBehaviour
         {
             if (!result.ContainsValue(platform))
             {
-                float distTo = Vector3.Magnitude(platform.transform.position - origin.transform.position);
+                float distTo = Vector3.Magnitude(platform.transform.position - origin);
                 result.Add(distTo, platform);
             }
         }
         return result;
     }
-    public KeyValuePair<float, GameObject> FindNearestPlatform(in GameObject origin)
+    public KeyValuePair<float, GameObject> FindNearestPlatform(in Vector3 origin)
     {
         SortedDictionary<float, GameObject> platforms = FindDistToPlatforms(in origin);
         bool arePlatforms = platforms.Count > 0;

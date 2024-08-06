@@ -190,8 +190,8 @@ public class Player : MonoBehaviour
     {
         KeyValuePair<float, GameObject> nearest;
         TargetTypes targetType;
-        var nearestNpc = npcController.FindNearestEnemy(gameObject);
-        var nearestPlatform = platformController.FindNearestPlatform(gameObject);
+        var nearestNpc = npcController.FindNearestEnemy(transform.position);
+        var nearestPlatform = platformController.FindNearestPlatform(transform.position);
 
         nearest = nearestNpc.Key < nearestPlatform.Key ? nearestNpc : nearestPlatform;
         targetType = nearestNpc.Key < nearestPlatform.Key ? TargetTypes.Enemy : TargetTypes.Platform;

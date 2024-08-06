@@ -209,12 +209,12 @@ public class NpcAir : Npc
         KeyValuePair<float, GameObject> nearest;
         if (IsFriendly)
         {
-            nearest = npcController.FindNearestEnemy(gameObject);
+            nearest = npcController.FindNearestEnemy(transform.position);
         }
         else
         {
-            nearest = npcController.FindNearestFriendly(gameObject);
-            var player = npcController.GetPlayer(gameObject);
+            nearest = npcController.FindNearestFriendly(transform.position);
+            var player = npcController.GetPlayer(transform.position);
             nearest = player.Key < nearest.Key ? player : nearest;
         }
         selectedTarget = nearest.Value;

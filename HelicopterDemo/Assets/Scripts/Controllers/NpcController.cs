@@ -46,13 +46,13 @@ public class NpcController : MonoBehaviour
             npcs.Remove(npc);
     }
 
-    public SortedDictionary<float, GameObject> FindDistToEnemies(in GameObject origin) => FindDistToNpcs(in origin, true);
-    public SortedDictionary<float, GameObject> FindDistToFriendlies(in GameObject origin) => FindDistToNpcs(in origin, false);
-    public KeyValuePair<float, GameObject> FindNearestEnemy(in GameObject origin) => FindNearestNpc(in origin, FindDistToEnemies(in origin));
-    public KeyValuePair<float, GameObject> FindNearestFriendly(in GameObject origin) => FindNearestNpc(in origin, FindDistToFriendlies(in origin));
-    public KeyValuePair<float, GameObject> GetPlayer(in GameObject origin)
+    public SortedDictionary<float, GameObject> FindDistToEnemies(in Vector3 origin) => FindDistToNpcs(in origin, true);
+    public SortedDictionary<float, GameObject> FindDistToFriendlies(in Vector3 origin) => FindDistToNpcs(in origin, false);
+    public KeyValuePair<float, GameObject> FindNearestEnemy(in Vector3 origin) => FindNearestNpc(in origin, FindDistToEnemies(in origin));
+    public KeyValuePair<float, GameObject> FindNearestFriendly(in Vector3 origin) => FindNearestNpc(in origin, FindDistToFriendlies(in origin));
+    public KeyValuePair<float, GameObject> GetPlayer(in Vector3 origin)
     {
-        float distTo = Vector3.Magnitude(player.transform.position - origin.transform.position);
+        float distTo = Vector3.Magnitude(player.transform.position - origin);
         return new KeyValuePair<float, GameObject>(distTo, player);
     }
 
@@ -87,7 +87,7 @@ public class NpcController : MonoBehaviour
         return count;
     }
 
-    SortedDictionary<float, GameObject> FindDistToNpcs(in GameObject origin, bool findEnemies = true)
+    SortedDictionary<float, GameObject> FindDistToNpcs(in Vector3 origin, bool findEnemies = true)
     {
         string selAirTag = findEnemies ? enemyAirTag : friendlyAirTag;
         string selGroundTag = findEnemies ? enemyGroundTag : friendlyGroundTag;
@@ -98,14 +98,14 @@ public class NpcController : MonoBehaviour
         {
             if (npc.CompareTag(selAirTag) || npc.CompareTag(selGroundTag) || npc.CompareTag(selBuildTag))
             {
-                float distTo = Vector3.Magnitude(npc.transform.position - origin.transform.position);
+                float distTo = Vector3.Magnitude(npc.transform.position - origin);
                 result.Add(distTo, npc);
             }
         }
         return result;
     }
 
-    KeyValuePair<float, GameObject> FindNearestNpc(in GameObject origin, SortedDictionary<float, GameObject> npcs)
+    KeyValuePair<float, GameObject> FindNearestNpc(in Vector3 origin, SortedDictionary<float, GameObject> npcs)
     {
         bool areNpcs = npcs.Count > 0;
         KeyValuePair<float, GameObject> nearestNpc = areNpcs ? npcs.ElementAt(0) : new KeyValuePair<float, GameObject>(Mathf.Infinity, null);
