@@ -1,6 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(NpcExplorer))]
+[RequireComponent(typeof(NpcPatroller))]
+[RequireComponent(typeof(NpcMoveToTgt))]
+[RequireComponent(typeof(NpcAttack))]
+[RequireComponent(typeof(Shooter))]
+[RequireComponent(typeof(Health))]
 [RequireComponent(typeof(NpcTakeoff))]
 [RequireComponent(typeof(Translation))]
 [RequireComponent(typeof(Rotation))]

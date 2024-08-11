@@ -1,12 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(NpcExplorer))]
-[RequireComponent(typeof(NpcPatroller))]
-[RequireComponent(typeof(NpcMoveToTgt))]
-[RequireComponent(typeof(NpcAttack))]
-[RequireComponent(typeof(Shooter))]
-[RequireComponent(typeof(Health))]
-
 public abstract class Npc : MonoBehaviour
 {
     [SerializeField] protected bool isFriendly = true;
@@ -54,6 +47,7 @@ public abstract class Npc : MonoBehaviour
     public enum NpcState
     {
         Idle,
+        Delivery,
         Takeoff,
         Exploring,
         Patrolling,
