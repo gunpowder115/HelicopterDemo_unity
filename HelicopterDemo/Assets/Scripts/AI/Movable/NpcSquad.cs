@@ -15,6 +15,46 @@ public class NpcSquad : Npc
     [SerializeField] private float deliverySpeed = 5f;
     [SerializeField] private GameObject memberPrefab;
 
+    private bool BaseHasProtection => BaseCenter.HasPrimaryProtection || (BaseCenter.HasSecondaryProtection && BaseCenter.Protection != thisItem); //4
+    private bool BaseUnderAttack => BaseCenter.IsUnderAttack; //6
+    private bool EnemyForAttack => HorDistToSquadPos <= MinAttackDist; //7
+    private bool EnemyForPursuit => HorDistToSquadPos > MaxAttackDist; //8
+    private bool EnemyLost => selectedTarget == null;
+    private bool IsExplorer { get; set; } //10
+    private bool IsPatroller { get; set; } //11
+    private bool IsDead //15
+    {
+        get
+        {
+            foreach (var npc in Npcs)
+                if (npc.gameObject) return false;
+            return true;
+        }
+    }
+    private NpcGround MemberUnderAttack //17
+    {
+        get
+        {
+            foreach (var npc in Npcs)
+                if (npc.UnderAttack) return npc;
+            return null;
+        }
+    }
+
+    public float HorDistToSquadPos
+    {
+        get
+        {
+            if (selectedTarget)
+            {
+                Vector3 toTgt = selectedTarget.transform.position - SquadPos;
+                toTgt.y = 0f;
+                return toTgt.magnitude;
+            }
+            else
+                return Mathf.Infinity;
+        }
+    }
     public Vector3 SquadPos
     {
         get
@@ -33,6 +73,7 @@ public class NpcSquad : Npc
             return pos;
         }
     }
+    public Vector3 CurrentDirection => Npcs[0].Rotation.CurrentDirection;
     public List<GameObject> Members { get; private set; }
     public List<NpcGround> Npcs { get; private set; }
 
@@ -40,6 +81,8 @@ public class NpcSquad : Npc
     {
         Members = new List<GameObject>();
         Npcs = new List<NpcGround>();
+
+        npcState = NpcState.Delivery;
     }
 
     private void Update()
@@ -50,6 +93,18 @@ public class NpcSquad : Npc
             ChangeState();
             Move();
         }
+    }
+
+    public void RotateSquad(Vector3 dir)
+    {
+        foreach (var npc in Npcs)
+            npc.Rotation.RotateByYaw(dir);
+    }
+
+    public void TranslateSquad(Vector3 speed)
+    {
+        foreach (var npc in Npcs)
+            npc.Translation.SetGlobalTranslation(speed);
     }
 
     private void SelectTarget()
@@ -73,25 +128,59 @@ public class NpcSquad : Npc
 
     private void ChangeState()
     {
+        if (!BaseHasProtection && IsExplorer)
+        {
+            npcState = NpcState.Patrolling;
+            IsExplorer = false;
+            IsPatroller = true;
+        }
+
         switch (npcState)
         {
             case NpcState.Delivery:
-
+                npcState = NpcState.Patrolling;
+                IsExplorer = false;
+                IsPatroller = true;
                 break;
             case NpcState.Patrolling:
-
+                if (BaseHasProtection)
+                {
+                    npcState = NpcState.Exploring;
+                    IsExplorer = true;
+                    IsPatroller = false;
+                }
+                else if (BaseUnderAttack || MemberUnderAttack != null)
+                {
+                    npcState = NpcState.MoveToTarget;
+                }
                 break;
             case NpcState.Exploring:
-
+                if (EnemyForPursuit || MemberUnderAttack != null)
+                {
+                    npcState = NpcState.MoveToTarget;
+                }
                 break;
             case NpcState.MoveToTarget:
-
+                if (EnemyForAttack)
+                {
+                    npcState = NpcState.Attack;
+                }
                 break;
             case NpcState.Attack:
-
+                if (EnemyForPursuit)
+                {
+                    npcState = NpcState.MoveToTarget;
+                }
+                else if (EnemyLost && IsExplorer)
+                {
+                    npcState = NpcState.Exploring;
+                }
+                else if (EnemyLost && IsPatroller)
+                {
+                    npcState = NpcState.Patrolling;
+                }
                 break;
         }
-        SetMembersState(npcState);
     }
 
     private void Move()
@@ -102,30 +191,19 @@ public class NpcSquad : Npc
 
                 break;
             case NpcState.Patrolling:
-
+                npcPatroller.Move();
                 break;
             case NpcState.Exploring:
-
+                npcExplorer.Move();
                 break;
             case NpcState.MoveToTarget:
-
+                npcMoveToTgt.Move();
                 break;
             case NpcState.Attack:
-
+                npcAttack.Move();
+                npcAttack.Shoot();
                 break;
         }
-    }
-
-    private void SetMembersState(NpcState newState)
-    {
-        foreach (var npc in Npcs)
-            npc.SetState(newState);
-    }
-
-    private void MembersMove()
-    {
-        foreach (var npc in Npcs)
-            npc.Move();
     }
 
     private void InitMembers()

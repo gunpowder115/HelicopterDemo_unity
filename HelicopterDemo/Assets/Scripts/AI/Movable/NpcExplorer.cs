@@ -11,23 +11,27 @@ public class NpcExplorer : MonoBehaviour
     private float targetHeight, targetVerticalSpeed, currVerticalSpeed;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
-    private NpcAir NpcAir;
+    private Npc npc;
+    private NpcAir npcAir;
+    private NpcSquad npcSquad;
 
-    private bool IsGround => NpcAir.IsGround;
-    private float Speed => NpcAir.Speed;
-    private float VerticalSpeed => NpcAir.VerticalSpeed;
-    private float HeightDelta => NpcAir.HeightDelta;
-    private float Acceleration => NpcAir.Acceleration;
-    private float MinHeight => NpcAir.MinHeight;
-    private float MaxHeight => NpcAir.MaxHeight;
-    private float MinPursuitDist => NpcAir.MinPursuitDist;
-    private float HorDistToTgt => NpcAir.HorDistToTgt;
-    private Translation Translation => NpcAir.Translation;
-    private Rotation Rotation => NpcAir.Rotation;
+    private bool IsGround => npc.IsGround;
+    private float Speed => npc.Speed;
+    private float VerticalSpeed => npcAir.VerticalSpeed;
+    private float HeightDelta => npcAir.HeightDelta;
+    private float Acceleration => npc.Acceleration;
+    private float MinHeight => npcAir.MinHeight;
+    private float MaxHeight => npcAir.MaxHeight;
+    private float MinPursuitDist => npc.MinPursuitDist;
+    private float HorDistToTgt => npc.HorDistToTgt;
+    private Translation Translation => npc.Translation;
+    private Rotation Rotation => npc.Rotation;
 
     void Start()
     {
-        NpcAir = GetComponent<NpcAir>();
+        npc = GetComponent<Npc>();
+        npcAir = GetComponent<NpcAir>();
+        npcSquad = GetComponent<NpcSquad>();
         currMoveTime = maxMoveTime;
     }
 
@@ -56,9 +60,15 @@ public class NpcExplorer : MonoBehaviour
 
     private void Translate()
     {
-        targetSpeed = Vector3.ClampMagnitude((IsGround ? Rotation.CurrentDirection : targetDirection) * Speed, Speed);
+        var dir = IsGround ? npcSquad.CurrentDirection : targetDirection;
+
+        targetSpeed = Vector3.ClampMagnitude(dir * Speed, Speed);
         currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
-        Translation.SetGlobalTranslation(currSpeed);
+
+        if (IsGround)
+            npcSquad.TranslateSquad(currSpeed);
+        else
+            Translation.SetGlobalTranslation(currSpeed);
     }
 
     private void VerticalTranslate()
@@ -73,11 +83,12 @@ public class NpcExplorer : MonoBehaviour
 
     private void Rotate()
     {
-        var direction = targetDirection != Vector3.zero ? targetDirection : Rotation.CurrentDirection;
+        var curDir = IsGround ? npcSquad.CurrentDirection : Rotation.CurrentDirection;
+        var direction = targetDirection != Vector3.zero ? targetDirection : curDir;
         var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
 
         if (IsGround)
-            Rotation.RotateByYaw(direction);
+            npcSquad.RotateSquad(direction);
         else
             Rotation.RotateToDirection(direction, speedCoef, true);
     }

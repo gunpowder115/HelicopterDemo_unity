@@ -23,6 +23,7 @@ public abstract class Npc : MonoBehaviour
     protected Shooter shooter;
     protected Health health;
     protected GameObject selectedTarget;
+    protected CargoItem thisItem;
     protected NpcController npcController;
 
     protected void Init()
@@ -38,11 +39,44 @@ public abstract class Npc : MonoBehaviour
         npcController = NpcController.singleton;
     }
 
+    #region Properties
+
     public bool IsFriendly
     {
         get => isFriendly;
         set => isFriendly = value;
     }
+    public bool IsGround => isGround;
+    public float Speed => speed;
+    public float LowSpeed => speed * lowSpeedCoef;
+    public float HighSpeed => speed * highSpeedCoef;
+    public float Acceleration => acceleration;
+    public float MinPursuitDist => minPursuitDist;
+    public float MaxPursuitDist => maxPursuitDist;
+    public float MinAttackDist => minAttackDist;
+    public float MaxAttackDist => minPursuitDist;
+    public float HorDistToTgt
+    {
+        get
+        {
+            if (selectedTarget)
+            {
+                Vector3 toTgt = selectedTarget.transform.position - transform.position;
+                toTgt.y = 0f;
+                return toTgt.magnitude;
+            }
+            else
+                return Mathf.Infinity;
+        }
+    }
+    public GameObject SelectedTarget => selectedTarget;
+    public Translation Translation => translation;
+    public Rotation Rotation => rotation;
+    public Building Building => thisItem.Building;
+    public BaseCenter BaseCenter => thisItem.BaseCenter;
+    public Platform[] BasePlatforms => thisItem.BaseCenter.Platforms;
+
+    #endregion
 
     public enum NpcState
     {

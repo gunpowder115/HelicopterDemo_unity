@@ -16,25 +16,29 @@ public class NpcAttack : MonoBehaviour
     private float targetVerticalSpeed, currVerticalSpeed, targetVerticalDir;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
-    private NpcAir NpcAir;
+    private Npc npc;
+    private NpcAir npcAir;
+    private NpcSquad npcSquad;
     private Health health;
     private Shooter shooter;
 
-    private bool IsGround => NpcAir.IsGround;
-    private float LowSpeed => NpcAir.LowSpeed;
-    private float VerticalSpeed => NpcAir.VerticalSpeed;
-    private float HeightDelta => NpcAir.HeightDelta;
-    private float Acceleration => NpcAir.Acceleration;
-    private float MinHeight => NpcAir.MinHeight;
-    private float MaxHeight => NpcAir.MaxHeight;
-    private float HorDistToTgt => NpcAir.HorDistToTgt;
-    private GameObject Target => NpcAir.SelectedTarget;
-    private Translation Translation => NpcAir.Translation;
-    private Rotation Rotation => NpcAir.Rotation;
+    private bool IsGround => npc.IsGround;
+    private float LowSpeed => npc.LowSpeed;
+    private float VerticalSpeed => npcAir.VerticalSpeed;
+    private float HeightDelta => npcAir.HeightDelta;
+    private float Acceleration => npc.Acceleration;
+    private float MinHeight => npcAir.MinHeight;
+    private float MaxHeight => npcAir.MaxHeight;
+    private float HorDistToTgt => npc.HorDistToTgt;
+    private GameObject Target => npc.SelectedTarget;
+    private Translation Translation => npc.Translation;
+    private Rotation Rotation => npc.Rotation;
 
     void Start()
     {
-        NpcAir = GetComponent<NpcAir>();
+        npc = GetComponent<Npc>();
+        npcAir = GetComponent<NpcAir>();
+        npcSquad = GetComponent<NpcSquad>();
         health = GetComponent<Health>();
         shooter = GetComponent<Shooter>();
     }
@@ -80,7 +84,7 @@ public class NpcAttack : MonoBehaviour
 
     public bool Check_ToMoveToTarget()
     {
-        return HorDistToTgt > NpcAir.MaxAttackDist;
+        return HorDistToTgt > npc.MaxAttackDist;
     }
 
     private void Translate()

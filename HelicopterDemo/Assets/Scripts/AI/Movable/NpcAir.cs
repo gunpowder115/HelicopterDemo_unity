@@ -20,7 +20,6 @@ public class NpcAir : Npc
     [SerializeField] private float maxHeight = 50f;
 
     private NpcTakeoff npcTakeoff;
-    private CargoItem thisItem;
     private LineRenderer lineToTarget;
 
     #region Properties
@@ -43,39 +42,11 @@ public class NpcAir : Npc
 
     #endregion
 
-    public bool IsGround => isGround;
-    public float Speed => speed;
-    public float LowSpeed => speed * lowSpeedCoef;
-    public float HighSpeed => speed * highSpeedCoef;
     public float VerticalSpeed => verticalSpeed;
     public float HeightDelta => heightDelta;
-    public float Acceleration => acceleration;
     public float MinHeight => minHeight;
     public float MaxHeight => maxHeight;
-    public float MinPursuitDist => minPursuitDist;
-    public float MaxPursuitDist => maxPursuitDist;
-    public float MinAttackDist => minAttackDist;
-    public float MaxAttackDist => minPursuitDist;
-    public float HorDistToTgt
-    {
-        get
-        {
-            if (selectedTarget)
-            {
-                Vector3 toTgt = selectedTarget.transform.position - transform.position;
-                toTgt.y = 0f;
-                return toTgt.magnitude;
-            }
-            else
-                return Mathf.Infinity;
-        }
-    }
-    public GameObject SelectedTarget => selectedTarget;
     public LineRenderer LineToTarget => lineToTarget;
-    public Translation Translation => translation;
-    public Rotation Rotation => rotation;
-    public Building Building => thisItem.Building;
-    public Platform[] BasePlatforms => thisItem.BaseCenter.Platforms;
 
     #endregion
 
@@ -88,10 +59,7 @@ public class NpcAir : Npc
 
         lineToTarget = gameObject.AddComponent<LineRenderer>();
         lineToTarget.enabled = false;
-    }
 
-    void Start()
-    {
         npcState = NpcState.Takeoff;
     }
 
@@ -129,7 +97,8 @@ public class NpcAir : Npc
         }
     }
 
-    private void ChangeState()
+    
+    private void ChangeState() //todo
     {
         //if (!BaseHasProtection && isExplorer)
         //{
@@ -191,15 +160,15 @@ public class NpcAir : Npc
             case NpcState.Takeoff:
                 if (npcTakeoff.EndOfTakeoff) npcState = NpcState.Patrolling;
                 break;
-            case NpcState.Patrolling: //todo
+            case NpcState.Patrolling:
                 if (npcPatroller.Check_ToExploring()) npcState = NpcState.Exploring;
                 if (npcPatroller.Check_ToMoveRelTarget()) npcState = NpcState.MoveToTarget;
                 break;
-            case NpcState.Exploring: //todo
+            case NpcState.Exploring:
                 if (npcExplorer.Check_ToPatrolling()) npcState = NpcState.Patrolling;
                 if (npcExplorer.Check_ToMoveRelTarget()) npcState = NpcState.MoveToTarget;
                 break;
-            case NpcState.MoveToTarget: //todo
+            case NpcState.MoveToTarget:
                 if (npcMoveToTgt.Check_ToAttack()) npcState = NpcState.Attack;
                 if (npcMoveToTgt.Check_ToPatrolling()) npcState = NpcState.Patrolling;
                 if (npcMoveToTgt.Check_ToExploring()) npcState = NpcState.Exploring;

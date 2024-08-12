@@ -9,12 +9,7 @@ public class NpcGround : Npc
 {
     private NpcSquad npcSquad;
 
+    public bool UnderAttack { get; } //todo
+
     public void SetTarget(GameObject tgt) => selectedTarget = tgt;
-
-    public void SetState(NpcState newState) => npcState = newState;
-
-    public void Move()
-    {
-        
-    }
 }

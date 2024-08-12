@@ -5,24 +5,25 @@ public class NpcMoveToTgt : MonoBehaviour
     private float targetVerticalSpeed, currVerticalSpeed, targetVerticalDir;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
-    private NpcAir NpcAir;
-    private Health health;
+    private Npc npc;
+    private NpcAir npcAir;
+    private NpcSquad npcSquad;
 
-    private bool IsGround => NpcAir.IsGround;
-    private float Speed => NpcAir.Speed;
-    private float HighSpeed => NpcAir.HighSpeed;
-    private float VerticalSpeed => NpcAir.VerticalSpeed;
-    private float HeightDelta => NpcAir.HeightDelta;
-    private float Acceleration => NpcAir.Acceleration;
-    private float HorDistToTgt => NpcAir.HorDistToTgt;
-    private GameObject Target => NpcAir.SelectedTarget;
-    private Translation Translation => NpcAir.Translation;
-    private Rotation Rotation => NpcAir.Rotation;
+    private bool IsGround => npc.IsGround;
+    private float Speed => npc.Speed;
+    private float VerticalSpeed => npcAir.VerticalSpeed;
+    private float HeightDelta => npcAir.HeightDelta;
+    private float Acceleration => npc.Acceleration;
+    private float HorDistToTgt => npc.HorDistToTgt;
+    private GameObject Target => npc.SelectedTarget;
+    private Translation Translation => npc.Translation;
+    private Rotation Rotation => npc.Rotation;
 
     void Start()
     {
-        NpcAir = GetComponent<NpcAir>();
-        health = GetComponent<Health>();
+        npc = GetComponent<Npc>();
+        npcAir = GetComponent<NpcAir>();
+        npcSquad = GetComponent<NpcSquad>();
     }
 
     public void Move()
@@ -42,21 +43,27 @@ public class NpcMoveToTgt : MonoBehaviour
 
     public bool Check_ToExploring()
     {
-        var check = HorDistToTgt > NpcAir.MaxPursuitDist;
+        var check = HorDistToTgt > npc.MaxPursuitDist;
         //if (check) NpcAir.RemoveTarget();
         return check;
     }
 
     public bool Check_ToAttack()
     {
-        return HorDistToTgt <= NpcAir.MinAttackDist;
+        return HorDistToTgt <= npc.MinAttackDist;
     }
 
     private void Translate()
     {
-        targetSpeed = Vector3.ClampMagnitude((IsGround ? Rotation.CurrentDirection : targetDirection) * Speed, Speed);
+        var dir = IsGround ? npcSquad.CurrentDirection : targetDirection;
+
+        targetSpeed = Vector3.ClampMagnitude(dir * Speed, Speed);
         currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
-        Translation.SetGlobalTranslation(currSpeed);
+
+        if (IsGround)
+            npcSquad.TranslateSquad(currSpeed);
+        else
+            Translation.SetGlobalTranslation(currSpeed);
     }
 
     private void VerticalTranslate()
@@ -68,11 +75,12 @@ public class NpcMoveToTgt : MonoBehaviour
 
     private void Rotate()
     {
-        var direction = targetDirection != Vector3.zero ? targetDirection : Rotation.CurrentDirection;
+        var curDir = IsGround ? npcSquad.CurrentDirection : Rotation.CurrentDirection;
+        var direction = targetDirection != Vector3.zero ? targetDirection : curDir;
         var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
 
         if (IsGround)
-            Rotation.RotateByYaw(direction);
+            npcSquad.RotateSquad(direction);
         else
             Rotation.RotateToDirection(direction, speedCoef, true);
     }
