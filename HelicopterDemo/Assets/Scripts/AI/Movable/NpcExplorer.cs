@@ -85,7 +85,10 @@ public class NpcExplorer : MonoBehaviour
         if (currMoveTime >= maxMoveTime)
         {
             if (Wait())
+            {
                 targetDirection = Vector2.zero;
+                targetHeight = transform.position.y;
+            }
             else
             {
                 do
