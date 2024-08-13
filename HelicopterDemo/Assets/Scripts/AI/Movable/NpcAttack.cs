@@ -82,11 +82,6 @@ public class NpcAttack : MonoBehaviour
         shooter.BarrelFire(Target);
     }
 
-    public bool Check_ToMoveToTarget()
-    {
-        return HorDistToTgt > npc.MaxAttackDist;
-    }
-
     private void Translate()
     {
         if (!IsGround)

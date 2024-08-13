@@ -14,7 +14,6 @@ public class NpcMoveToTgt : MonoBehaviour
     private float VerticalSpeed => npcAir.VerticalSpeed;
     private float HeightDelta => npcAir.HeightDelta;
     private float Acceleration => npc.Acceleration;
-    private float HorDistToTgt => npc.HorDistToTgt;
     private GameObject Target => npc.SelectedTarget;
     private Translation Translation => npc.Translation;
     private Rotation Rotation => npc.Rotation;
@@ -33,24 +32,6 @@ public class NpcMoveToTgt : MonoBehaviour
         if (!IsGround)
             VerticalTranslate();
         Rotate();
-    }
-
-    public bool Check_ToPatrolling()
-    {
-        //todo
-        return false;
-    }
-
-    public bool Check_ToExploring()
-    {
-        var check = HorDistToTgt > npc.MaxPursuitDist;
-        //if (check) NpcAir.RemoveTarget();
-        return check;
-    }
-
-    public bool Check_ToAttack()
-    {
-        return HorDistToTgt <= npc.MinAttackDist;
     }
 
     private void Translate()

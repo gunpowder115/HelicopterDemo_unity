@@ -15,13 +15,9 @@ public class NpcSquad : Npc
     [SerializeField] private float deliverySpeed = 5f;
     [SerializeField] private GameObject memberPrefab;
 
-    private bool BaseHasProtection => BaseCenter.HasPrimaryProtection || (BaseCenter.HasSecondaryProtection && BaseCenter.Protection != thisItem); //4
-    private bool BaseUnderAttack => BaseCenter.IsUnderAttack; //6
     private bool EnemyForAttack => HorDistToSquadPos <= MinAttackDist; //7
-    private bool EnemyForPursuit => HorDistToSquadPos > MaxAttackDist; //8
-    private bool EnemyLost => selectedTarget == null;
-    private bool IsExplorer { get; set; } //10
-    private bool IsPatroller { get; set; } //11
+    private bool EnemyForPursuit => npcState == NpcState.Attack ?
+        HorDistToSquadPos > MaxAttackDist : HorDistToSquadPos <= MinPursuitDist; //8
     private bool IsDead //15
     {
         get
@@ -185,7 +181,7 @@ public class NpcSquad : Npc
 
     private void Move()
     {
-        switch(npcState)
+        switch (npcState)
         {
             case NpcState.Delivery:
 

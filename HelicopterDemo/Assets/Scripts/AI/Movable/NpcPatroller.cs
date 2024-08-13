@@ -19,8 +19,6 @@ public class NpcPatroller : MonoBehaviour
     private float Speed => npc.LowSpeed;
     private float HeightDelta => npcAir.HeightDelta;
     private float Acceleration => npc.Acceleration;
-    private float MinPursuitDist => npc.MinPursuitDist;
-    private float HorDistToTgt => npc.HorDistToTgt;
     private Translation Translation => npc.Translation;
     private Rotation Rotation => npc.Rotation;
 
@@ -46,17 +44,6 @@ public class NpcPatroller : MonoBehaviour
         SetDirection();
         Translate();
         Rotate();
-    }
-
-    public bool Check_ToExploring()
-    {
-        //todo
-        return false;
-    }
-
-    public bool Check_ToMoveRelTarget()
-    {
-        return HorDistToTgt <= MinPursuitDist;
     }
 
     private void Translate()

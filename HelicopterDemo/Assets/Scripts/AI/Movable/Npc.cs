@@ -26,20 +26,17 @@ public abstract class Npc : MonoBehaviour
     protected CargoItem thisItem;
     protected NpcController npcController;
 
-    protected void Init()
-    {
-        npcExplorer = GetComponent<NpcExplorer>();
-        npcPatroller = GetComponent<NpcPatroller>();
-        npcMoveToTgt = GetComponent<NpcMoveToTgt>();
-        npcAttack = GetComponent<NpcAttack>();
-        translation = GetComponent<Translation>();
-        rotation = GetComponent<Rotation>();
-        shooter = GetComponent<Shooter>();
-        health = GetComponent<Health>();
-        npcController = NpcController.singleton;
-    }
-
     #region Properties
+
+    #region For change state
+
+    protected bool BaseHasProtection => BaseCenter.HasPrimaryProtection || (BaseCenter.HasSecondaryProtection && BaseCenter.Protection != thisItem); //4
+    protected bool BaseUnderAttack => BaseCenter.IsUnderAttack; //6
+    protected bool EnemyLost => selectedTarget == null; //9
+    protected bool IsExplorer { get; set; } //10
+    protected bool IsPatroller { get; set; } //11
+
+    #endregion
 
     public bool IsFriendly
     {
@@ -77,6 +74,19 @@ public abstract class Npc : MonoBehaviour
     public Platform[] BasePlatforms => thisItem.BaseCenter.Platforms;
 
     #endregion
+
+    protected void Init()
+    {
+        npcExplorer = GetComponent<NpcExplorer>();
+        npcPatroller = GetComponent<NpcPatroller>();
+        npcMoveToTgt = GetComponent<NpcMoveToTgt>();
+        npcAttack = GetComponent<NpcAttack>();
+        translation = GetComponent<Translation>();
+        rotation = GetComponent<Rotation>();
+        shooter = GetComponent<Shooter>();
+        health = GetComponent<Health>();
+        npcController = NpcController.singleton;
+    }
 
     public enum NpcState
     {

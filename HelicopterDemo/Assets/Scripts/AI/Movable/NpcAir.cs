@@ -26,19 +26,11 @@ public class NpcAir : Npc
 
     #region For change state
 
-    //private bool EndOfTakeoff => NpcTakeoff.EndOfTakeoff;
-    //private bool BaseHasProtection => thisItem.BaseCenter.HasProtection;
-    //private bool enemyDetected => ;
-    //private bool npcUnderAttack => ;
-    //private bool baseUnderAttack => ;
-    //private bool enemyForAttack => ;
-    //private bool enemyForPursuit => ;
-    //private bool enemyLost => ;
-    //private bool isExplorer { get; set; }
-    //private bool isPatroller { get; set; }
-    //private bool isLowHealth => ;
-    //private bool isNormHealth => ;
-    //private bool enemyIsFar => ;
+    private bool EndOfTakeoff => npcTakeoff.EndOfTakeoff; //2
+    private bool EnemyForAttack => HorDistToTgt <= MinAttackDist; //7
+    private bool EnemyForPursuit => npcState == NpcState.Attack ? 
+        HorDistToTgt > MaxAttackDist : HorDistToTgt <= MinPursuitDist; //8
+    private bool NpcUnderAttack => false; //17 //todo
 
     #endregion
 
@@ -100,81 +92,51 @@ public class NpcAir : Npc
     
     private void ChangeState() //todo
     {
-        //if (!BaseHasProtection && isExplorer)
-        //{
-        //    npcState = NpcState.Patrolling;
-        //    isExplorer = false;
-        //    isPatroller = true;
-        //}
-        //else if (isExplorer && isLowHealth)
-        //    npcState = NpcState.MoveFromTarget;
-
-        //switch (npcState)
-        //{
-        //    case NpcState.Takeoff:
-        //        if (EndOfTakeoff) npcState = NpcState.Patrolling;
-        //        break;
-
-        //    case NpcState.Patrolling:
-        //        if (BaseHasProtection)
-        //        {
-        //            npcState = NpcState.Exploring;
-        //            isExplorer = true;
-        //            isPatroller = false;
-        //        }
-        //        else if (enemyFinded || npcUnderAttack || baseUnderAttack)
-        //            npcState = NpcState.MoveToTarget;
-        //        break;
-
-        //    case NpcState.Exploring:
-        //        if (enemyFinded || npcUnderAttack)
-        //            npcState = NpcState.MoveToTarget;
-        //        break;
-
-        //    case NpcState.MoveToTarget:
-        //        if (enemyForAttack)
-        //            npcState = NpcState.Attack;
-        //        break;
-
-        //    case NpcState.Attack:
-        //        if (enemyForPursuit)
-        //            npcState = NpcState.MoveToTarget;
-        //        else if (enemyLost && isExplorer)
-        //            npcState = NpcState.Exploring;
-        //        else if (enemyLost && isPatroller)
-        //            npcState = NpcState.Patrolling;
-        //        break;
-
-        //    case NpcState.MoveFromTarget:
-        //        if (isNormHealth || enemyIsFar)
-        //        {
-        //            npcState = NpcState.Exploring;
-        //            isExplorer = true;
-        //            isPatroller = false;
-        //        }
-        //        break;
-        //}
+        if (!BaseHasProtection && IsExplorer)
+        {
+            npcState = NpcState.Patrolling;
+            IsExplorer = false;
+            IsPatroller = true;
+        }
 
         switch (npcState)
         {
+            case NpcState.Delivery:
+                npcState = NpcState.Takeoff;
+                break;
             case NpcState.Takeoff:
-                if (npcTakeoff.EndOfTakeoff) npcState = NpcState.Patrolling;
+                if (EndOfTakeoff)
+                {
+                    npcState = NpcState.Patrolling;
+                    IsExplorer = false;
+                    IsPatroller = true;
+                }
                 break;
             case NpcState.Patrolling:
-                if (npcPatroller.Check_ToExploring()) npcState = NpcState.Exploring;
-                if (npcPatroller.Check_ToMoveRelTarget()) npcState = NpcState.MoveToTarget;
+                if (BaseHasProtection)
+                {
+                    npcState = NpcState.Exploring;
+                    IsExplorer = true;
+                    IsPatroller = false;
+                }
+                else if (NpcUnderAttack || BaseUnderAttack)
+                    npcState = NpcState.MoveToTarget;
                 break;
             case NpcState.Exploring:
-                if (npcExplorer.Check_ToPatrolling()) npcState = NpcState.Patrolling;
-                if (npcExplorer.Check_ToMoveRelTarget()) npcState = NpcState.MoveToTarget;
+                if (EnemyForPursuit || NpcUnderAttack)
+                    npcState = NpcState.MoveToTarget;
                 break;
             case NpcState.MoveToTarget:
-                if (npcMoveToTgt.Check_ToAttack()) npcState = NpcState.Attack;
-                if (npcMoveToTgt.Check_ToPatrolling()) npcState = NpcState.Patrolling;
-                if (npcMoveToTgt.Check_ToExploring()) npcState = NpcState.Exploring;
+                if (EnemyForAttack)
+                    npcState = NpcState.Attack;
                 break;
             case NpcState.Attack:
-                if (npcAttack.Check_ToMoveToTarget()) npcState = NpcState.MoveToTarget;
+                if (EnemyForPursuit)
+                    npcState = NpcState.MoveToTarget;
+                else if (EnemyLost && IsExplorer)
+                    npcState = NpcState.Exploring;
+                else if (EnemyLost && IsPatroller)
+                    npcState = NpcState.Patrolling;
                 break;
         }
     }
