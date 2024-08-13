@@ -103,7 +103,20 @@ public class NpcSquad : Npc
             var player = npcController.GetPlayer(SquadPos);
             nearest = player.Key < nearest.Key ? player : nearest;
         }
-        var selectedTarget = nearest.Value;
+
+        switch (npcState)
+        {
+            case NpcState.Attack:
+                selectedTarget = nearest.Value;
+                break;
+            case NpcState.MoveToTarget:
+                selectedTarget = nearest.Key > MaxPursuitDist ? null : nearest.Value;
+                break;
+            default:
+                selectedTarget = nearest.Key <= MinPursuitDist ? nearest.Value : null;
+                break;
+
+        }
 
         foreach (var npc in Npcs)
             npc.SetTarget(selectedTarget);

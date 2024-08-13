@@ -91,7 +91,7 @@ public class NpcAir : Npc
     }
 
     
-    private void ChangeState() //todo
+    private void ChangeState()
     {
         if (!BaseHasProtection && IsExplorer)
         {
@@ -136,6 +136,14 @@ public class NpcAir : Npc
             case NpcState.MoveToTarget:
                 if (EnemyForAttack)
                     npcState = NpcState.Attack;
+                else if (EnemyLost && IsExplorer)
+                {
+                    npcState = NpcState.Exploring;
+                }
+                else if (EnemyLost && IsPatroller)
+                {
+                    npcState = NpcState.Patrolling;
+                }
                 break;
             case NpcState.Attack:
                 if (EnemyForPursuit)
@@ -161,7 +169,20 @@ public class NpcAir : Npc
             var player = npcController.GetPlayer(transform.position);
             nearest = player.Key < nearest.Key ? player : nearest;
         }
-        selectedTarget = nearest.Value;
+
+        switch (npcState)
+        {
+            case NpcState.Attack:
+                selectedTarget = nearest.Value;
+                break;
+            case NpcState.MoveToTarget:
+                selectedTarget = nearest.Key > MaxPursuitDist ? null : nearest.Value;
+                break;
+            default:
+                selectedTarget = nearest.Key <= MinPursuitDist ? nearest.Value : null;
+                break;
+
+        }
     }
 
     private void DrawLine(Color color)
