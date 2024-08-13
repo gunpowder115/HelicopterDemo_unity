@@ -32,6 +32,11 @@ public class NpcSquad : Npc
                 if (npc.UnderAttack) return npc;
             return null;
         }
+        set
+        {
+            foreach (var npc in Npcs)
+                if (npc.UnderAttack) npc.UnderAttack = value;
+        }
     }
 
     public new Vector3 SquadPos
@@ -58,8 +63,7 @@ public class NpcSquad : Npc
 
     private void Awake()
     {
-        Members = new List<GameObject>();
-        Npcs = new List<NpcGround>();
+        InitMembers();
 
         npcState = NpcState.Delivery;
     }
@@ -131,12 +135,14 @@ public class NpcSquad : Npc
                 else if (BaseUnderAttack || MemberUnderAttack != null)
                 {
                     npcState = NpcState.MoveToTarget;
+                    MemberUnderAttack = null; //todo target
                 }
                 break;
             case NpcState.Exploring:
                 if (EnemyForPursuit || MemberUnderAttack != null)
                 {
                     npcState = NpcState.MoveToTarget;
+                    MemberUnderAttack = null; //todo target
                 }
                 break;
             case NpcState.MoveToTarget:

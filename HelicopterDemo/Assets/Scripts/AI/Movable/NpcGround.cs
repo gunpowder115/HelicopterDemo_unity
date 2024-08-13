@@ -9,7 +9,11 @@ public class NpcGround : Npc
 {
     private NpcSquad npcSquad;
 
-    public bool UnderAttack { get; } //todo
+    public bool UnderAttack
+    {
+        get => health.IsUnderAttack;
+        set => health.IsUnderAttack = value;
+    }
 
     public void SetTarget(GameObject tgt) => selectedTarget = tgt;
 }

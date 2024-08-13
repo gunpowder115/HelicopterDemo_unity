@@ -27,7 +27,11 @@ public class NpcAir : Npc
     #region For change state
 
     private bool EndOfTakeoff => npcTakeoff.EndOfTakeoff; //2
-    private bool NpcUnderAttack => false; //17 //todo
+    private bool NpcUnderAttack //17
+    {
+        get => health.IsUnderAttack;
+        set => health.IsUnderAttack = value;
+    }
 
     #endregion
 
@@ -117,11 +121,17 @@ public class NpcAir : Npc
                     IsPatroller = false;
                 }
                 else if (NpcUnderAttack || BaseUnderAttack)
+                {
                     npcState = NpcState.MoveToTarget;
+                    NpcUnderAttack = false; //todo target
+                }
                 break;
             case NpcState.Exploring:
                 if (EnemyForPursuit || NpcUnderAttack)
+                {
                     npcState = NpcState.MoveToTarget;
+                    NpcUnderAttack = false; //todo target
+                }
                 break;
             case NpcState.MoveToTarget:
                 if (EnemyForAttack)
