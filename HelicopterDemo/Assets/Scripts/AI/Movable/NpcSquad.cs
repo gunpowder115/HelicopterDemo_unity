@@ -15,9 +15,6 @@ public class NpcSquad : Npc
     [SerializeField] private float deliverySpeed = 5f;
     [SerializeField] private GameObject memberPrefab;
 
-    private bool EnemyForAttack => HorDistToSquadPos <= MinAttackDist; //7
-    private bool EnemyForPursuit => npcState == NpcState.Attack ?
-        HorDistToSquadPos > MaxAttackDist : HorDistToSquadPos <= MinPursuitDist; //8
     private bool IsDead //15
     {
         get
@@ -37,21 +34,7 @@ public class NpcSquad : Npc
         }
     }
 
-    public float HorDistToSquadPos
-    {
-        get
-        {
-            if (selectedTarget)
-            {
-                Vector3 toTgt = selectedTarget.transform.position - SquadPos;
-                toTgt.y = 0f;
-                return toTgt.magnitude;
-            }
-            else
-                return Mathf.Infinity;
-        }
-    }
-    public Vector3 SquadPos
+    public new Vector3 SquadPos
     {
         get
         {

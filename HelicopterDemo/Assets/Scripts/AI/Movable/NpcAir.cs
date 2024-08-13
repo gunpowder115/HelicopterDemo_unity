@@ -27,9 +27,6 @@ public class NpcAir : Npc
     #region For change state
 
     private bool EndOfTakeoff => npcTakeoff.EndOfTakeoff; //2
-    private bool EnemyForAttack => HorDistToTgt <= MinAttackDist; //7
-    private bool EnemyForPursuit => npcState == NpcState.Attack ? 
-        HorDistToTgt > MaxAttackDist : HorDistToTgt <= MinPursuitDist; //8
     private bool NpcUnderAttack => false; //17 //todo
 
     #endregion

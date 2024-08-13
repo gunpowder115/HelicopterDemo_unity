@@ -32,6 +32,9 @@ public abstract class Npc : MonoBehaviour
 
     protected bool BaseHasProtection => BaseCenter.HasPrimaryProtection || (BaseCenter.HasSecondaryProtection && BaseCenter.Protection != thisItem); //4
     protected bool BaseUnderAttack => BaseCenter.IsUnderAttack; //6
+    protected bool EnemyForAttack => HorDistToTgt <= MinAttackDist; //7
+    protected bool EnemyForPursuit => npcState == NpcState.Attack ?
+        HorDistToTgt > MaxAttackDist : HorDistToTgt <= MinPursuitDist; //8
     protected bool EnemyLost => selectedTarget == null; //9
     protected bool IsExplorer { get; set; } //10
     protected bool IsPatroller { get; set; } //11
@@ -58,7 +61,7 @@ public abstract class Npc : MonoBehaviour
         {
             if (selectedTarget)
             {
-                Vector3 toTgt = selectedTarget.transform.position - transform.position;
+                Vector3 toTgt = selectedTarget.transform.position - (isGround ? SquadPos : transform.position);
                 toTgt.y = 0f;
                 return toTgt.magnitude;
             }
@@ -66,6 +69,7 @@ public abstract class Npc : MonoBehaviour
                 return Mathf.Infinity;
         }
     }
+    public Vector3 SquadPos;
     public GameObject SelectedTarget => selectedTarget;
     public Translation Translation => translation;
     public Rotation Rotation => rotation;
