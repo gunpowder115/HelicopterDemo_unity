@@ -25,8 +25,19 @@ public class Projectile : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         Health health = other.GetComponent<Health>();
-        if (health != null)
-            health.Hurt(damage);
+        if (!FriendlyFire(other.gameObject.tag) && health)
+            health.Hurt(damage, other.GetComponent<Npc>());
+
         Destroy(gameObject);
+    }
+
+    private bool FriendlyFire(string anotherTag) //todo remove tags
+    {
+        string thisTag = gameObject.tag;
+        bool isPlayer = thisTag == "Player" || anotherTag == "Player";
+        bool isFriendly = thisTag.Contains("Friendly") || anotherTag.Contains("Friendly");
+        bool isEnemy = thisTag.Contains("Enemy") || anotherTag.Contains("Enemy");
+
+        return !((isFriendly && isEnemy) || (isPlayer && isEnemy));
     }
 }
