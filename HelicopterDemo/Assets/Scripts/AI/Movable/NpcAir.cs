@@ -123,14 +123,16 @@ public class NpcAir : Npc
                 else if (NpcUnderAttack || BaseUnderAttack)
                 {
                     npcState = NpcState.MoveToTarget;
-                    NpcUnderAttack = false; //todo target
+                    selectedTarget = health.AttackSource.gameObject;
+                    NpcUnderAttack = false;
                 }
                 break;
             case NpcState.Exploring:
                 if (EnemyForPursuit || NpcUnderAttack)
                 {
                     npcState = NpcState.MoveToTarget;
-                    NpcUnderAttack = false; //todo target
+                    selectedTarget = health.AttackSource.gameObject;
+                    NpcUnderAttack = false;
                 }
                 break;
             case NpcState.MoveToTarget:

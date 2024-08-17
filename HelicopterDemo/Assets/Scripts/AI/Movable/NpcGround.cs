@@ -11,9 +11,14 @@ public class NpcGround : Npc
 
     public bool UnderAttack
     {
-        get => health.IsUnderAttack;
+        get
+        {
+            AttackSource = health.AttackSource;
+            return health.IsUnderAttack;
+        }
         set => health.IsUnderAttack = value;
     }
+    public Npc AttackSource { get; private set; }
 
     public void SetTarget(GameObject tgt) => selectedTarget = tgt;
 }

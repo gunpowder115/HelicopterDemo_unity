@@ -15,6 +15,8 @@ public class NpcSquad : Npc
     [SerializeField] private float deliverySpeed = 5f;
     [SerializeField] private GameObject memberPrefab;
 
+    private Npc attackSource;
+
     private bool IsDead //15
     {
         get
@@ -29,7 +31,11 @@ public class NpcSquad : Npc
         get
         {
             foreach (var npc in Npcs)
-                if (npc.UnderAttack) return npc;
+                if (npc.UnderAttack)
+                {
+                    attackSource = npc.AttackSource;
+                    return npc;
+                }
             return null;
         }
         set
@@ -148,14 +154,16 @@ public class NpcSquad : Npc
                 else if (BaseUnderAttack || MemberUnderAttack != null)
                 {
                     npcState = NpcState.MoveToTarget;
-                    MemberUnderAttack = null; //todo target
+                    selectedTarget = attackSource.gameObject;
+                    MemberUnderAttack = null;
                 }
                 break;
             case NpcState.Exploring:
                 if (EnemyForPursuit || MemberUnderAttack != null)
                 {
                     npcState = NpcState.MoveToTarget;
-                    MemberUnderAttack = null; //todo target
+                    selectedTarget = attackSource.gameObject;
+                    MemberUnderAttack = null;
                 }
                 break;
             case NpcState.MoveToTarget:

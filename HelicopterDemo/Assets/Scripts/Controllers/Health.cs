@@ -11,12 +11,15 @@ public class Health : MonoBehaviour
     public bool IsAlive { get; private set; }
     public bool IsHurt { get; set; }
     public bool IsUnderAttack { get; set; }
+    public Npc AttackSource { get; private set; }
 
-    public void Hurt(float damage)
+    public void Hurt(float damage, Npc attackSource = null)
     {
         health -= damage;
         IsHurt = true;
         IsUnderAttack = true;
+        AttackSource = attackSource;
+
         if (health <= 0f)
         {
             IsAlive = false;
