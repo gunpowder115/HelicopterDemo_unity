@@ -17,6 +17,8 @@ public class NpcSquad : Npc
 
     private Npc attackSource;
 
+    #region Properties
+
     private bool IsDead //15
     {
         get
@@ -67,6 +69,8 @@ public class NpcSquad : Npc
     public List<GameObject> Members { get; private set; }
     public List<NpcGround> Npcs { get; private set; }
 
+    #endregion
+
     private void Awake()
     {
         InitMembers();
@@ -84,16 +88,31 @@ public class NpcSquad : Npc
         }
     }
 
-    public void RotateSquad(Vector3 dir)
+    public void RotateSquad(Vector3 targetDir)
     {
         foreach (var npc in Npcs)
-            npc.Rotation.RotateByYaw(dir);
+        {
+            if (npc.BehindSquad && npc.FarFromSquad)
+                targetDir = (SquadPos - npc.gameObject.transform.position).normalized;
+            else
+                targetDir = targetDir != Vector3.zero ? targetDir : CurrentDirection;
+            npc.Rotation.RotateByYaw(targetDir);
+        }
     }
 
-    public void TranslateSquad(Vector3 speed)
+    public void TranslateSquad()
     {
         foreach (var npc in Npcs)
-            npc.Translation.SetGlobalTranslation(speed);
+        {
+            Vector3 targetSpeed = Vector3.ClampMagnitude(CurrentDirection * LowSpeed, LowSpeed);
+            npc.BehindSquad = BehindOfSquad(npc);
+            npc.FarFromSquad = Vector3.Magnitude(SquadPos - npc.gameObject.transform.position) > squadRadius;
+
+            if (npc.BehindSquad && npc.FarFromSquad)
+                targetSpeed = highSpeedCoef * targetSpeed.magnitude * (SquadPos - npc.gameObject.transform.position).normalized;
+
+            npc.Translate(targetSpeed);
+        }
     }
 
     private void SelectTarget()
@@ -227,5 +246,11 @@ public class NpcSquad : Npc
             Npcs.Add(Members[i].GetComponent<NpcGround>());
             dir = rot * dir;
         }
+    }
+
+    private bool BehindOfSquad(NpcGround member)
+    {
+        float dot = Vector3.Dot(SquadPos - member.gameObject.transform.position, member.CurrentSpeed);
+        return dot > 0f;
     }
 }

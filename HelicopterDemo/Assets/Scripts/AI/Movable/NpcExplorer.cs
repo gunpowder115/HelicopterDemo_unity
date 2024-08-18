@@ -52,12 +52,7 @@ public class NpcExplorer : MonoBehaviour
         }
     }
 
-    private void TranslateGround()
-    {
-        targetSpeed = Vector3.ClampMagnitude(npcSquad.CurrentDirection * Speed, Speed);
-        currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
-        npcSquad.TranslateSquad(currSpeed);
-    }
+    private void TranslateGround() => npcSquad.TranslateSquad();
 
     private void TranslateAir()
     {
@@ -66,11 +61,7 @@ public class NpcExplorer : MonoBehaviour
         Translation.SetGlobalTranslation(currSpeed);
     }
 
-    private void RotateGround()
-    {
-        var direction = targetDirection != Vector3.zero ? targetDirection : npcSquad.CurrentDirection;
-        npcSquad.RotateSquad(direction);
-    }
+    private void RotateGround() => npcSquad.RotateSquad(targetDirection);
 
     private void RotateAir()
     {
