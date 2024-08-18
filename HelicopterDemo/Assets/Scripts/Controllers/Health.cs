@@ -23,7 +23,7 @@ public class Health : MonoBehaviour
         if (health <= 0f)
         {
             IsAlive = false;
-            if (npc) DestroyNpc();
+            if (npc) npc.RequestDestroy();
         }
     }
 
@@ -39,11 +39,5 @@ public class Health : MonoBehaviour
         health = baseHealth;
         npcController = NpcController.singleton;
         npc = GetComponent<Npc>();
-    }
-
-    private void DestroyNpc()
-    {
-        npcController.Remove(gameObject);
-        Destroy(gameObject);
     }
 }

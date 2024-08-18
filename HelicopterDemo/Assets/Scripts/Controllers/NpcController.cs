@@ -59,16 +59,6 @@ public class NpcController : MonoBehaviour
     void Awake()
     {
         singleton = this;
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        if (instance == null)
-            instance = this;
-        else if (instance == this)
-            Destroy(gameObject);
-
         npcs = new List<GameObject>();
         npcs.AddRange(GameObject.FindGameObjectsWithTag(enemyAirTag));
         npcs.AddRange(GameObject.FindGameObjectsWithTag(friendlyAirTag));

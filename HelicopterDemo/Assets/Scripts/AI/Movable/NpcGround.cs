@@ -7,8 +7,6 @@ using UnityEngine;
 
 public class NpcGround : Npc
 {
-    private NpcSquad npcSquad;
-
     public bool UnderAttack
     {
         get
@@ -22,6 +20,12 @@ public class NpcGround : Npc
     public bool FarFromSquad { get; set; }
     public Vector3 CurrentSpeed { get; private set; }
     public Npc AttackSource { get; private set; }
+    public NpcSquad NpcSquad { get; set; }
+
+    private void Awake()
+    {
+        base.Init();
+    }
 
     public void SetTarget(GameObject tgt) => selectedTarget = tgt;
 
@@ -29,5 +33,13 @@ public class NpcGround : Npc
     {
         CurrentSpeed = Vector3.Lerp(CurrentSpeed, targetSpeed, Acceleration * Time.deltaTime);
         translation.SetGlobalTranslation(CurrentSpeed);
+    }
+
+    public override void RequestDestroy()
+    {
+        npcController.Remove(gameObject);
+        bool isSquad = NpcSquad.RemoveMember(this);
+        Destroy(gameObject);
+        if (!isSquad) Destroy(NpcSquad.gameObject);
     }
 }

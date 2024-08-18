@@ -73,9 +73,10 @@ public class NpcSquad : Npc
 
     private void Awake()
     {
+        base.Init();
         InitMembers();
-
         npcState = NpcState.Delivery;
+        thisItem = GetComponent<CargoItem>();
     }
 
     private void Update()
@@ -113,6 +114,15 @@ public class NpcSquad : Npc
 
             npc.Translate(targetSpeed);
         }
+    }
+
+    public override void RequestDestroy() => Destroy(gameObject);
+
+    public bool RemoveMember(NpcGround member)
+    {
+        if (Npcs.Contains(member))
+            Npcs.Remove(member);
+        return Npcs.Count > 0;
     }
 
     private void SelectTarget()
@@ -159,9 +169,12 @@ public class NpcSquad : Npc
         switch (npcState)
         {
             case NpcState.Delivery:
-                npcState = NpcState.Patrolling;
-                IsExplorer = false;
-                IsPatroller = true;
+                npcState = NpcState.Exploring;
+                IsExplorer = true;
+                IsPatroller = false;
+                //npcState = NpcState.Patrolling;
+                //IsExplorer = false;
+                //IsPatroller = true;
                 break;
             case NpcState.Patrolling:
                 if (BaseHasProtection)
@@ -193,9 +206,11 @@ public class NpcSquad : Npc
                 break;
             case NpcState.MoveToTarget:
                 if (EnemyForAttack)
-                {
                     npcState = NpcState.Attack;
-                }
+                else if (EnemyLost && IsExplorer)
+                    npcState = NpcState.Exploring;
+                else if (EnemyLost && IsPatroller)
+                    npcState = NpcState.Patrolling;
                 break;
             case NpcState.Attack:
                 if (EnemyForPursuit)
@@ -250,7 +265,9 @@ public class NpcSquad : Npc
             member.transform.Translate(dir * squadRadius / 2f);
             Members.Add(member);
             Npcs.Add(Members[i].GetComponent<NpcGround>());
+            Npcs[i].NpcSquad = this;
             dir = rot * dir;
+            npcController.Add(member);
         }
     }
 

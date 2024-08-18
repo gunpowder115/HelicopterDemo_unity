@@ -69,10 +69,13 @@ public class NpcMoveToTgt : MonoBehaviour
 
     private void SetDirection()
     {
-        if (Mathf.Abs(Target.transform.position.y - transform.position.y) > HeightDelta)
-            targetVerticalDir = Mathf.Sign(Target.transform.position.y - transform.position.y);
-        else
-            targetVerticalDir = 0f;
+        if (!IsGround)
+        {
+            if (Mathf.Abs(Target.transform.position.y - transform.position.y) > HeightDelta)
+                targetVerticalDir = Mathf.Sign(Target.transform.position.y - transform.position.y);
+            else
+                targetVerticalDir = 0f;
+        }
 
         targetDirection = Target.transform.position - transform.position;
         targetDirection.y = 0f;

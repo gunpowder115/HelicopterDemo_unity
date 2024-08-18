@@ -66,6 +66,12 @@ public class NpcAir : Npc
 
     public void RemoveTarget() => selectedTarget = null;
 
+    public override void RequestDestroy()
+    {
+        npcController.Remove(gameObject);
+        Destroy(gameObject);
+    }
+
     private void Move()
     {
         EraseLine();

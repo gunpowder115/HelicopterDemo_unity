@@ -92,6 +92,8 @@ public abstract class Npc : MonoBehaviour
         npcController = NpcController.singleton;
     }
 
+    public abstract void RequestDestroy();
+
     public enum NpcState
     {
         Idle,

@@ -94,7 +94,7 @@ public class NpcExplorer : MonoBehaviour
                 do
                 {
                     targetDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
-                    targetHeight = Random.Range(MinHeight, MaxHeight);
+                    targetHeight = IsGround ? 0f : Random.Range(MinHeight, MaxHeight);
                     CheckBorders();
                 } while (CheckObstacles());
                 currMoveTime = 0f;

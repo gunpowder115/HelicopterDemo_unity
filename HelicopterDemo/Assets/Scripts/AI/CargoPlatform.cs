@@ -45,7 +45,8 @@ public class CargoPlatform : MonoBehaviour
             case CargoState.Lost:
                 cargoItem = Instantiate(cargoPrefab, gameObject.transform.position, gameObject.transform.rotation);
                 cargoState = CargoState.Works;
-                npcController.Add(cargoItem);
+                if (!cargoItem.GetComponent<NpcSquad>())
+                    npcController.Add(cargoItem);
 
                 CargoItem cargoItemComp = cargoItem.GetComponent<CargoItem>();
                 if (cargoItemComp)
