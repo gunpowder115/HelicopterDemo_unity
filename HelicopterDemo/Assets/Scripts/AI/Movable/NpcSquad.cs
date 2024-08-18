@@ -170,15 +170,21 @@ public class NpcSquad : Npc
                     IsExplorer = true;
                     IsPatroller = false;
                 }
-                else if (BaseUnderAttack || MemberUnderAttack != null)
+                else if (MemberUnderAttack != null)
                 {
                     npcState = NpcState.MoveToTarget;
                     selectedTarget = attackSource.gameObject;
                     MemberUnderAttack = null;
                 }
+                else if (BaseUnderAttack)
+                {
+                    //todo
+                }
                 break;
             case NpcState.Exploring:
-                if (EnemyForPursuit || MemberUnderAttack != null)
+                if (EnemyForPursuit)
+                    npcState = NpcState.MoveToTarget;
+                else if (MemberUnderAttack != null)
                 {
                     npcState = NpcState.MoveToTarget;
                     selectedTarget = attackSource.gameObject;

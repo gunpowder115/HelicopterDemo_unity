@@ -120,15 +120,22 @@ public class NpcAir : Npc
                     IsExplorer = true;
                     IsPatroller = false;
                 }
-                else if (NpcUnderAttack || BaseUnderAttack)
+                else if (NpcUnderAttack)
                 {
                     npcState = NpcState.MoveToTarget;
                     selectedTarget = health.AttackSource.gameObject;
                     NpcUnderAttack = false;
                 }
+                else if (BaseUnderAttack)
+                {
+                    npcState = NpcState.MoveToTarget;
+                    //todo
+                }
                 break;
             case NpcState.Exploring:
-                if (EnemyForPursuit || NpcUnderAttack)
+                if (EnemyForPursuit)
+                    npcState = NpcState.MoveToTarget;
+                else if (NpcUnderAttack)
                 {
                     npcState = NpcState.MoveToTarget;
                     selectedTarget = health.AttackSource.gameObject;
