@@ -42,33 +42,43 @@ public class NpcPatroller : MonoBehaviour
     public void Move()
     {
         SetDirection();
-        Translate();
-        Rotate();
+        if (IsGround)
+        {
+            TranslateGround();
+            RotateGround();
+        }
+        else
+        {
+            TranslateAir();
+            RotateAir();
+        }
     }
 
-    private void Translate()
+    private void TranslateGround()
     {
-        var dir = IsGround ? npcSquad.CurrentDirection : targetDirection;
-
-        targetSpeed = Vector3.ClampMagnitude(dir * Speed, Speed);
+        targetSpeed = Vector3.ClampMagnitude(npcSquad.CurrentDirection * Speed, Speed);
         currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
-
-        if (IsGround)
-            npcSquad.TranslateSquad(currSpeed);
-        else
-            Translation.SetGlobalTranslation(currSpeed);
+        npcSquad.TranslateSquad(currSpeed);
     }
 
-    private void Rotate()
+    private void TranslateAir()
     {
-        var curDir = IsGround ? npcSquad.CurrentDirection : Rotation.CurrentDirection;
-        var direction = targetDirection != Vector3.zero ? targetDirection : curDir;
-        var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
+        targetSpeed = Vector3.ClampMagnitude(targetDirection * Speed, Speed);
+        currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
+        Translation.SetGlobalTranslation(currSpeed);
+    }
 
-        if (IsGround)
-            npcSquad.RotateSquad(direction);
-        else
-            Rotation.RotateToDirection(direction, speedCoef, true);
+    private void RotateGround()
+    {
+        var direction = targetDirection != Vector3.zero ? targetDirection : npcSquad.CurrentDirection;
+        npcSquad.RotateSquad(direction);
+    }
+
+    private void RotateAir()
+    {
+        var direction = targetDirection != Vector3.zero ? targetDirection : Rotation.CurrentDirection;
+        var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
+        Rotation.RotateToDirection(direction, speedCoef, true);
     }
 
     private void SetDirection()

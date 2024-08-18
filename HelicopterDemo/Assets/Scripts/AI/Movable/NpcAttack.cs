@@ -29,7 +29,6 @@ public class NpcAttack : MonoBehaviour
     private float Acceleration => npc.Acceleration;
     private float MinHeight => npcAir.MinHeight;
     private float MaxHeight => npcAir.MaxHeight;
-    private float HorDistToTgt => npc.HorDistToTgt;
     private GameObject Target => npc.SelectedTarget;
     private Translation Translation => npc.Translation;
     private Rotation Rotation => npc.Rotation;
@@ -70,11 +69,18 @@ public class NpcAttack : MonoBehaviour
             }
         }
 
-        SetVerticalDirection();
-        Translate();
-        if (!IsGround)
+        if (IsGround)
+        {
+            TranslateGround();
+            RotateGround();
+        }
+        else
+        {
+            SetVerticalDirection();
+            TranslateAir();
             VerticalTranslate();
-        Rotate();
+            RotateAir();
+        }
     }
 
     public void Shoot()
@@ -82,20 +88,17 @@ public class NpcAttack : MonoBehaviour
         shooter.BarrelFire(Target);
     }
 
-    private void Translate()
+    private void TranslateGround()
     {
-        if (!IsGround)
-        {
-            targetDirection = BalanceDistToTarget(targetDirection);
-            targetSpeed = Vector3.ClampMagnitude(targetDirection * LowSpeed, LowSpeed);
-            currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
+        //todo
+    }
 
-            Translation.SetRelToTargetTranslation(currSpeed, Rotation.YawAngle);
-        }
-        else
-        {
-            //todo
-        }
+    private void TranslateAir()
+    {
+        targetDirection = BalanceDistToTarget(targetDirection);
+        targetSpeed = Vector3.ClampMagnitude(targetDirection * LowSpeed, LowSpeed);
+        currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
+        Translation.SetRelToTargetTranslation(currSpeed, Rotation.YawAngle);
     }
 
     private void VerticalTranslate()
@@ -105,17 +108,15 @@ public class NpcAttack : MonoBehaviour
         Translation.SetVerticalTranslation(currVerticalSpeed);
     }
 
-    private void Rotate()
+    private void RotateGround()
     {
-        if (!IsGround)
-        {
-            Quaternion rotToTarget = Quaternion.LookRotation((Target.transform.position - transform.position));
-            Rotation.RotateToTarget(rotToTarget, targetDirection.x);
-        }
-        else
-        {
-            //todo
-        }
+        //todo
+    }
+
+    private void RotateAir()
+    {
+        Quaternion rotToTarget = Quaternion.LookRotation((Target.transform.position - transform.position));
+        Rotation.RotateToTarget(rotToTarget, targetDirection.x);
     }
 
     private void SetVerticalDirection()

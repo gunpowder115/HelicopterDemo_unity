@@ -28,23 +28,45 @@ public class NpcMoveToTgt : MonoBehaviour
     public void Move()
     {
         SetDirection();
-        Translate();
-        if (!IsGround)
-            VerticalTranslate();
-        Rotate();
-    }
-
-    private void Translate()
-    {
-        var dir = IsGround ? npcSquad.CurrentDirection : targetDirection;
-
-        targetSpeed = Vector3.ClampMagnitude(dir * Speed, Speed);
-        currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
 
         if (IsGround)
-            npcSquad.TranslateSquad(currSpeed);
+        {
+            TranslateGround();
+            RotateGround();
+        }
         else
-            Translation.SetGlobalTranslation(currSpeed);
+        {
+            TranslateAir();
+            VerticalTranslate();
+            RotateAir();
+        }
+    }
+
+    private void TranslateGround()
+    {
+        targetSpeed = Vector3.ClampMagnitude(npcSquad.CurrentDirection * Speed, Speed);
+        currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
+        npcSquad.TranslateSquad(currSpeed);
+    }
+
+    private void TranslateAir()
+    {
+        targetSpeed = Vector3.ClampMagnitude(targetDirection * Speed, Speed);
+        currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
+        Translation.SetGlobalTranslation(currSpeed);
+    }
+
+    private void RotateGround()
+    {
+        var direction = targetDirection != Vector3.zero ? targetDirection : npcSquad.CurrentDirection;
+        npcSquad.RotateSquad(direction);
+    }
+
+    private void RotateAir()
+    {
+        var direction = targetDirection != Vector3.zero ? targetDirection : Rotation.CurrentDirection;
+        var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
+        Rotation.RotateToDirection(direction, speedCoef, true);
     }
 
     private void VerticalTranslate()
@@ -52,18 +74,6 @@ public class NpcMoveToTgt : MonoBehaviour
         targetVerticalSpeed = targetVerticalDir * VerticalSpeed;
         currVerticalSpeed = Mathf.Lerp(currVerticalSpeed, targetVerticalSpeed, Acceleration * Time.deltaTime);
         Translation.SetVerticalTranslation(currVerticalSpeed);
-    }
-
-    private void Rotate()
-    {
-        var curDir = IsGround ? npcSquad.CurrentDirection : Rotation.CurrentDirection;
-        var direction = targetDirection != Vector3.zero ? targetDirection : curDir;
-        var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
-
-        if (IsGround)
-            npcSquad.RotateSquad(direction);
-        else
-            Rotation.RotateToDirection(direction, speedCoef, true);
     }
 
     private void SetDirection()
