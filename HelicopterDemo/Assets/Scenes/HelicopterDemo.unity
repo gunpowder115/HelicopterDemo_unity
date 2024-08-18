@@ -153,7 +153,7 @@ PrefabInstance:
     - target: {fileID: 6431487588653109747, guid: 57bd9caf10121f94faa7a832a3f96158, type: 3}
       propertyPath: buildPrefabs.Array.data[6]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 4898905388749487773, guid: a74db5d134fcd24479d6715e8ae2f6ee, type: 3}
     - target: {fileID: 7105680829501726187, guid: 57bd9caf10121f94faa7a832a3f96158, type: 3}
       propertyPath: m_Name
       value: Base (1)

@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 1231538618, guid: 5951cff0d292eda49ae209d2b0fe21b9, type: 3}
       propertyPath: cargoPrefab
       value: 
-      objectReference: {fileID: 312384580812019912, guid: 599b79ac16123004faaea83e51626b15, type: 3}
+      objectReference: {fileID: 1083005665745061296, guid: 46294bd73b3311846b922561e896ceb9, type: 3}
     - target: {fileID: 1231538618, guid: 5951cff0d292eda49ae209d2b0fe21b9, type: 3}
       propertyPath: helicopterPrefab
       value: 
