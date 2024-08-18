@@ -29,7 +29,10 @@ public class BarrelLauncher : BaseLauncher
         if (currShotDeltaTime >= shotDeltaTime)
         {
             if (projectilePrefab)
-                Instantiate(projectilePrefab, this.transform.position, CalculateDeflection());
+            {
+                var proj = Instantiate(projectilePrefab, this.transform.position, CalculateDeflection());
+                proj.tag = gameObject.tag;
+            }
             else
                 Debug.Log(this.ToString() + ": projectilePrefab is NULL!");
 

@@ -36,6 +36,8 @@ public class Shooter : MonoBehaviour
     {
         barrels = new List<BarrelLauncher>();
         barrels.AddRange(GetComponentsInChildren<BarrelLauncher>());
+        foreach (var bar in barrels)
+            bar.gameObject.tag = gameObject.tag;
 
         List<MissileLauncher> missiles = new List<MissileLauncher>(GetComponentsInChildren<MissileLauncher>());
         unguidedMissiles = new List<MissileLauncher>();
@@ -44,6 +46,7 @@ public class Shooter : MonoBehaviour
         {
             foreach (var missile in missiles)
             {
+                missile.tag = gameObject.tag;
                 if (missile.IsGuided)
                     guidedMissiles.Add(missile);
                 else
