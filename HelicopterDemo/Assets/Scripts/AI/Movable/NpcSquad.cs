@@ -10,7 +10,7 @@ using UnityEngine;
 public class NpcSquad : Npc
 {
     [SerializeField] private int membersCount = 3;
-    [SerializeField] private float squadRadius = 20f;
+    [SerializeField] private float squadRadius = 12f;
     [SerializeField] private float memberRadius = 3f;
     [SerializeField] private float deliverySpeed = 5f;
     [SerializeField] private GameObject memberPrefab;
@@ -101,11 +101,10 @@ public class NpcSquad : Npc
         }
     }
 
-    public void TranslateSquad()
+    public void TranslateSquad(Vector3 targetSpeed)
     {
         foreach (var npc in Npcs)
         {
-            Vector3 targetSpeed = Vector3.ClampMagnitude(CurrentDirection * LowSpeed, LowSpeed);
             npc.BehindSquad = BehindOfSquad(npc);
             npc.FarFromSquad = Vector3.Magnitude(SquadPos - npc.gameObject.transform.position) > squadRadius;
 
@@ -261,7 +260,7 @@ public class NpcSquad : Npc
 
         for (int i = 0; i < membersCount; i++)
         {
-            GameObject member = Instantiate(memberPrefab, transform);
+            GameObject member = Instantiate(memberPrefab, transform.position, transform.rotation);
             member.transform.Translate(dir * squadRadius / 2f);
             Members.Add(member);
             Npcs.Add(Members[i].GetComponent<NpcGround>());

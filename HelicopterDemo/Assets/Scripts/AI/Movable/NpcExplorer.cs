@@ -14,9 +14,10 @@ public class NpcExplorer : MonoBehaviour
     private Npc npc;
     private NpcAir npcAir;
     private NpcSquad npcSquad;
+    private LineRenderer lineToTarget;
 
     private bool IsGround => npc.IsGround;
-    private float Speed => npc.Speed;
+    private float Speed => npc.LowSpeed;
     private float VerticalSpeed => npcAir.VerticalSpeed;
     private float HeightDelta => npcAir.HeightDelta;
     private float Acceleration => npc.Acceleration;
@@ -31,6 +32,9 @@ public class NpcExplorer : MonoBehaviour
         npcAir = GetComponent<NpcAir>();
         npcSquad = GetComponent<NpcSquad>();
         currMoveTime = maxMoveTime;
+
+        lineToTarget = gameObject.AddComponent<LineRenderer>();
+        lineToTarget.enabled = false;
     }
 
     public void Move()
@@ -41,6 +45,7 @@ public class NpcExplorer : MonoBehaviour
 
         if (IsGround)
         {
+            DrawLine();
             TranslateGround();
             RotateGround();
         }
@@ -52,7 +57,11 @@ public class NpcExplorer : MonoBehaviour
         }
     }
 
-    private void TranslateGround() => npcSquad.TranslateSquad();
+    private void TranslateGround()
+    {
+        targetSpeed = Vector3.ClampMagnitude(targetDirection == Vector3.zero ? targetDirection : npcSquad.CurrentDirection * Speed, Speed);
+        npcSquad.TranslateSquad(targetSpeed);
+    }
 
     private void TranslateAir()
     {
@@ -118,11 +127,13 @@ public class NpcExplorer : MonoBehaviour
 
     private bool CheckObstacles()
     {
-        Ray ray = new Ray(gameObject.transform.position, targetDirection);
-        if (Physics.SphereCast(ray, 5.0f, out RaycastHit hit))
+        var raycastHits = Physics.SphereCastAll(npcSquad.SquadPos, 5f, targetDirection, 20f);
+        for (int i = 0; i < raycastHits.Length; i++)
         {
+            var hit = raycastHits[i];
             GameObject hitObject = hit.transform.gameObject;
-            return hitObject.CompareTag("Obstacle") && hit.distance < 20.0f;
+            if (hitObject.CompareTag("Obstacle"))
+                return true;
         }
         return false;
     }
@@ -134,5 +145,14 @@ public class NpcExplorer : MonoBehaviour
 
         if (transform.position.z > absBorderZ || transform.position.z < -absBorderZ)
             targetDirection = new Vector3(targetDirection.x, targetDirection.y, -targetDirection.z);
+    }
+
+    private void DrawLine()
+    {
+        lineToTarget.enabled = true;
+        lineToTarget.startColor = Color.red;
+        lineToTarget.endColor = Color.red;
+        lineToTarget.SetPosition(0, npcSquad.SquadPos);
+        lineToTarget.SetPosition(1, npcSquad.SquadPos + targetDirection.normalized * 20f);
     }
 }

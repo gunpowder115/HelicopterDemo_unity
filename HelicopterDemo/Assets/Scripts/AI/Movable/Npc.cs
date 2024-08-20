@@ -69,7 +69,7 @@ public abstract class Npc : MonoBehaviour
                 return Mathf.Infinity;
         }
     }
-    public Vector3 SquadPos;
+    public Vector3 SquadPos { get; set; }
     public GameObject SelectedTarget => selectedTarget;
     public Translation Translation => translation;
     public Rotation Rotation => rotation;

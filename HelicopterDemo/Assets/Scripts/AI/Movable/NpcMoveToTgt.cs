@@ -42,7 +42,11 @@ public class NpcMoveToTgt : MonoBehaviour
         }
     }
 
-    private void TranslateGround() => npcSquad.TranslateSquad();
+    private void TranslateGround()
+    {
+        targetSpeed = Vector3.ClampMagnitude(npcSquad.CurrentDirection * Speed, Speed);
+        npcSquad.TranslateSquad(targetSpeed);
+    }
 
     private void TranslateAir()
     {

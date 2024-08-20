@@ -141,11 +141,11 @@ PrefabInstance:
     - target: {fileID: 6431487588653109747, guid: 57bd9caf10121f94faa7a832a3f96158, type: 3}
       propertyPath: buildPrefabs.Array.data[0]
       value: 
-      objectReference: {fileID: 5548556400626671042, guid: a1d6960533b576e4193953d597eaf08c, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 6431487588653109747, guid: 57bd9caf10121f94faa7a832a3f96158, type: 3}
       propertyPath: buildPrefabs.Array.data[3]
       value: 
-      objectReference: {fileID: 7864451530842663586, guid: 3b406d071c7608742a7714c0b9cf6214, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 6431487588653109747, guid: 57bd9caf10121f94faa7a832a3f96158, type: 3}
       propertyPath: buildPrefabs.Array.data[5]
       value: 
