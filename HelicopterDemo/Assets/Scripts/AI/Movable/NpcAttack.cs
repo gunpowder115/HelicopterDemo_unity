@@ -44,31 +44,6 @@ public class NpcAttack : MonoBehaviour
 
     public void Move()
     {
-        if (health.IsHurt && !isMoving)
-        {
-            isMoving = true;
-            health.IsHurt = false;
-
-            float dir = Random.Range(0, 2) == 0 ? 1 : -1;
-            targetDirection = new Vector3(dir, 0f, 0f);
-        }
-
-        if (isMoving)
-        {
-            if (currMoveTime < moveTime)
-            {
-                SetHorizontalDirection();
-                currMoveTime += Time.deltaTime;
-            }
-            else
-            {
-                targetDirection = Vector3.zero;
-                targetVerticalDir = 0f;
-                currMoveTime = 0f;
-                isMoving = false;
-            }
-        }
-
         if (IsGround)
         {
             TranslateGround();
@@ -76,6 +51,31 @@ public class NpcAttack : MonoBehaviour
         }
         else
         {
+            if (health.IsHurt && !isMoving)
+            {
+                isMoving = true;
+                health.IsHurt = false;
+
+                float dir = Random.Range(0, 2) == 0 ? 1 : -1;
+                targetDirection = new Vector3(dir, 0f, 0f);
+            }
+
+            if (isMoving)
+            {
+                if (currMoveTime < moveTime)
+                {
+                    SetHorizontalDirection();
+                    currMoveTime += Time.deltaTime;
+                }
+                else
+                {
+                    targetDirection = Vector3.zero;
+                    targetVerticalDir = 0f;
+                    currMoveTime = 0f;
+                    isMoving = false;
+                }
+            }
+
             SetVerticalDirection();
             TranslateAir();
             VerticalTranslate();
@@ -90,7 +90,8 @@ public class NpcAttack : MonoBehaviour
 
     private void TranslateGround()
     {
-        //todo
+        targetSpeed = Vector3.zero;
+        npcSquad.TranslateSquad(targetSpeed);
     }
 
     private void TranslateAir()
@@ -108,10 +109,7 @@ public class NpcAttack : MonoBehaviour
         Translation.SetVerticalTranslation(currVerticalSpeed);
     }
 
-    private void RotateGround()
-    {
-        //todo
-    }
+    private void RotateGround() => npcSquad.RotateSquad(targetDirection);
 
     private void RotateAir()
     {

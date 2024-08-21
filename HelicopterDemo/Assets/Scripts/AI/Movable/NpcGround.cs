@@ -22,6 +22,8 @@ public class NpcGround : Npc
     public Npc AttackSource { get; private set; }
     public NpcSquad NpcSquad { get; set; }
 
+    public override float HorDistToTgt => throw new System.NotImplementedException();
+
     private void Awake()
     {
         base.Init();

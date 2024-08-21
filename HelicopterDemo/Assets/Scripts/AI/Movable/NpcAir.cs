@@ -35,6 +35,20 @@ public class NpcAir : Npc
 
     #endregion
 
+    public override float HorDistToTgt
+    {
+        get
+        {
+            if (selectedTarget)
+            {
+                Vector3 toTgt = selectedTarget.transform.position - transform.position;
+                toTgt.y = 0f;
+                return toTgt.magnitude;
+            }
+            else
+                return Mathf.Infinity;
+        }
+    }
     public float VerticalSpeed => verticalSpeed;
     public float HeightDelta => heightDelta;
     public float MinHeight => minHeight;

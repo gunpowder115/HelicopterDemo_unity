@@ -81,7 +81,7 @@ public class NpcMoveToTgt : MonoBehaviour
                 targetVerticalDir = 0f;
         }
 
-        targetDirection = Target.transform.position - transform.position;
+        targetDirection = Target.transform.position - npcSquad.SquadPos;
         targetDirection.y = 0f;
         targetDirection = targetDirection.normalized;
     }

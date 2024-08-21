@@ -47,7 +47,21 @@ public class NpcSquad : Npc
         }
     }
 
-    public new Vector3 SquadPos
+    public override float HorDistToTgt
+    {
+        get
+        {
+            if (selectedTarget)
+            {
+                Vector3 toTgt = selectedTarget.transform.position - SquadPos;
+                toTgt.y = 0f;
+                return toTgt.magnitude;
+            }
+            else
+                return Mathf.Infinity;
+        }
+    }
+    public Vector3 SquadPos
     {
         get
         {
@@ -87,6 +101,8 @@ public class NpcSquad : Npc
             ChangeState();
             Move();
         }
+
+        Debug.Log(npcState);
     }
 
     public void RotateSquad(Vector3 targetDir)

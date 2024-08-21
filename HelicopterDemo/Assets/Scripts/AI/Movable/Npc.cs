@@ -55,21 +55,7 @@ public abstract class Npc : MonoBehaviour
     public float MaxPursuitDist => maxPursuitDist;
     public float MinAttackDist => minAttackDist;
     public float MaxAttackDist => minPursuitDist;
-    public float HorDistToTgt
-    {
-        get
-        {
-            if (selectedTarget)
-            {
-                Vector3 toTgt = selectedTarget.transform.position - (isGround ? SquadPos : transform.position);
-                toTgt.y = 0f;
-                return toTgt.magnitude;
-            }
-            else
-                return Mathf.Infinity;
-        }
-    }
-    public Vector3 SquadPos { get; set; }
+    public abstract float HorDistToTgt { get; }
     public GameObject SelectedTarget => selectedTarget;
     public Translation Translation => translation;
     public Rotation Rotation => rotation;

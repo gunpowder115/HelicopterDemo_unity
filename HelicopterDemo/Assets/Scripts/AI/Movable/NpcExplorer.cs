@@ -127,7 +127,7 @@ public class NpcExplorer : MonoBehaviour
 
     private bool CheckObstacles()
     {
-        var raycastHits = Physics.SphereCastAll(npcSquad.SquadPos, 5f, targetDirection, 20f);
+        var raycastHits = Physics.SphereCastAll(npcSquad.SquadPos + npcSquad.CurrentDirection * 5, 8f, targetDirection, 20f);
         for (int i = 0; i < raycastHits.Length; i++)
         {
             var hit = raycastHits[i];
