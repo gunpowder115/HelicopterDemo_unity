@@ -136,7 +136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isFriendly: 0
   isGround: 1
-  speed: 20
+  speed: 12
   lowSpeedCoef: 0.5
   highSpeedCoef: 1.5
   acceleration: 1
@@ -144,9 +144,8 @@ MonoBehaviour:
   maxPursuitDist: 50
   minAttackDist: 10
   maxAttackDist: 20
-  SquadPos: {x: 0, y: 0, z: 0}
   membersCount: 3
-  squadRadius: 20
+  squadRadius: 12
   memberRadius: 3
   deliverySpeed: 5
   memberPrefab: {fileID: 312384580812019912, guid: 599b79ac16123004faaea83e51626b15, type: 3}
