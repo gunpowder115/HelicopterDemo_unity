@@ -33,7 +33,9 @@ public class NpcExplorer : MonoBehaviour
         npcSquad = GetComponent<NpcSquad>();
         currMoveTime = maxMoveTime;
 
-        lineToTarget = gameObject.AddComponent<LineRenderer>();
+        lineToTarget = GetComponent<LineRenderer>();
+        if (!lineToTarget)
+            lineToTarget = gameObject.AddComponent<LineRenderer>();
         lineToTarget.enabled = false;
     }
 
@@ -59,7 +61,7 @@ public class NpcExplorer : MonoBehaviour
 
     private void TranslateGround()
     {
-        targetSpeed = Vector3.ClampMagnitude(targetDirection == Vector3.zero ? targetDirection : npcSquad.CurrentDirection * Speed, Speed);
+        targetSpeed = Vector3.ClampMagnitude(targetDirection == Vector3.zero ? targetDirection : npc.NpcCurrDir * Speed, Speed);
         npcSquad.TranslateSquad(targetSpeed);
     }
 
@@ -127,7 +129,7 @@ public class NpcExplorer : MonoBehaviour
 
     private bool CheckObstacles()
     {
-        var raycastHits = Physics.SphereCastAll(npcSquad.SquadPos + npcSquad.CurrentDirection * 5, 8f, targetDirection, 20f);
+        var raycastHits = Physics.SphereCastAll(npc.NpcPos + npc.NpcCurrDir * 5, 8f, targetDirection, 20f);
         for (int i = 0; i < raycastHits.Length; i++)
         {
             var hit = raycastHits[i];
@@ -152,7 +154,7 @@ public class NpcExplorer : MonoBehaviour
         lineToTarget.enabled = true;
         lineToTarget.startColor = Color.red;
         lineToTarget.endColor = Color.red;
-        lineToTarget.SetPosition(0, npcSquad.SquadPos);
-        lineToTarget.SetPosition(1, npcSquad.SquadPos + targetDirection.normalized * 20f);
+        lineToTarget.SetPosition(0, npc.NpcPos);
+        lineToTarget.SetPosition(1, npc.NpcPos + targetDirection.normalized * 20f);
     }
 }

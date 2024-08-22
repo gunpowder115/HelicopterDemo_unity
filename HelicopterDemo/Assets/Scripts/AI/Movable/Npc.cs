@@ -12,6 +12,7 @@ public abstract class Npc : MonoBehaviour
     [SerializeField] protected float maxPursuitDist = 50f;
     [SerializeField] protected float minAttackDist = 10f;
     [SerializeField] protected float maxAttackDist = 20f;
+    [SerializeField] protected float distDelta = 1f;
 
     protected NpcState npcState;
     protected NpcExplorer npcExplorer;
@@ -55,7 +56,23 @@ public abstract class Npc : MonoBehaviour
     public float MaxPursuitDist => maxPursuitDist;
     public float MinAttackDist => minAttackDist;
     public float MaxAttackDist => minPursuitDist;
-    public abstract float HorDistToTgt { get; }
+    public float DistDelta => distDelta;
+    public float HorDistToTgt
+    {
+        get
+        {
+            if (selectedTarget)
+            {
+                Vector3 toTgt = selectedTarget.transform.position - NpcPos;
+                toTgt.y = 0f;
+                return toTgt.magnitude;
+            }
+            else
+                return Mathf.Infinity;
+        }
+    }
+    public abstract Vector3 NpcPos { get; }
+    public abstract Vector3 NpcCurrDir { get; }
     public GameObject SelectedTarget => selectedTarget;
     public Translation Translation => translation;
     public Rotation Rotation => rotation;

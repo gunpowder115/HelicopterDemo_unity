@@ -15,7 +15,6 @@ using UnityEngine;
 public class NpcAir : Npc
 {
     [SerializeField] private float verticalSpeed = 20f;
-    [SerializeField] private float heightDelta = 1f;
     [SerializeField] private float minHeight = 15f;
     [SerializeField] private float maxHeight = 50f;
 
@@ -35,24 +34,12 @@ public class NpcAir : Npc
 
     #endregion
 
-    public override float HorDistToTgt
-    {
-        get
-        {
-            if (selectedTarget)
-            {
-                Vector3 toTgt = selectedTarget.transform.position - transform.position;
-                toTgt.y = 0f;
-                return toTgt.magnitude;
-            }
-            else
-                return Mathf.Infinity;
-        }
-    }
     public float VerticalSpeed => verticalSpeed;
-    public float HeightDelta => heightDelta;
+    public float HeightDelta => distDelta;
     public float MinHeight => minHeight;
     public float MaxHeight => maxHeight;
+    public override Vector3 NpcPos => transform.position;
+    public override Vector3 NpcCurrDir => rotation.CurrentDirection;
     public LineRenderer LineToTarget => lineToTarget;
 
     #endregion
@@ -136,9 +123,9 @@ public class NpcAir : Npc
             case NpcState.Patrolling:
                 if (BaseHasProtection)
                 {
-                    npcState = NpcState.Exploring;
-                    IsExplorer = true;
-                    IsPatroller = false;
+                    //npcState = NpcState.Exploring;
+                    //IsExplorer = true;
+                    //IsPatroller = false;
                 }
                 else if (NpcUnderAttack)
                 {

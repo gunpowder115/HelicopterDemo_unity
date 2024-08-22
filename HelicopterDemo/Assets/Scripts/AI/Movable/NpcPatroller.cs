@@ -17,8 +17,8 @@ public class NpcPatroller : MonoBehaviour
 
     private bool IsGround => npc.IsGround;
     private float Speed => npc.LowSpeed;
-    private float HeightDelta => npcAir.HeightDelta;
     private float Acceleration => npc.Acceleration;
+    private float DistDelta => npc.DistDelta;
     private Translation Translation => npc.Translation;
     private Rotation Rotation => npc.Rotation;
 
@@ -56,7 +56,7 @@ public class NpcPatroller : MonoBehaviour
 
     private void TranslateGround()
     {
-        targetSpeed = Vector3.ClampMagnitude(npcSquad.CurrentDirection * Speed, Speed);
+        targetSpeed = Vector3.ClampMagnitude(npc.NpcCurrDir * Speed, Speed);
         npcSquad.TranslateSquad(targetSpeed);
     }
 
@@ -78,16 +78,16 @@ public class NpcPatroller : MonoBehaviour
 
     private void SetDirection()
     {
-        Vector3 airPatrolPos = patrolPositions[currPatrolPosIndex] - transform.position;
-        airPatrolPos.y = 0f;
+        Vector3 patrolPos = patrolPositions[currPatrolPosIndex] - npc.NpcPos;
+        patrolPos.y = 0f;
 
-        if (airPatrolPos.magnitude <= HeightDelta)
+        if (patrolPos.magnitude <= DistDelta)
         {
             currPatrolPosIndex++;
             if (currPatrolPosIndex >= 8)
                 currPatrolPosIndex = 0;
         }
         else
-            targetDirection = airPatrolPos.normalized;
+            targetDirection = patrolPos.normalized;
     }
 }

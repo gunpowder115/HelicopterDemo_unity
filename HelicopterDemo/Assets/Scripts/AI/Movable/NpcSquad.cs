@@ -47,21 +47,7 @@ public class NpcSquad : Npc
         }
     }
 
-    public override float HorDistToTgt
-    {
-        get
-        {
-            if (selectedTarget)
-            {
-                Vector3 toTgt = selectedTarget.transform.position - SquadPos;
-                toTgt.y = 0f;
-                return toTgt.magnitude;
-            }
-            else
-                return Mathf.Infinity;
-        }
-    }
-    public Vector3 SquadPos
+    private Vector3 SquadPos
     {
         get
         {
@@ -79,7 +65,9 @@ public class NpcSquad : Npc
             return pos;
         }
     }
-    public Vector3 CurrentDirection => Npcs[0].Rotation.CurrentDirection;
+    private Vector3 CurrentDirection => Npcs[0].Rotation.CurrentDirection;
+    public override Vector3 NpcPos => SquadPos;
+    public override Vector3 NpcCurrDir => CurrentDirection;
     public List<GameObject> Members { get; private set; }
     public List<NpcGround> Npcs { get; private set; }
 
@@ -184,19 +172,19 @@ public class NpcSquad : Npc
         switch (npcState)
         {
             case NpcState.Delivery:
-                npcState = NpcState.Exploring;
-                IsExplorer = true;
-                IsPatroller = false;
-                //npcState = NpcState.Patrolling;
-                //IsExplorer = false;
-                //IsPatroller = true;
+                //npcState = NpcState.Exploring;
+                //IsExplorer = true;
+                //IsPatroller = false;
+                npcState = NpcState.Patrolling;
+                IsExplorer = false;
+                IsPatroller = true;
                 break;
             case NpcState.Patrolling:
                 if (BaseHasProtection)
                 {
-                    npcState = NpcState.Exploring;
-                    IsExplorer = true;
-                    IsPatroller = false;
+                    //npcState = NpcState.Exploring;
+                    //IsExplorer = true;
+                    //IsPatroller = false;
                 }
                 else if (MemberUnderAttack != null)
                 {

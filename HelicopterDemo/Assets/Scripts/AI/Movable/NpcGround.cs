@@ -19,10 +19,10 @@ public class NpcGround : Npc
     public bool BehindSquad { get; set; }
     public bool FarFromSquad { get; set; }
     public Vector3 CurrentSpeed { get; private set; }
+    public override Vector3 NpcPos => transform.position;
+    public override Vector3 NpcCurrDir => rotation.CurrentDirection;
     public Npc AttackSource { get; private set; }
     public NpcSquad NpcSquad { get; set; }
-
-    public override float HorDistToTgt => throw new System.NotImplementedException();
 
     private void Awake()
     {

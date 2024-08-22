@@ -44,7 +44,7 @@ public class NpcMoveToTgt : MonoBehaviour
 
     private void TranslateGround()
     {
-        targetSpeed = Vector3.ClampMagnitude(npcSquad.CurrentDirection * Speed, Speed);
+        targetSpeed = Vector3.ClampMagnitude(npc.NpcCurrDir * Speed, Speed);
         npcSquad.TranslateSquad(targetSpeed);
     }
 
@@ -81,7 +81,7 @@ public class NpcMoveToTgt : MonoBehaviour
                 targetVerticalDir = 0f;
         }
 
-        targetDirection = Target.transform.position - npcSquad.SquadPos;
+        targetDirection = Target.transform.position - npc.NpcPos;
         targetDirection.y = 0f;
         targetDirection = targetDirection.normalized;
     }
