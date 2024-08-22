@@ -86,6 +86,7 @@ public class NpcSquad : Npc
         if (Npcs.Count > 0)
         {
             SelectTarget();
+            SetMembersTrackers();
             ChangeState();
             Move();
         }
@@ -182,9 +183,9 @@ public class NpcSquad : Npc
             case NpcState.Patrolling:
                 if (BaseHasProtection)
                 {
-                    //npcState = NpcState.Exploring;
-                    //IsExplorer = true;
-                    //IsPatroller = false;
+                    npcState = NpcState.Exploring;
+                    IsExplorer = true;
+                    IsPatroller = false;
                 }
                 else if (MemberUnderAttack != null)
                 {
@@ -278,5 +279,11 @@ public class NpcSquad : Npc
     {
         float dot = Vector3.Dot(SquadPos - member.gameObject.transform.position, member.CurrentSpeed);
         return dot > 0f;
+    }
+
+    private void SetMembersTrackers()
+    {
+        foreach (var npc in Npcs)
+            npc.SetTrackersRotation();
     }
 }

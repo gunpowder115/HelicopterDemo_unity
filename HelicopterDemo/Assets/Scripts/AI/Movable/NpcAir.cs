@@ -60,6 +60,7 @@ public class NpcAir : Npc
     void Update()
     {
         SelectTarget();
+        SetTrackersRotation();
         ChangeState();
         Move();
         Debug.Log(npcState);
@@ -123,9 +124,9 @@ public class NpcAir : Npc
             case NpcState.Patrolling:
                 if (BaseHasProtection)
                 {
-                    //npcState = NpcState.Exploring;
-                    //IsExplorer = true;
-                    //IsPatroller = false;
+                    npcState = NpcState.Exploring;
+                    IsExplorer = true;
+                    IsPatroller = false;
                 }
                 else if (NpcUnderAttack)
                 {

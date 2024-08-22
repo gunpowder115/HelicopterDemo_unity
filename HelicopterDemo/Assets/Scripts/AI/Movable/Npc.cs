@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Npc : MonoBehaviour
@@ -26,6 +27,7 @@ public abstract class Npc : MonoBehaviour
     protected GameObject selectedTarget;
     protected CargoItem thisItem;
     protected NpcController npcController;
+    protected List<TargetTracker> trackers;
 
     #region Properties
 
@@ -93,6 +95,15 @@ public abstract class Npc : MonoBehaviour
         shooter = GetComponent<Shooter>();
         health = GetComponent<Health>();
         npcController = NpcController.singleton;
+
+        trackers = new List<TargetTracker>();
+        trackers.AddRange(gameObject.GetComponentsInChildren<TargetTracker>());
+    }
+
+    public void SetTrackersRotation()
+    {
+        foreach (var track in trackers)
+            track.SetRotation(selectedTarget, NpcCurrDir);
     }
 
     public abstract void RequestDestroy();
