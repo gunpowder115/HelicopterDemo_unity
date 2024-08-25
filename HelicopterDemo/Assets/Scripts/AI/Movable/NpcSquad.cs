@@ -265,7 +265,7 @@ public class NpcSquad : Npc
 
         for (int i = 0; i < membersCount; i++)
         {
-            GameObject member = Instantiate(memberPrefab, transform.position, transform.rotation);
+            GameObject member = Instantiate(memberPrefab, transform.position, transform.rotation, transform);
             member.transform.Translate(dir * squadRadius / 2f);
             Members.Add(member);
             Npcs.Add(Members[i].GetComponent<NpcGround>());
