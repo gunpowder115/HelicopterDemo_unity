@@ -46,7 +46,7 @@ public class Shooter : MonoBehaviour
         {
             foreach (var missile in missiles)
             {
-                missile.tag = gameObject.tag;
+                missile.gameObject.tag = gameObject.tag;
                 if (missile.IsGuided)
                     guidedMissiles.Add(missile);
                 else
