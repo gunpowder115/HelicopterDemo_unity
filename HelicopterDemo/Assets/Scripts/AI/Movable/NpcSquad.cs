@@ -77,32 +77,6 @@ public class NpcSquad : Npc
         Debug.Log(npcState);
     }
 
-    public void RotateSquad(Vector3 targetDir)
-    {
-        foreach (var npc in Npcs)
-        {
-            if (npc.BehindSquad && npc.FarFromSquad)
-                targetDir = (squadPos - npc.gameObject.transform.position).normalized;
-            else
-                targetDir = targetDir != Vector3.zero ? targetDir : CurrentDirection;
-            npc.Rotation.RotateByYaw(targetDir);
-        }
-    }
-
-    public void TranslateSquad(Vector3 targetSpeed)
-    {
-        foreach (var npc in Npcs)
-        {
-            npc.BehindSquad = BehindOfSquad(npc);
-            npc.FarFromSquad = Vector3.Magnitude(squadPos - npc.gameObject.transform.position) > squadRadius;
-
-            if (npc.BehindSquad && npc.FarFromSquad)
-                targetSpeed = highSpeedCoef * targetSpeed.magnitude * (squadPos - npc.gameObject.transform.position).normalized;
-
-            npc.Translate(targetSpeed);
-        }
-    }
-
     public void MoveSquad(Vector3 targetDir, float speed)
     {
         if (targetDir == Vector3.zero) targetDir = CurrentDirection;
@@ -123,6 +97,7 @@ public class NpcSquad : Npc
         }
         else
         {
+            squadPos = GetSquadPos(0);
             Npcs[0].Translate(Npcs[0].NpcCurrDir * speed);
             Npcs[0].Rotation.RotateByYaw(targetDir);
         }
