@@ -46,8 +46,7 @@ public class NpcAttack : MonoBehaviour
     {
         if (IsGround)
         {
-            TranslateGround();
-            RotateGround();
+            npcSquad.MoveSquad(targetDirection, 0f);
         }
         else
         {
@@ -88,12 +87,6 @@ public class NpcAttack : MonoBehaviour
         shooter.BarrelFire(Target);
     }
 
-    private void TranslateGround()
-    {
-        targetSpeed = Vector3.zero;
-        npcSquad.TranslateSquad(targetSpeed);
-    }
-
     private void TranslateAir()
     {
         targetDirection = BalanceDistToTarget(targetDirection);
@@ -108,8 +101,6 @@ public class NpcAttack : MonoBehaviour
         currVerticalSpeed = Mathf.Lerp(currVerticalSpeed, targetVerticalSpeed, Acceleration * Time.deltaTime);
         Translation.SetVerticalTranslation(currVerticalSpeed);
     }
-
-    private void RotateGround() => npcSquad.RotateSquad(targetDirection);
 
     private void RotateAir()
     {

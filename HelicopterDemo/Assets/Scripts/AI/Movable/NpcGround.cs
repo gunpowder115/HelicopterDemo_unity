@@ -44,4 +44,7 @@ public class NpcGround : Npc
         Destroy(gameObject);
         if (!isSquad) Destroy(NpcSquad.gameObject);
     }
+
+    public bool FarFrom(NpcGround npc, float dist) => Vector3.Magnitude(transform.position - npc.gameObject.transform.position) > dist;
+    public bool FarFrom(NpcGround npc1, NpcGround npc2, float dist) => FarFrom(npc1, dist) && FarFrom(npc2, dist);
 }

@@ -11,7 +11,6 @@ public class NpcPatroller : MonoBehaviour
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
     private List<Vector3> patrolPositions;
-    private NpcAir npcAir;
     private NpcSquad npcSquad;
     private Npc npc;
 
@@ -25,7 +24,6 @@ public class NpcPatroller : MonoBehaviour
     private void Awake()
     {
         npc = GetComponent<Npc>();
-        npcAir = GetComponent<NpcAir>();
         npcSquad = GetComponent<NpcSquad>();
     }
 
@@ -44,8 +42,7 @@ public class NpcPatroller : MonoBehaviour
         SetDirection();
         if (IsGround)
         {
-            TranslateGround();
-            RotateGround();
+            npcSquad.MoveSquad(targetDirection, Speed);
         }
         else
         {
@@ -54,20 +51,12 @@ public class NpcPatroller : MonoBehaviour
         }
     }
 
-    private void TranslateGround()
-    {
-        targetSpeed = Vector3.ClampMagnitude(npc.NpcCurrDir * Speed, Speed);
-        npcSquad.TranslateSquad(targetSpeed);
-    }
-
     private void TranslateAir()
     {
         targetSpeed = Vector3.ClampMagnitude(targetDirection * Speed, Speed);
         currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
         Translation.SetGlobalTranslation(currSpeed);
     }
-
-    private void RotateGround() => npcSquad.RotateSquad(targetDirection);
 
     private void RotateAir()
     {

@@ -15,6 +15,7 @@ public class NpcSquad : Npc
     [SerializeField] private float deliverySpeed = 5f;
     [SerializeField] private GameObject memberPrefab;
 
+    private Vector3 squadPos;
     private Npc attackSource;
 
     #region Properties
@@ -47,26 +48,8 @@ public class NpcSquad : Npc
         }
     }
 
-    private Vector3 SquadPos
-    {
-        get
-        {
-            Vector3 pos = Vector3.zero;
-            int count = 0;
-            foreach (var npc in Npcs)
-            {
-                if (npc)
-                {
-                    pos += npc.gameObject.transform.position;
-                    count++;
-                }
-            }
-            pos /= count;
-            return pos;
-        }
-    }
     private Vector3 CurrentDirection => Npcs[0].Rotation.CurrentDirection;
-    public override Vector3 NpcPos => SquadPos;
+    public override Vector3 NpcPos => squadPos;
     public override Vector3 NpcCurrDir => CurrentDirection;
     public List<GameObject> Members { get; private set; }
     public List<NpcGround> Npcs { get; private set; }
@@ -99,7 +82,7 @@ public class NpcSquad : Npc
         foreach (var npc in Npcs)
         {
             if (npc.BehindSquad && npc.FarFromSquad)
-                targetDir = (SquadPos - npc.gameObject.transform.position).normalized;
+                targetDir = (squadPos - npc.gameObject.transform.position).normalized;
             else
                 targetDir = targetDir != Vector3.zero ? targetDir : CurrentDirection;
             npc.Rotation.RotateByYaw(targetDir);
@@ -111,12 +94,37 @@ public class NpcSquad : Npc
         foreach (var npc in Npcs)
         {
             npc.BehindSquad = BehindOfSquad(npc);
-            npc.FarFromSquad = Vector3.Magnitude(SquadPos - npc.gameObject.transform.position) > squadRadius;
+            npc.FarFromSquad = Vector3.Magnitude(squadPos - npc.gameObject.transform.position) > squadRadius;
 
             if (npc.BehindSquad && npc.FarFromSquad)
-                targetSpeed = highSpeedCoef * targetSpeed.magnitude * (SquadPos - npc.gameObject.transform.position).normalized;
+                targetSpeed = highSpeedCoef * targetSpeed.magnitude * (squadPos - npc.gameObject.transform.position).normalized;
 
             npc.Translate(targetSpeed);
+        }
+    }
+
+    public void MoveSquad(Vector3 targetDir, float speed)
+    {
+        if (targetDir == Vector3.zero) targetDir = CurrentDirection;
+
+        if (Npcs.Count > 1)
+        {
+            Vector3[] newNpcSpeed;
+            if (Npcs.Count == 2)
+                newNpcSpeed = CorrectSpeed_2(targetDir, speed);
+            else
+                newNpcSpeed = CorrectSpeed_3(targetDir, speed);
+
+            for (int i = 0; i < Npcs.Count; i++)
+            {
+                Npcs[i].Translate(Npcs[i].NpcCurrDir * newNpcSpeed[i].magnitude);
+                Npcs[i].Rotation.RotateByYaw(newNpcSpeed[i].normalized);
+            }
+        }
+        else
+        {
+            Npcs[0].Translate(Npcs[0].NpcCurrDir * speed);
+            Npcs[0].Rotation.RotateByYaw(targetDir);
         }
     }
 
@@ -134,12 +142,12 @@ public class NpcSquad : Npc
         KeyValuePair<float, GameObject> nearest;
         if (Npcs[0].IsFriendly)
         {
-            nearest = npcController.FindNearestEnemy(SquadPos);
+            nearest = npcController.FindNearestEnemy(squadPos);
         }
         else
         {
-            nearest = npcController.FindNearestFriendly(SquadPos);
-            var player = npcController.GetPlayer(SquadPos);
+            nearest = npcController.FindNearestFriendly(squadPos);
+            var player = npcController.GetPlayer(squadPos);
             nearest = player.Key < nearest.Key ? player : nearest;
         }
 
@@ -277,7 +285,7 @@ public class NpcSquad : Npc
 
     private bool BehindOfSquad(NpcGround member)
     {
-        float dot = Vector3.Dot(SquadPos - member.gameObject.transform.position, member.CurrentSpeed);
+        float dot = Vector3.Dot(squadPos - member.gameObject.transform.position, member.CurrentSpeed);
         return dot > 0f;
     }
 
@@ -285,5 +293,119 @@ public class NpcSquad : Npc
     {
         foreach (var npc in Npcs)
             npc.SetTrackersRotation();
+    }
+
+    private Vector3[] CorrectSpeed_3(Vector3 targetDir, float speed)
+    {
+        Vector3 targetSpeed = targetDir * speed;
+        Vector3[] correctedSpeed = new Vector3[] { targetSpeed, targetSpeed, targetSpeed };
+
+        var npc0 = Npcs[0];
+        var npc1 = Npcs[1];
+        var npc2 = Npcs[2];
+
+        bool[] npcFar = new bool[3];
+        npcFar[0] = npc0.FarFrom(npc0, squadRadius * 1.1f);
+        npcFar[1] = npc0.FarFrom(npc1, squadRadius * 1.1f);
+        npcFar[2] = npc0.FarFrom(npc2, squadRadius * 1.1f);
+        bool allNpcFar = npcFar[1] && npcFar[2];
+
+        if (allNpcFar)
+            squadPos = GetSquadPos(0);
+        else if (npcFar[1] || npcFar[2])
+            squadPos = GetSquadPos(0, npcFar[1] ? 2 : 1);
+        else
+            squadPos = GetSquadPos();
+
+        for (int i = 0; i < Npcs.Count; i++)
+        {
+            Vector3 newTargetSpeed = targetSpeed;
+            if (allNpcFar) //two members are lagging behind first member
+            {
+                if (i == 0)
+                    newTargetSpeed = BehindOfSquad(Npcs[0]) ? newTargetSpeed * highSpeedCoef : newTargetSpeed / highSpeedCoef;
+                else if (BehindOfSquad(Npcs[i]))
+                    newTargetSpeed = highSpeedCoef * speed * (squadPos - Npcs[i].gameObject.transform.position).normalized;
+                else
+                    newTargetSpeed /= highSpeedCoef;
+            }
+            else if (npcFar[i]) //one members is lagging behind first member
+            {
+                if (BehindOfSquad(Npcs[i]))
+                    newTargetSpeed = highSpeedCoef * speed * (squadPos - Npcs[i].gameObject.transform.position).normalized;
+                else
+                    newTargetSpeed /= highSpeedCoef;
+            }
+
+            correctedSpeed[i] = newTargetSpeed;
+        }
+        return correctedSpeed;
+    }
+
+    private Vector3[] CorrectSpeed_2(Vector3 targetDir, float speed)
+    {
+        Vector3 targetSpeed = targetDir * speed;
+        Vector3[] correctedSpeed = new Vector3[] { targetSpeed, targetSpeed };
+
+        var npc0 = Npcs[0];
+        var npc1 = Npcs[1];
+        bool npcFar = npc0.FarFrom(npc1, squadRadius);
+
+        if (npcFar)
+        {
+            squadPos = GetSquadPos(0);
+            Vector3 newTargetSpeed = targetSpeed;
+
+            newTargetSpeed = BehindOfSquad(npc0) ? newTargetSpeed * highSpeedCoef : newTargetSpeed / highSpeedCoef;
+            correctedSpeed[0] = newTargetSpeed;
+
+            newTargetSpeed = targetSpeed;
+            if (BehindOfSquad(npc1))
+                newTargetSpeed = highSpeedCoef * speed * (squadPos - npc1.gameObject.transform.position).normalized;
+            else
+                newTargetSpeed /= highSpeedCoef;
+            correctedSpeed[1] = newTargetSpeed;
+        }
+        else
+        {
+            squadPos = GetSquadPos(0, 1);
+            correctedSpeed[0] = targetSpeed;
+            correctedSpeed[1] = targetSpeed;
+        }
+
+        return correctedSpeed;
+    }
+
+    private Vector3 GetSquadPos()
+    {
+        Vector3 pos = Vector3.zero;
+        int count = 0;
+        foreach (var npc in Npcs)
+        {
+            if (npc)
+            {
+                pos += npc.gameObject.transform.position;
+                count++;
+            }
+        }
+        pos /= count;
+        return pos;
+    }
+
+    private Vector3 GetSquadPos(int npc1, int npc2)
+    {
+        Vector3 pos = Vector3.zero;
+        pos += Npcs[npc1].gameObject.transform.position;
+        pos += Npcs[npc2].gameObject.transform.position;
+        pos /= 2f;
+        return pos;
+    }
+
+    private Vector3 GetSquadPos(int npc) => Npcs[npc].gameObject.transform.position;
+
+    public enum PosInSquad
+    {
+        Forward,
+        Backward
     }
 }
