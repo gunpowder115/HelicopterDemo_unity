@@ -37,6 +37,8 @@ public class NpcGround : Npc
         translation.SetGlobalTranslation(CurrentSpeed);
     }
 
+    public void Drop(float speed) => translation.SetVerticalTranslation(speed);
+
     public override void RequestDestroy()
     {
         npcController.Remove(gameObject);

@@ -13,10 +13,14 @@ public class NpcSquad : Npc
     [SerializeField] private float squadRadius = 12f;
     [SerializeField] private float memberRadius = 3f;
     [SerializeField] private float deliverySpeed = 5f;
+    [SerializeField] private float dropHeight = 30f;
+    [SerializeField] private float parachuneHeight = 15f;
     [SerializeField] private GameObject memberPrefab;
+    [SerializeField] private GameObject parachutePrefab;
 
     private Vector3 squadPos;
     private Npc attackSource;
+    private List<GameObject> parachutes;
 
     #region Properties
 
@@ -156,12 +160,19 @@ public class NpcSquad : Npc
         switch (npcState)
         {
             case NpcState.Delivery:
-                //npcState = NpcState.Exploring;
-                //IsExplorer = true;
-                //IsPatroller = false;
-                npcState = NpcState.Patrolling;
-                IsExplorer = false;
-                IsPatroller = true;
+                if (Npcs[0].gameObject.transform.position.y <= transform.position.y)
+                {
+                    npcState = NpcState.Patrolling;
+                    IsExplorer = false;
+                    IsPatroller = true;
+                    for (int i = 0; i < Npcs.Count; i++)
+                    {
+                        Npcs[i].Drop(0f);
+                        Npcs[i].transform.position = new Vector3(Npcs[i].transform.position.x, transform.position.y, Npcs[i].transform.position.z);
+                        Destroy(parachutes[i]);
+                    }
+                    parachutes.Clear();
+                }
                 break;
             case NpcState.Patrolling:
                 if (BaseHasProtection)
@@ -221,7 +232,8 @@ public class NpcSquad : Npc
         switch (npcState)
         {
             case NpcState.Delivery:
-
+                foreach (var npc in Npcs)
+                    npc.Drop(-deliverySpeed);
                 break;
             case NpcState.Patrolling:
                 npcPatroller.Move();
@@ -243,19 +255,23 @@ public class NpcSquad : Npc
     {
         Members = new List<GameObject>();
         Npcs = new List<NpcGround>();
+        parachutes = new List<GameObject>();
         Vector3 dir = new Vector3(0f, 0f, -1f);
         Quaternion rot = Quaternion.Euler(0f, 360f / membersCount, 0f);
 
         for (int i = 0; i < membersCount; i++)
         {
-            GameObject member = Instantiate(memberPrefab, transform.position, transform.rotation, transform);
+            GameObject member = Instantiate(memberPrefab, transform.position + new Vector3(0f, dropHeight, 0f), transform.rotation, transform);
             member.transform.Translate(dir * squadRadius / 2f);
             Members.Add(member);
             Npcs.Add(Members[i].GetComponent<NpcGround>());
             Npcs[i].NpcSquad = this;
             dir = rot * dir;
             npcController.Add(member);
+
+            parachutes.Add(Instantiate(parachutePrefab, member.transform.position + new Vector3(0f, parachuneHeight, 0f), transform.rotation, member.transform));
         }
+        squadPos = GetSquadPos();
     }
 
     private bool BehindOfSquad(NpcGround member)
@@ -377,10 +393,4 @@ public class NpcSquad : Npc
     }
 
     private Vector3 GetSquadPos(int npc) => Npcs[npc].gameObject.transform.position;
-
-    public enum PosInSquad
-    {
-        Forward,
-        Backward
-    }
 }
