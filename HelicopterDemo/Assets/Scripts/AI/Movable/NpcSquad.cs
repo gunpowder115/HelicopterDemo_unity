@@ -12,11 +12,7 @@ public class NpcSquad : Npc
     [SerializeField] private int membersCount = 3;
     [SerializeField] private float squadRadius = 12f;
     [SerializeField] private float memberRadius = 3f;
-    [SerializeField] private float deliverySpeed = 5f;
-    [SerializeField] private float dropHeight = 30f;
-    [SerializeField] private float parachuneHeight = 15f;
     [SerializeField] private GameObject memberPrefab;
-    [SerializeField] private GameObject parachutePrefab;
 
     private Vector3 squadPos;
     private Npc attackSource;
@@ -62,10 +58,10 @@ public class NpcSquad : Npc
 
     private void Awake()
     {
-        base.Init();
-        InitMembers();
         npcState = NpcState.Delivery;
         thisItem = GetComponent<CargoItem>();
+        base.Init();
+        InitMembers();
     }
 
     private void Update()
@@ -137,6 +133,9 @@ public class NpcSquad : Npc
                 break;
             case NpcState.MoveToTarget:
                 selectedTarget = nearest.Key > MaxPursuitDist ? null : nearest.Value;
+                break;
+            case NpcState.Delivery:
+                selectedTarget = null;
                 break;
             default:
                 selectedTarget = nearest.Key <= MinPursuitDist ? nearest.Value : null;
@@ -233,7 +232,7 @@ public class NpcSquad : Npc
         {
             case NpcState.Delivery:
                 foreach (var npc in Npcs)
-                    npc.Drop(-deliverySpeed);
+                    npc.Drop(-thisItem.DeliverySpeed);
                 break;
             case NpcState.Patrolling:
                 npcPatroller.Move();
@@ -261,7 +260,7 @@ public class NpcSquad : Npc
 
         for (int i = 0; i < membersCount; i++)
         {
-            GameObject member = Instantiate(memberPrefab, transform.position + new Vector3(0f, dropHeight, 0f), transform.rotation, transform);
+            GameObject member = Instantiate(memberPrefab, transform.position + new Vector3(0f, thisItem.DropHeight, 0f), transform.rotation, transform);
             member.transform.Translate(dir * squadRadius / 2f);
             Members.Add(member);
             Npcs.Add(Members[i].GetComponent<NpcGround>());
@@ -269,7 +268,7 @@ public class NpcSquad : Npc
             dir = rot * dir;
             npcController.Add(member);
 
-            parachutes.Add(Instantiate(parachutePrefab, member.transform.position + new Vector3(0f, parachuneHeight, 0f), transform.rotation, member.transform));
+            parachutes.Add(Instantiate(thisItem.ParachutePrefab, member.transform.position + new Vector3(0f, thisItem.ParachuteHeight, 0f), transform.rotation, member.transform));
         }
         squadPos = GetSquadPos();
     }

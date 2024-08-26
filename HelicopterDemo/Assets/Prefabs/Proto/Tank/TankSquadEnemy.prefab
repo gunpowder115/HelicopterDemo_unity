@@ -122,6 +122,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1210418546a3a37469c953a95622b84e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  deliverySpeed: 5
+  dropHeight: 25
+  parachuteHeight: 10
+  parachutePrefab: {fileID: 1109531507258896801, guid: 30aaee82bd5452f45b2baaa68f47869c, type: 3}
 --- !u!114 &2039629800542891224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,8 +152,4 @@ MonoBehaviour:
   membersCount: 3
   squadRadius: 12
   memberRadius: 3
-  deliverySpeed: 5
-  dropHeight: 25
-  parachuneHeight: 10
   memberPrefab: {fileID: 312384580812019912, guid: 599b79ac16123004faaea83e51626b15, type: 3}
-  parachutePrefab: {fileID: 1109531507258896801, guid: 30aaee82bd5452f45b2baaa68f47869c, type: 3}
