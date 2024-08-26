@@ -73,6 +73,28 @@ public class CargoHelicopter : MonoBehaviour
         }
     }
 
+    public void Init(Vector3 cargoPlatformPos, float height, CargoFlightType flightType)
+    {
+        minHeight = targetHeight * minHeightRange;
+        maxHeight = targetHeight * maxHeightRange;
+
+        float distance = Random.Range(minDistance, maxDistance);
+        float angle = Random.Range(0.0f, 360.0f);
+
+        gameObject.transform.Rotate(new Vector3(0, angle, 0));
+        gameObject.transform.position = new Vector3();
+        gameObject.transform.Translate(0, height, distance);
+        gameObject.transform.position += cargoPlatformPos;
+        targetDirection = new Vector3(cargoPlatformPos.x, height + cargoPlatformPos.y, cargoPlatformPos.z);
+        gameObject.transform.LookAt(targetDirection);
+
+        targetPosition = new Vector3(cargoPlatformPos.x, targetHeight + cargoPlatformPos.y, cargoPlatformPos.z);
+        translation = targetPosition - this.gameObject.transform.position;
+        beginPosition = this.gameObject.transform.position;
+        beginDistance = translation.magnitude;
+        translation = translation.normalized;
+    }
+
     public void Init(Vector3 cargoPlatformPosition)
     {
         minHeight = targetHeight * minHeightRange;
@@ -123,5 +145,11 @@ public class CargoHelicopter : MonoBehaviour
         translation = new Vector3(translation.x, -translation.y, translation.z);
         targetPosition = new Vector3(-beginPosition.x, beginPosition.y, -beginPosition.z);
         isLeaving = true;
+    }
+
+    public enum CargoFlightType
+    {
+        Horizontal,
+        DownAndUp
     }
 }
