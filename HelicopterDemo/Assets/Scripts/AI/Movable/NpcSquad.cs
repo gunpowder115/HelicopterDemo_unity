@@ -61,7 +61,7 @@ public class NpcSquad : Npc
         npcState = NpcState.Delivery;
         thisItem = GetComponent<CargoItem>();
         base.Init();
-        InitMembers();
+        thisItem.InitCargoItem += InitMembers;
     }
 
     private void Update()

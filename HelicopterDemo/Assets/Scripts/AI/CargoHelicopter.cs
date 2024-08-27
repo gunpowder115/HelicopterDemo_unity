@@ -1,155 +1,50 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+
+[RequireComponent(typeof(Translation))]
+[RequireComponent(typeof(Rotation))]
 
 public class CargoHelicopter : MonoBehaviour
 {
-    [SerializeField] private GameObject cargoPrefab;
-    [SerializeField] private CargoPlatform.CargoType cargoType = CargoPlatform.CargoType.Air;
     [SerializeField] private float speed = 5f;
-    [SerializeField] private float minDistance = 80f;
-    [SerializeField] private float maxDistance = 120f;
-    [SerializeField] private float targetHeight = 15f;
-    [SerializeField] private float minHeightRange = 2f;
-    [SerializeField] private float maxHeightRange = 3f;
-    [SerializeField] private float leavingTime = 10.0f;
+    [SerializeField] private float distance = 80f;
+    [SerializeField] private float dropDistCoef = 0.2f;
+    [SerializeField] private float lowSpeedCoef = 0.6f;
+    [SerializeField] private float leaveDistCoef = 1.1f;
+    [SerializeField] private float dropDistDelta = 1f;
 
     public bool CargoIsDelivered { get; private set; }
+    public bool NearDropPoint => currDist < dropDistDelta;
 
-    private GameObject cargo;
-    private Vector3 targetDirection, targetPosition;
-    private Vector3 translation;
-    private Vector3 beginPosition;
-    private float minHeight, maxHeight;
-    private bool isDelivering, isLeaving;
-    private float beginDistance;
-    private bool slow;
-    private float currLeavingTime;
+    private Translation translation;
+    private Rotation rotation;
+    private Vector3 dropPoint;
+    private float dropDist;
+    private float currDist;
 
-    private const float DELTA = 1f;
-
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
-        currLeavingTime = 0;
+        translation = GetComponent<Translation>();
+        rotation = GetComponent<Rotation>();
+        dropDist = dropDistCoef * distance;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 delta = this.transform.position - targetPosition;
-        float currDistance = delta.magnitude;
+        currDist = Vector3.Magnitude(dropPoint - transform.position);
+        float currentSpeed = currDist > dropDist ? speed : speed * lowSpeedCoef;
+        translation.SetGlobalTranslation(transform.forward * currentSpeed);
+        rotation.RotateToDirection(transform.forward, currentSpeed / speed, true);
 
-        if (currDistance < beginDistance * 0.2f && !slow)
-        {
-            speed /= 2.0f;
-            slow = true;
-        }
-        else if (currDistance > beginDistance * 0.2f && slow)
-        {
-            speed *= 2.0f;
-            slow = false;
-        }
-
-        if (isDelivering)
-        {
-            if (currDistance < DELTA)
-            {
-                isDelivering = false;
-                StartCoroutine(CargoDrop());
-            }
-            Translate(translation, speed);
-        }
-        else if (isLeaving)
-        {
-            if (currLeavingTime >= leavingTime)
-            {
-                isLeaving = false;
-                currLeavingTime = 0f;
-                Destroy(this.gameObject);
-            }
-            currLeavingTime += Time.deltaTime;
-            Translate(translation, speed, false);
-        }
+        if (currDist > distance * leaveDistCoef)
+            Destroy(gameObject);
     }
 
-    public void Init(Vector3 cargoPlatformPos, float height, CargoFlightType flightType)
+    public void Init(Vector3 cargoPlatformPos, float height)
     {
-        minHeight = targetHeight * minHeightRange;
-        maxHeight = targetHeight * maxHeightRange;
-
-        float distance = Random.Range(minDistance, maxDistance);
-        float angle = Random.Range(0.0f, 360.0f);
-
-        gameObject.transform.Rotate(new Vector3(0, angle, 0));
-        gameObject.transform.position = new Vector3();
-        gameObject.transform.Translate(0, height, distance);
-        gameObject.transform.position += cargoPlatformPos;
-        targetDirection = new Vector3(cargoPlatformPos.x, height + cargoPlatformPos.y, cargoPlatformPos.z);
-        gameObject.transform.LookAt(targetDirection);
-
-        targetPosition = new Vector3(cargoPlatformPos.x, targetHeight + cargoPlatformPos.y, cargoPlatformPos.z);
-        translation = targetPosition - this.gameObject.transform.position;
-        beginPosition = this.gameObject.transform.position;
-        beginDistance = translation.magnitude;
-        translation = translation.normalized;
-    }
-
-    public void Init(Vector3 cargoPlatformPosition)
-    {
-        minHeight = targetHeight * minHeightRange;
-        maxHeight = targetHeight * maxHeightRange;
-
-        float distance = Random.Range(minDistance, maxDistance);
-        float height = Random.Range(minHeight, maxHeight);
-        float angle = Random.Range(0.0f, 360.0f);
-
-        this.gameObject.transform.Rotate(new Vector3(0, angle, 0));
-        this.gameObject.transform.position = new Vector3();
-        this.gameObject.transform.Translate(0, height, distance);
-        this.gameObject.transform.position += cargoPlatformPosition;
-        targetDirection = new Vector3(cargoPlatformPosition.x, height + cargoPlatformPosition.y, cargoPlatformPosition.z);
-        this.gameObject.transform.LookAt(targetDirection);
-
-        targetPosition = new Vector3(cargoPlatformPosition.x, targetHeight + cargoPlatformPosition.y, cargoPlatformPosition.z);
-        translation = targetPosition - this.gameObject.transform.position;        
-        beginPosition = this.gameObject.transform.position;
-        beginDistance = translation.magnitude;
-        translation = translation.normalized;
-
-        InitCargo();
-
-        isDelivering = true;
-        slow = false;
-        CargoIsDelivered = false;
-    }
-
-    private void InitCargo()
-    {
-        cargo = Instantiate(cargoPrefab, this.gameObject.transform);
-        cargo.transform.rotation = this.transform.rotation;
-        cargo.transform.position = new Vector3(this.transform.position.x, this.transform.position.y - targetHeight, this.transform.position.z);
-    }
-
-    private void Translate(Vector3 translation, float speed, bool withCargo = true, bool back = false)
-    {
-        translation *= (back ? -1f : 1f);
-        this.gameObject.transform.Translate(translation * speed * Time.deltaTime, Space.World);
-    }
-
-    private IEnumerator CargoDrop()
-    {
-        yield return new WaitForSeconds(1.5f);
-        Destroy(cargo.gameObject);
-        CargoIsDelivered = true;
-        translation = new Vector3(translation.x, -translation.y, translation.z);
-        targetPosition = new Vector3(-beginPosition.x, beginPosition.y, -beginPosition.z);
-        isLeaving = true;
-    }
-
-    public enum CargoFlightType
-    {
-        Horizontal,
-        DownAndUp
+        dropPoint = new Vector3(cargoPlatformPos.x, cargoPlatformPos.y + height, cargoPlatformPos.z);
+        currDist = distance;
+        transform.Translate(0, height, -distance);
     }
 }
