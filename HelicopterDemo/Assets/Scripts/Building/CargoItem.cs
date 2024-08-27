@@ -19,6 +19,6 @@ public class CargoItem : MonoBehaviour
     {
         Building = building;
         CargoPlatform = Building.gameObject.GetComponent<CargoPlatform>();
-        InitCargoItem.Invoke();
+        InitCargoItem?.Invoke();
     }
 }

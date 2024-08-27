@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     PlatformController platformController;
     InputController inputController;
     Shooter shooter;
+    private List<SimpleRotor> rotors;
 
     public bool Aiming { get; private set; }
     public Vector3 AimAngles { get; private set; }
@@ -45,6 +46,10 @@ public class Player : MonoBehaviour
         translation = GetComponent<Translation>();
         rotation = GetComponentInChildren<Rotation>();
         shooter = GetComponent<Shooter>();
+        rotors = new List<SimpleRotor>();
+        rotors.AddRange(GetComponentsInChildren<SimpleRotor>());
+        foreach (var rotor in rotors)
+            rotor.StartRotor();
 
         npcController = NpcController.singleton;
         platformController = PlatformController.singleton;
