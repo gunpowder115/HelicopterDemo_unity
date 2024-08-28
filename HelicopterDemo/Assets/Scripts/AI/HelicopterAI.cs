@@ -209,7 +209,7 @@ public class HelicopterAI : MonoBehaviour
             targetDirection = translationInput.TargetDirectionNorm;
             targetSpeed = Vector3.ClampMagnitude(currentInput * speed, speed);
             currSpeed = Vector3.Lerp(currSpeed, targetSpeed, acceleration * Time.deltaTime);
-            translationInput.SetGlobalTranslation(currSpeed);
+            translationInput.SetHorizontalTranslation(currSpeed);
         }
 
         if (rotationInput != null)

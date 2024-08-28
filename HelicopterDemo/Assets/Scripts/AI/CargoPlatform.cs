@@ -6,80 +6,102 @@ public class CargoPlatform : MonoBehaviour
 {
     [SerializeField] private GameObject cargoHelicopterPrefab;
     [SerializeField] private GameObject cargoPrefab;
+    [SerializeField] private float dropHeight = 25f;
+    [SerializeField] private float parachuteHeight = 10f;
     [SerializeField] private CargoType cargoType = CargoType.Air;
 
     private Building building;
-    private GameObject cargoHelicopterItem;
-    private GameObject cargoItem;
+    private GameObject cargoHelicopterObject;
+    private GameObject cargoObject;
     private CargoHelicopter cargoHelicopter;
-    private HelicopterAI helicopter;
     private NpcController npcController;
     private CargoState cargoState;
+
+    public float DropHeight => dropHeight;
+    public float ParachuteHeight => parachuteHeight;
 
     private void Awake()
     {
         building = GetComponent<Building>();
         npcController = NpcController.singleton;
-
-        cargoItem = Instantiate(cargoPrefab, gameObject.transform.position, gameObject.transform.rotation);
-        cargoState = CargoState.Works;
-        CargoItem cargoItemComp = cargoItem.GetComponent<CargoItem>();
-        if (cargoItemComp)
-            cargoItemComp.SetBuilding(building);
+        cargoState = CargoState.Lost;
     }
 
     // Update is called once per frame
     void Update()
     {
-        SimpleCargoCall();
-    }
-
-    private void SimpleCargoCall()
-    {
-        switch (cargoState)
+        switch(cargoType)
         {
-            case CargoState.Works:
-                if (cargoItem.gameObject == null)
-                    cargoState = CargoState.Lost;
+            case CargoType.Ground:
+                CallGroundCargo();
                 break;
-            case CargoState.Lost:
-                cargoItem = Instantiate(cargoPrefab, gameObject.transform.position, gameObject.transform.rotation);
-                cargoState = CargoState.Works;
-                npcController.Add(cargoItem);
-
-                CargoItem cargoItemComp = cargoItem.GetComponent<CargoItem>();
-                if (cargoItemComp)
-                    cargoItemComp.SetBuilding(building);
-
+            case CargoType.Air:
+                CallAirCargo();
                 break;
         }
     }
 
-    private void CargoCall()
+    private void CallGroundCargo()
     {
         switch (cargoState)
         {
             case CargoState.Works:
-                if (cargoItem.gameObject == null)
+                if (cargoObject.gameObject == null)
                     cargoState = CargoState.Lost;
                 break;
             case CargoState.Lost:
-                cargoHelicopterItem = Instantiate(cargoHelicopterPrefab);
-                cargoHelicopter = cargoHelicopterItem.GetComponent<CargoHelicopter>();
-                cargoHelicopter.Init(this.gameObject.transform.position);
+                cargoHelicopterObject = Instantiate(cargoHelicopterPrefab, transform.position, transform.rotation);
+                cargoHelicopter = cargoHelicopterObject.GetComponent<CargoHelicopter>();
+                cargoHelicopter.InitForDrop(transform.position, dropHeight + parachuteHeight);
                 cargoState = CargoState.Expecting;
                 break;
             case CargoState.Expecting:
-                if (cargoHelicopter.CargoIsDelivered)
-                    cargoState = CargoState.Delivered;
+                if (cargoHelicopter.NearDropPoint)
+                {
+                    cargoObject = Instantiate(cargoPrefab, gameObject.transform.position, gameObject.transform.rotation);
+                    if (!cargoObject.GetComponent<NpcSquad>())
+                        npcController.Add(cargoObject);
+                    CargoItem cargoItem = cargoObject.GetComponent<CargoItem>();
+                    if (cargoItem)
+                        cargoItem.Init(building, null);
+                    cargoState = CargoState.Works;
+                }
                 break;
-            case CargoState.Delivered:
-                cargoItem = Instantiate(cargoPrefab, this.gameObject.transform.position, cargoHelicopterItem.transform.rotation);
-                helicopter = cargoItem.GetComponent<HelicopterAI>();
-                if (helicopter)
-                    helicopter.StartFlight();
-                cargoState = CargoState.Works;
-                //StartCoroutine(DestroyHelicopter());
+        }
+    }
+
+    private void CallAirCargo()
+    {
+        switch (cargoState)
+        {
+            case CargoState.Works:
+                if (cargoObject.gameObject == null)
+                    cargoState = CargoState.Lost;
+                break;
+            case CargoState.Lost:
+                cargoHelicopterObject = Instantiate(cargoHelicopterPrefab, transform.position, transform.rotation);
+                cargoHelicopter = cargoHelicopterObject.GetComponent<CargoHelicopter>();
+                cargoHelicopter.InitForDelivery(transform.position, dropHeight + parachuteHeight);
+
+                cargoObject = Instantiate(cargoPrefab, cargoHelicopter.transform.position - new Vector3(0f, cargoHelicopter.CableLength, 0f), 
+                    cargoHelicopter.transform.rotation, cargoHelicopter.transform);
+                CargoItem cargoItem_ = cargoObject.GetComponent<CargoItem>();
+                if (cargoItem_)
+                    cargoItem_.Init(building, cargoHelicopter);
+                cargoState = CargoState.Expecting;
+                break;
+            case CargoState.Expecting:
+                if (cargoHelicopter.NearDropPoint)
+                {
+                    Destroy(cargoObject);
+                    cargoObject = Instantiate(cargoPrefab, transform.position, transform.rotation);
+                    if (!cargoObject.GetComponent<NpcSquad>())
+                        npcController.Add(cargoObject);
+                    CargoItem cargoItem = cargoObject.GetComponent<CargoItem>();
+                    if (cargoItem)
+                        cargoItem.Init(building, cargoHelicopter);
+                    cargoState = CargoState.Works;
+                }
                 break;
         }
     }

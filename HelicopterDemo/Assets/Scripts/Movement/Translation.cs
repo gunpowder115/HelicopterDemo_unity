@@ -13,7 +13,7 @@ public class Translation : MonoBehaviour
     private Vector3 speed, movement;
     private float speedAbs, verticalSpeedAbs;
 
-    public void SetGlobalTranslation(Vector3 speed)
+    public void SetHorizontalTranslation(Vector3 speed)
     {
         speedAbs = speed.magnitude;
         this.speed = new Vector3(speed.x, this.speed.y, speed.z);
@@ -29,6 +29,12 @@ public class Translation : MonoBehaviour
     public void SetVerticalTranslation(float speed)
     {
         this.speed = new Vector3(this.speed.x, speed, this.speed.z);
+    }
+
+    public void SetGlobalTranslation(Vector3 speed)
+    {
+        speedAbs = new Vector3(speed.x, 0f, speed.z).magnitude;
+        this.speed = new Vector3(speed.x, speed.y, speed.z);
     }
 
     public bool SwitchRotation()

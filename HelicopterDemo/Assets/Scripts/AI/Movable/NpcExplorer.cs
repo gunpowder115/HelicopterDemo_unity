@@ -11,24 +11,32 @@ public class NpcExplorer : MonoBehaviour
     private float targetHeight, targetVerticalSpeed, currVerticalSpeed;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
-    private NpcAir NpcAir;
+    private Npc npc;
+    private NpcAir npcAir;
+    private NpcSquad npcSquad;
+    private LineRenderer lineToTarget;
 
-    private bool IsGround => NpcAir.IsGround;
-    private float Speed => NpcAir.Speed;
-    private float VerticalSpeed => NpcAir.VerticalSpeed;
-    private float HeightDelta => NpcAir.HeightDelta;
-    private float Acceleration => NpcAir.Acceleration;
-    private float MinHeight => NpcAir.MinHeight;
-    private float MaxHeight => NpcAir.MaxHeight;
-    private float MinPursuitDist => NpcAir.MinPursuitDist;
-    private float HorDistToTgt => NpcAir.HorDistToTgt;
-    private Translation Translation => NpcAir.Translation;
-    private Rotation Rotation => NpcAir.Rotation;
+    private bool IsGround => npc.IsGround;
+    private float Speed => npc.LowSpeed;
+    private float VerticalSpeed => npcAir.VerticalSpeed;
+    private float HeightDelta => npcAir.HeightDelta;
+    private float Acceleration => npc.Acceleration;
+    private float MinHeight => npcAir.MinHeight;
+    private float MaxHeight => npcAir.MaxHeight;
+    private Translation Translation => npc.Translation;
+    private Rotation Rotation => npc.Rotation;
 
     void Start()
     {
-        NpcAir = GetComponent<NpcAir>();
+        npc = GetComponent<Npc>();
+        npcAir = GetComponent<NpcAir>();
+        npcSquad = GetComponent<NpcSquad>();
         currMoveTime = maxMoveTime;
+
+        lineToTarget = GetComponent<LineRenderer>();
+        if (!lineToTarget)
+            lineToTarget = gameObject.AddComponent<LineRenderer>();
+        lineToTarget.enabled = false;
     }
 
     public void Move()
@@ -37,28 +45,31 @@ public class NpcExplorer : MonoBehaviour
         if (CheckObstacles())
             currMoveTime = maxMoveTime;
 
-        Translate();
-        if (!IsGround)
+        if (IsGround)
+        {
+            DrawLine();
+            npcSquad.MoveSquad(targetDirection, Speed);
+        }
+        else
+        {
+            TranslateAir();
             VerticalTranslate();
-        Rotate();
+            RotateAir();
+        }
     }
 
-    public bool Check_ToPatrolling()
+    private void TranslateAir()
     {
-        //todo
-        return false;
-    }
-
-    public bool Check_ToMoveRelTarget()
-    {
-        return HorDistToTgt <= MinPursuitDist;
-    }
-
-    private void Translate()
-    {
-        targetSpeed = Vector3.ClampMagnitude((IsGround ? Rotation.CurrentDirection : targetDirection) * Speed, Speed);
+        targetSpeed = Vector3.ClampMagnitude(targetDirection * Speed, Speed);
         currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
-        Translation.SetGlobalTranslation(currSpeed);
+        Translation.SetHorizontalTranslation(currSpeed);
+    }
+
+    private void RotateAir()
+    {
+        var direction = targetDirection != Vector3.zero ? targetDirection : Rotation.CurrentDirection;
+        var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
+        Rotation.RotateToDirection(direction, speedCoef, true);
     }
 
     private void VerticalTranslate()
@@ -71,29 +82,21 @@ public class NpcExplorer : MonoBehaviour
         Translation.SetVerticalTranslation(currVerticalSpeed);
     }
 
-    private void Rotate()
-    {
-        var direction = targetDirection != Vector3.zero ? targetDirection : Rotation.CurrentDirection;
-        var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
-
-        if (IsGround)
-            Rotation.RotateByYaw(direction);
-        else
-            Rotation.RotateToDirection(direction, speedCoef, true);
-    }
-
     private void SetDirection()
     {
         if (currMoveTime >= maxMoveTime)
         {
             if (Wait())
+            {
                 targetDirection = Vector2.zero;
+                targetHeight = transform.position.y;
+            }
             else
             {
                 do
                 {
                     targetDirection = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
-                    targetHeight = Random.Range(MinHeight, MaxHeight);
+                    targetHeight = IsGround ? 0f : Random.Range(MinHeight, MaxHeight);
                     CheckBorders();
                 } while (CheckObstacles());
                 currMoveTime = 0f;
@@ -117,11 +120,13 @@ public class NpcExplorer : MonoBehaviour
 
     private bool CheckObstacles()
     {
-        Ray ray = new Ray(gameObject.transform.position, targetDirection);
-        if (Physics.SphereCast(ray, 5.0f, out RaycastHit hit))
+        var raycastHits = Physics.SphereCastAll(npc.NpcPos + npc.NpcCurrDir * 5, 8f, targetDirection, 20f);
+        for (int i = 0; i < raycastHits.Length; i++)
         {
+            var hit = raycastHits[i];
             GameObject hitObject = hit.transform.gameObject;
-            return hitObject.CompareTag("Obstacle") && hit.distance < 20.0f;
+            if (hitObject.CompareTag("Obstacle"))
+                return true;
         }
         return false;
     }
@@ -133,5 +138,14 @@ public class NpcExplorer : MonoBehaviour
 
         if (transform.position.z > absBorderZ || transform.position.z < -absBorderZ)
             targetDirection = new Vector3(targetDirection.x, targetDirection.y, -targetDirection.z);
+    }
+
+    private void DrawLine()
+    {
+        lineToTarget.enabled = true;
+        lineToTarget.startColor = Color.red;
+        lineToTarget.endColor = Color.red;
+        lineToTarget.SetPosition(0, npc.NpcPos);
+        lineToTarget.SetPosition(1, npc.NpcPos + targetDirection.normalized * 20f);
     }
 }

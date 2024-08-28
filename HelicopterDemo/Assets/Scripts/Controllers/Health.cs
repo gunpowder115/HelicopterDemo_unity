@@ -10,15 +10,20 @@ public class Health : MonoBehaviour
 
     public bool IsAlive { get; private set; }
     public bool IsHurt { get; set; }
+    public bool IsUnderAttack { get; set; }
+    public Npc AttackSource { get; private set; }
 
-    public void Hurt(float damage)
+    public void Hurt(float damage, Npc attackSource = null)
     {
         health -= damage;
         IsHurt = true;
+        IsUnderAttack = true;
+        AttackSource = attackSource;
+
         if (health <= 0f)
         {
             IsAlive = false;
-            if (npc) DestroyNpc();
+            if (npc) npc.RequestDestroy();
         }
     }
 
@@ -34,11 +39,5 @@ public class Health : MonoBehaviour
         health = baseHealth;
         npcController = NpcController.singleton;
         npc = GetComponent<Npc>();
-    }
-
-    private void DestroyNpc()
-    {
-        npcController.Remove(gameObject);
-        Destroy(gameObject);
     }
 }

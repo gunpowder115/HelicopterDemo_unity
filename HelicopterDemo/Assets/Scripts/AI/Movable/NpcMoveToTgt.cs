@@ -5,58 +5,54 @@ public class NpcMoveToTgt : MonoBehaviour
     private float targetVerticalSpeed, currVerticalSpeed, targetVerticalDir;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
-    private NpcAir NpcAir;
-    private Health health;
+    private Npc npc;
+    private NpcAir npcAir;
+    private NpcSquad npcSquad;
 
-    private bool IsGround => NpcAir.IsGround;
-    private float Speed => NpcAir.Speed;
-    private float HighSpeed => NpcAir.HighSpeed;
-    private float VerticalSpeed => NpcAir.VerticalSpeed;
-    private float HeightDelta => NpcAir.HeightDelta;
-    private float Acceleration => NpcAir.Acceleration;
-    private float HorDistToTgt => NpcAir.HorDistToTgt;
-    private GameObject Target => NpcAir.SelectedTarget;
-    private Translation Translation => NpcAir.Translation;
-    private Rotation Rotation => NpcAir.Rotation;
+    private bool IsGround => npc.IsGround;
+    private float Speed => npc.Speed;
+    private float VerticalSpeed => npcAir.VerticalSpeed;
+    private float HeightDelta => npcAir.HeightDelta;
+    private float Acceleration => npc.Acceleration;
+    private GameObject Target => npc.SelectedTarget;
+    private Translation Translation => npc.Translation;
+    private Rotation Rotation => npc.Rotation;
 
     void Start()
     {
-        NpcAir = GetComponent<NpcAir>();
-        health = GetComponent<Health>();
+        npc = GetComponent<Npc>();
+        npcAir = GetComponent<NpcAir>();
+        npcSquad = GetComponent<NpcSquad>();
     }
 
     public void Move()
     {
         SetDirection();
-        Translate();
-        if (!IsGround)
+
+        if (IsGround)
+        {
+            npcSquad.MoveSquad(targetDirection, Speed);
+        }
+        else
+        {
+            TranslateAir();
             VerticalTranslate();
-        Rotate();
+            RotateAir();
+        }
     }
 
-    public bool Check_ToPatrolling()
+    private void TranslateAir()
     {
-        //todo
-        return false;
-    }
-
-    public bool Check_ToExploring()
-    {
-        var check = HorDistToTgt > NpcAir.MaxPursuitDist;
-        //if (check) NpcAir.RemoveTarget();
-        return check;
-    }
-
-    public bool Check_ToAttack()
-    {
-        return HorDistToTgt <= NpcAir.MinAttackDist;
-    }
-
-    private void Translate()
-    {
-        targetSpeed = Vector3.ClampMagnitude((IsGround ? Rotation.CurrentDirection : targetDirection) * Speed, Speed);
+        targetSpeed = Vector3.ClampMagnitude(targetDirection * Speed, Speed);
         currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
-        Translation.SetGlobalTranslation(currSpeed);
+        Translation.SetHorizontalTranslation(currSpeed);
+    }
+
+    private void RotateAir()
+    {
+        var direction = targetDirection != Vector3.zero ? targetDirection : Rotation.CurrentDirection;
+        var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
+        Rotation.RotateToDirection(direction, speedCoef, true);
     }
 
     private void VerticalTranslate()
@@ -66,25 +62,17 @@ public class NpcMoveToTgt : MonoBehaviour
         Translation.SetVerticalTranslation(currVerticalSpeed);
     }
 
-    private void Rotate()
-    {
-        var direction = targetDirection != Vector3.zero ? targetDirection : Rotation.CurrentDirection;
-        var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
-
-        if (IsGround)
-            Rotation.RotateByYaw(direction);
-        else
-            Rotation.RotateToDirection(direction, speedCoef, true);
-    }
-
     private void SetDirection()
     {
-        if (Mathf.Abs(Target.transform.position.y - transform.position.y) > HeightDelta)
-            targetVerticalDir = Mathf.Sign(Target.transform.position.y - transform.position.y);
-        else
-            targetVerticalDir = 0f;
+        if (!IsGround)
+        {
+            if (Mathf.Abs(Target.transform.position.y - transform.position.y) > HeightDelta)
+                targetVerticalDir = Mathf.Sign(Target.transform.position.y - transform.position.y);
+            else
+                targetVerticalDir = 0f;
+        }
 
-        targetDirection = Target.transform.position - transform.position;
+        targetDirection = Target.transform.position - npc.NpcPos;
         targetDirection.y = 0f;
         targetDirection = targetDirection.normalized;
     }

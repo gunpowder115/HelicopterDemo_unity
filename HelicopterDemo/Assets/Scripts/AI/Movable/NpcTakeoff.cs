@@ -3,18 +3,20 @@ using UnityEngine;
 public class NpcTakeoff : MonoBehaviour
 {
     private float targetVerticalSpeed, currVerticalSpeed;
-    private NpcAir NpcAir;
+    private Npc npc;
+    private NpcAir npcAir;
 
-    private float VerticalSpeed => NpcAir.VerticalSpeed;
-    private float Acceleration => NpcAir.Acceleration;
-    private float MinHeight => NpcAir.MinHeight;
-    private Translation translation => NpcAir.Translation;
+    private float VerticalSpeed => npcAir.VerticalSpeed;
+    private float Acceleration => npc.Acceleration;
+    private float MinHeight => npcAir.MinHeight;
+    private Translation translation => npc.Translation;
 
     public bool EndOfTakeoff => transform.position.y > MinHeight && currVerticalSpeed == 0f;
 
     private void Start()
     {
-        NpcAir = GetComponent<NpcAir>();
+        npc = GetComponent<Npc>();
+        npcAir = GetComponent<NpcAir>();
     }
 
     public void Move() => VerticalTranslate();

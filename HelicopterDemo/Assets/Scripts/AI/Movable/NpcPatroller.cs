@@ -11,27 +11,27 @@ public class NpcPatroller : MonoBehaviour
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
     private List<Vector3> patrolPositions;
-    private NpcAir NpcAir;
+    private NpcSquad npcSquad;
+    private Npc npc;
 
-    private bool IsGround => NpcAir.IsGround;
-    private float Speed => NpcAir.LowSpeed;
-    private float HeightDelta => NpcAir.HeightDelta;
-    private float Acceleration => NpcAir.Acceleration;
-    private float MinPursuitDist => NpcAir.MinPursuitDist;
-    private float HorDistToTgt => NpcAir.HorDistToTgt;
-    private Translation Translation => NpcAir.Translation;
-    private Rotation Rotation => NpcAir.Rotation;
+    private bool IsGround => npc.IsGround;
+    private float Speed => npc.LowSpeed;
+    private float Acceleration => npc.Acceleration;
+    private float DistDelta => npc.DistDelta;
+    private Translation Translation => npc.Translation;
+    private Rotation Rotation => npc.Rotation;
 
     private void Awake()
     {
-        NpcAir = GetComponent<NpcAir>();
+        npc = GetComponent<Npc>();
+        npcSquad = GetComponent<NpcSquad>();
     }
 
     void Start()
     {
         patrolPositions = new List<Vector3>();
         currPatrolPosIndex = 0;
-        foreach (var platform in NpcAir.BasePlatforms)
+        foreach (var platform in npc.BasePlatforms)
         {
             patrolPositions.Add(platform.gameObject.transform.position + platform.gameObject.transform.forward * patrolDist);
         }
@@ -40,51 +40,43 @@ public class NpcPatroller : MonoBehaviour
     public void Move()
     {
         SetDirection();
-        Translate();
-        Rotate();
+        if (IsGround)
+        {
+            npcSquad.MoveSquad(targetDirection, Speed);
+        }
+        else
+        {
+            TranslateAir();
+            RotateAir();
+        }
     }
 
-    public bool Check_ToExploring()
+    private void TranslateAir()
     {
-        //todo
-        return false;
-    }
-
-    public bool Check_ToMoveRelTarget()
-    {
-        return HorDistToTgt <= MinPursuitDist;
-    }
-
-    private void Translate()
-    {
-        targetSpeed = Vector3.ClampMagnitude((IsGround ? Rotation.CurrentDirection : targetDirection) * Speed, Speed);
+        targetSpeed = Vector3.ClampMagnitude(targetDirection * Speed, Speed);
         currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
-        Translation.SetGlobalTranslation(currSpeed);
+        Translation.SetHorizontalTranslation(currSpeed);
     }
 
-    private void Rotate()
+    private void RotateAir()
     {
         var direction = targetDirection != Vector3.zero ? targetDirection : Rotation.CurrentDirection;
         var speedCoef = targetDirection != Vector3.zero ? currSpeed.magnitude / Speed : 0f;
-
-        if (IsGround)
-            Rotation.RotateByYaw(direction);
-        else
-            Rotation.RotateToDirection(direction, speedCoef, true);
+        Rotation.RotateToDirection(direction, speedCoef, true);
     }
 
     private void SetDirection()
     {
-        Vector3 airPatrolPos = patrolPositions[currPatrolPosIndex] - transform.position;
-        airPatrolPos.y = 0f;
+        Vector3 patrolPos = patrolPositions[currPatrolPosIndex] - npc.NpcPos;
+        patrolPos.y = 0f;
 
-        if (airPatrolPos.magnitude <= HeightDelta)
+        if (patrolPos.magnitude <= DistDelta)
         {
             currPatrolPosIndex++;
             if (currPatrolPosIndex >= 8)
                 currPatrolPosIndex = 0;
         }
         else
-            targetDirection = airPatrolPos.normalized;
+            targetDirection = patrolPos.normalized;
     }
 }

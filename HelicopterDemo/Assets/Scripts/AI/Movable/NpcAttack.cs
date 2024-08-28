@@ -16,61 +16,70 @@ public class NpcAttack : MonoBehaviour
     private float targetVerticalSpeed, currVerticalSpeed, targetVerticalDir;
     private Vector3 targetSpeed, currSpeed;
     private Vector3 targetDirection;
-    private NpcAir NpcAir;
+    private Npc npc;
+    private NpcAir npcAir;
+    private NpcSquad npcSquad;
     private Health health;
     private Shooter shooter;
 
-    private bool IsGround => NpcAir.IsGround;
-    private float LowSpeed => NpcAir.LowSpeed;
-    private float VerticalSpeed => NpcAir.VerticalSpeed;
-    private float HeightDelta => NpcAir.HeightDelta;
-    private float Acceleration => NpcAir.Acceleration;
-    private float MinHeight => NpcAir.MinHeight;
-    private float MaxHeight => NpcAir.MaxHeight;
-    private float HorDistToTgt => NpcAir.HorDistToTgt;
-    private GameObject Target => NpcAir.SelectedTarget;
-    private Translation Translation => NpcAir.Translation;
-    private Rotation Rotation => NpcAir.Rotation;
+    private bool IsGround => npc.IsGround;
+    private float LowSpeed => npc.LowSpeed;
+    private float VerticalSpeed => npcAir.VerticalSpeed;
+    private float HeightDelta => npcAir.HeightDelta;
+    private float Acceleration => npc.Acceleration;
+    private float MinHeight => npcAir.MinHeight;
+    private float MaxHeight => npcAir.MaxHeight;
+    private GameObject Target => npc.SelectedTarget;
+    private Translation Translation => npc.Translation;
+    private Rotation Rotation => npc.Rotation;
 
     void Start()
     {
-        NpcAir = GetComponent<NpcAir>();
+        npc = GetComponent<Npc>();
+        npcAir = GetComponent<NpcAir>();
+        npcSquad = GetComponent<NpcSquad>();
         health = GetComponent<Health>();
         shooter = GetComponent<Shooter>();
     }
 
     public void Move()
     {
-        if (health.IsHurt && !isMoving)
+        if (IsGround)
         {
-            isMoving = true;
-            health.IsHurt = false;
-
-            float dir = Random.Range(0, 2) == 0 ? 1 : -1;
-            targetDirection = new Vector3(dir, 0f, 0f);
+            npcSquad.MoveSquad(targetDirection, 0f);
         }
-
-        if (isMoving)
+        else
         {
-            if (currMoveTime < moveTime)
+            if (health.IsHurt && !isMoving)
             {
-                SetHorizontalDirection();
-                currMoveTime += Time.deltaTime;
-            }
-            else
-            {
-                targetDirection = Vector3.zero;
-                targetVerticalDir = 0f;
-                currMoveTime = 0f;
-                isMoving = false;
-            }
-        }
+                isMoving = true;
+                health.IsHurt = false;
 
-        SetVerticalDirection();
-        Translate();
-        if (!IsGround)
+                float dir = Random.Range(0, 2) == 0 ? 1 : -1;
+                targetDirection = new Vector3(dir, 0f, 0f);
+            }
+
+            if (isMoving)
+            {
+                if (currMoveTime < moveTime)
+                {
+                    SetHorizontalDirection();
+                    currMoveTime += Time.deltaTime;
+                }
+                else
+                {
+                    targetDirection = Vector3.zero;
+                    targetVerticalDir = 0f;
+                    currMoveTime = 0f;
+                    isMoving = false;
+                }
+            }
+
+            SetVerticalDirection();
+            TranslateAir();
             VerticalTranslate();
-        Rotate();
+            RotateAir();
+        }
     }
 
     public void Shoot()
@@ -78,25 +87,12 @@ public class NpcAttack : MonoBehaviour
         shooter.BarrelFire(Target);
     }
 
-    public bool Check_ToMoveToTarget()
+    private void TranslateAir()
     {
-        return HorDistToTgt > NpcAir.MaxAttackDist;
-    }
-
-    private void Translate()
-    {
-        if (!IsGround)
-        {
-            targetDirection = BalanceDistToTarget(targetDirection);
-            targetSpeed = Vector3.ClampMagnitude(targetDirection * LowSpeed, LowSpeed);
-            currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
-
-            Translation.SetRelToTargetTranslation(currSpeed, Rotation.YawAngle);
-        }
-        else
-        {
-            //todo
-        }
+        targetDirection = BalanceDistToTarget(targetDirection);
+        targetSpeed = Vector3.ClampMagnitude(targetDirection * LowSpeed, LowSpeed);
+        currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
+        Translation.SetRelToTargetTranslation(currSpeed, Rotation.YawAngle);
     }
 
     private void VerticalTranslate()
@@ -106,17 +102,10 @@ public class NpcAttack : MonoBehaviour
         Translation.SetVerticalTranslation(currVerticalSpeed);
     }
 
-    private void Rotate()
+    private void RotateAir()
     {
-        if (!IsGround)
-        {
-            Quaternion rotToTarget = Quaternion.LookRotation((Target.transform.position - transform.position));
-            Rotation.RotateToTarget(rotToTarget, targetDirection.x);
-        }
-        else
-        {
-            //todo
-        }
+        Quaternion rotToTarget = Quaternion.LookRotation((Target.transform.position - transform.position));
+        Rotation.RotateToTarget(rotToTarget, targetDirection.x);
     }
 
     private void SetVerticalDirection()

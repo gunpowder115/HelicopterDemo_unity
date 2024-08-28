@@ -46,7 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 866eb0bcdbb91ce48961692b339f1be2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delta: 5
+  rotSpeed: 10
+  rotAcceleration: 0.5
   axis: 1
 --- !u!1001 &3757632997297113003
 PrefabInstance:

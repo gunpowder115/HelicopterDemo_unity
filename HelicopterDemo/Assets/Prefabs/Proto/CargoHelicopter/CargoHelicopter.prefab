@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5709780919029235194}
   - component: {fileID: 904573047}
+  - component: {fileID: 1794934457109105179}
+  - component: {fileID: 1579709643200717515}
   m_Layer: 0
   m_Name: CargoHelicopter
   m_TagString: Untagged
@@ -48,14 +50,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccd1886f00b802e47b90e3b8731c1cdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cargoPrefab: {fileID: 5817739379426018126, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
-  cargoType: 0
   speed: 17
-  minDistance: 80
-  maxDistance: 120
-  targetHeight: 15
-  minHeightRange: 4
-  maxHeightRange: 5
+  distance: 80
+  dropDistCoef: 0.2
+  lowSpeedCoef: 0.6
+  leaveDistCoef: 1.1
+  dropDistDelta: 1
+  cableLength: 15
+--- !u!114 &1794934457109105179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5709780919029235193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 415e5073c8781f34baf4a1dade35a55f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHeight: 50
+  minHeight: 10
+--- !u!114 &1579709643200717515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5709780919029235193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41175428f113cb24a811def3c61d2f8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationSpeed: 3
+  normAttitudeAngle: 20
 --- !u!1 &5709780919507144024
 GameObject:
   m_ObjectHideFlags: 0

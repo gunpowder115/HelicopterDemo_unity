@@ -23,12 +23,14 @@ public class MissileLauncher : BaseLauncher
             if (guided)
             {
                 var missileItem = Instantiate(missilePrefab, transform.position + transform.forward * 1.5f, transform.rotation);
+                missileItem.tag = gameObject.tag;
                 GuidedMissile guidedMissile = missileItem.GetComponent<GuidedMissile>();
                 if (guidedMissile) guidedMissile.SelectedTarget = target;
             }
             else
             {
-                Instantiate(missilePrefab, transform.position + transform.forward * 1.5f, CalculateDeflection());
+                var missile = Instantiate(missilePrefab, transform.position + transform.forward * 1.5f, CalculateDeflection());
+                missile.tag = gameObject.tag;
             }
         }
         else

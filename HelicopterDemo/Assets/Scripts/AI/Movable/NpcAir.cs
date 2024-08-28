@@ -15,67 +15,33 @@ using UnityEngine;
 public class NpcAir : Npc
 {
     [SerializeField] private float verticalSpeed = 20f;
-    [SerializeField] private float heightDelta = 1f;
     [SerializeField] private float minHeight = 15f;
     [SerializeField] private float maxHeight = 50f;
 
     private NpcTakeoff npcTakeoff;
-    private CargoItem thisItem;
+    private List<SimpleRotor> rotors;
     private LineRenderer lineToTarget;
 
     #region Properties
 
     #region For change state
 
-    //private bool EndOfTakeoff => NpcTakeoff.EndOfTakeoff;
-    //private bool BaseHasProtection => thisItem.BaseCenter.HasProtection;
-    //private bool enemyDetected => ;
-    //private bool npcUnderAttack => ;
-    //private bool baseUnderAttack => ;
-    //private bool enemyForAttack => ;
-    //private bool enemyForPursuit => ;
-    //private bool enemyLost => ;
-    //private bool isExplorer { get; set; }
-    //private bool isPatroller { get; set; }
-    //private bool isLowHealth => ;
-    //private bool isNormHealth => ;
-    //private bool enemyIsFar => ;
+    private bool EndOfTakeoff => npcTakeoff.EndOfTakeoff; //2
+    private bool NpcUnderAttack //17
+    {
+        get => health.IsUnderAttack;
+        set => health.IsUnderAttack = value;
+    }
 
     #endregion
 
-    public bool IsGround => isGround;
-    public float Speed => speed;
-    public float LowSpeed => speed * lowSpeedCoef;
-    public float HighSpeed => speed * highSpeedCoef;
     public float VerticalSpeed => verticalSpeed;
-    public float HeightDelta => heightDelta;
-    public float Acceleration => acceleration;
+    public float HeightDelta => distDelta;
     public float MinHeight => minHeight;
     public float MaxHeight => maxHeight;
-    public float MinPursuitDist => minPursuitDist;
-    public float MaxPursuitDist => maxPursuitDist;
-    public float MinAttackDist => minAttackDist;
-    public float MaxAttackDist => minPursuitDist;
-    public float HorDistToTgt
-    {
-        get
-        {
-            if (selectedTarget)
-            {
-                Vector3 toTgt = selectedTarget.transform.position - transform.position;
-                toTgt.y = 0f;
-                return toTgt.magnitude;
-            }
-            else
-                return Mathf.Infinity;
-        }
-    }
-    public GameObject SelectedTarget => selectedTarget;
+    public override Vector3 NpcPos => transform.position;
+    public override Vector3 NpcCurrDir => rotation.CurrentDirection;
     public LineRenderer LineToTarget => lineToTarget;
-    public Translation Translation => translation;
-    public Rotation Rotation => rotation;
-    public Building Building => thisItem.Building;
-    public Platform[] BasePlatforms => thisItem.BaseCenter.Platforms;
 
     #endregion
 
@@ -85,25 +51,31 @@ public class NpcAir : Npc
 
         npcTakeoff = GetComponent<NpcTakeoff>();
         thisItem = GetComponent<CargoItem>();
+        rotors = new List<SimpleRotor>();
+        rotors.AddRange(GetComponentsInChildren<SimpleRotor>());
 
         lineToTarget = gameObject.AddComponent<LineRenderer>();
         lineToTarget.enabled = false;
-    }
 
-    void Start()
-    {
-        npcState = NpcState.Takeoff;
+        npcState = NpcState.Delivery;
     }
 
     void Update()
     {
         SelectTarget();
+        SetTrackersRotation();
         ChangeState();
         Move();
         Debug.Log(npcState);
     }
 
     public void RemoveTarget() => selectedTarget = null;
+
+    public override void RequestDestroy()
+    {
+        npcController.Remove(gameObject);
+        Destroy(gameObject);
+    }
 
     private void Move()
     {
@@ -129,83 +101,88 @@ public class NpcAir : Npc
         }
     }
 
+    
     private void ChangeState()
     {
-        //if (!BaseHasProtection && isExplorer)
-        //{
-        //    npcState = NpcState.Patrolling;
-        //    isExplorer = false;
-        //    isPatroller = true;
-        //}
-        //else if (isExplorer && isLowHealth)
-        //    npcState = NpcState.MoveFromTarget;
-
-        //switch (npcState)
-        //{
-        //    case NpcState.Takeoff:
-        //        if (EndOfTakeoff) npcState = NpcState.Patrolling;
-        //        break;
-
-        //    case NpcState.Patrolling:
-        //        if (BaseHasProtection)
-        //        {
-        //            npcState = NpcState.Exploring;
-        //            isExplorer = true;
-        //            isPatroller = false;
-        //        }
-        //        else if (enemyFinded || npcUnderAttack || baseUnderAttack)
-        //            npcState = NpcState.MoveToTarget;
-        //        break;
-
-        //    case NpcState.Exploring:
-        //        if (enemyFinded || npcUnderAttack)
-        //            npcState = NpcState.MoveToTarget;
-        //        break;
-
-        //    case NpcState.MoveToTarget:
-        //        if (enemyForAttack)
-        //            npcState = NpcState.Attack;
-        //        break;
-
-        //    case NpcState.Attack:
-        //        if (enemyForPursuit)
-        //            npcState = NpcState.MoveToTarget;
-        //        else if (enemyLost && isExplorer)
-        //            npcState = NpcState.Exploring;
-        //        else if (enemyLost && isPatroller)
-        //            npcState = NpcState.Patrolling;
-        //        break;
-
-        //    case NpcState.MoveFromTarget:
-        //        if (isNormHealth || enemyIsFar)
-        //        {
-        //            npcState = NpcState.Exploring;
-        //            isExplorer = true;
-        //            isPatroller = false;
-        //        }
-        //        break;
-        //}
+        if (!BaseHasProtection && IsExplorer)
+        {
+            npcState = NpcState.Patrolling;
+            IsExplorer = false;
+            IsPatroller = true;
+        }
 
         switch (npcState)
         {
+            case NpcState.Delivery:
+                if (transform.position.y <= thisItem.CargoPlatform.transform.position.y)
+                {
+                    transform.position = thisItem.CargoPlatform.transform.position;
+                    foreach (var rotor in rotors)
+                        rotor.StartRotor();
+                }
+                if (rotors[0].ReadyToTakeoff)
+                {
+                    npcState = NpcState.Takeoff;
+                    IsExplorer = false;
+                    IsPatroller = true;
+                }
+                break;
             case NpcState.Takeoff:
-                if (npcTakeoff.EndOfTakeoff) npcState = NpcState.Patrolling;
+                if (EndOfTakeoff)
+                {
+                    npcState = NpcState.Patrolling;
+                    IsExplorer = false;
+                    IsPatroller = true;
+                }
                 break;
-            case NpcState.Patrolling: //todo
-                if (npcPatroller.Check_ToExploring()) npcState = NpcState.Exploring;
-                if (npcPatroller.Check_ToMoveRelTarget()) npcState = NpcState.MoveToTarget;
+            case NpcState.Patrolling:
+                if (BaseHasProtection)
+                {
+                    npcState = NpcState.Exploring;
+                    IsExplorer = true;
+                    IsPatroller = false;
+                }
+                else if (NpcUnderAttack)
+                {
+                    npcState = NpcState.MoveToTarget;
+                    selectedTarget = health.AttackSource.gameObject;
+                    NpcUnderAttack = false;
+                }
+                else if (BaseUnderAttack)
+                {
+                    npcState = NpcState.MoveToTarget;
+                    //todo
+                }
                 break;
-            case NpcState.Exploring: //todo
-                if (npcExplorer.Check_ToPatrolling()) npcState = NpcState.Patrolling;
-                if (npcExplorer.Check_ToMoveRelTarget()) npcState = NpcState.MoveToTarget;
+            case NpcState.Exploring:
+                if (EnemyForPursuit)
+                    npcState = NpcState.MoveToTarget;
+                else if (NpcUnderAttack)
+                {
+                    npcState = NpcState.MoveToTarget;
+                    selectedTarget = health.AttackSource.gameObject;
+                    NpcUnderAttack = false;
+                }
                 break;
-            case NpcState.MoveToTarget: //todo
-                if (npcMoveToTgt.Check_ToAttack()) npcState = NpcState.Attack;
-                if (npcMoveToTgt.Check_ToPatrolling()) npcState = NpcState.Patrolling;
-                if (npcMoveToTgt.Check_ToExploring()) npcState = NpcState.Exploring;
+            case NpcState.MoveToTarget:
+                if (EnemyForAttack)
+                    npcState = NpcState.Attack;
+                else if (EnemyLost && IsExplorer)
+                {
+                    npcState = NpcState.Exploring;
+                }
+                else if (EnemyLost && IsPatroller)
+                {
+                    npcState = NpcState.Patrolling;
+                }
                 break;
             case NpcState.Attack:
-                if (npcAttack.Check_ToMoveToTarget()) npcState = NpcState.MoveToTarget;
+                if (EnemyForPursuit)
+                    npcState = NpcState.MoveToTarget;
+                else if (EnemyLost && IsExplorer)
+                    npcState = NpcState.Exploring;
+                else if (EnemyLost && IsPatroller)
+                    npcState = NpcState.Patrolling;
                 break;
         }
     }
@@ -223,7 +200,20 @@ public class NpcAir : Npc
             var player = npcController.GetPlayer(transform.position);
             nearest = player.Key < nearest.Key ? player : nearest;
         }
-        selectedTarget = nearest.Value;
+
+        switch (npcState)
+        {
+            case NpcState.Attack:
+                selectedTarget = nearest.Value;
+                break;
+            case NpcState.MoveToTarget:
+                selectedTarget = nearest.Key > MaxPursuitDist ? null : nearest.Value;
+                break;
+            default:
+                selectedTarget = nearest.Key <= MinPursuitDist ? nearest.Value : null;
+                break;
+
+        }
     }
 
     private void DrawLine(Color color)
