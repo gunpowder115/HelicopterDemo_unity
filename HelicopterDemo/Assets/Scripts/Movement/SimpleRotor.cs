@@ -4,9 +4,12 @@ public class SimpleRotor : MonoBehaviour
 {
     [SerializeField] private float rotSpeed = 10.0f;
     [SerializeField] private float rotAcceleration = 0.2f;
+    [SerializeField] private float spdCoefToTakeoff = 0.9f;
     [SerializeField] private Axes axis = Axes.X;
 
     private float currRotorSpeed, tgtRotorSpeed;
+
+    public bool ReadyToTakeoff => currRotorSpeed >= rotSpeed * spdCoefToTakeoff;
 
     // Update is called once per frame
     void Update()
@@ -19,6 +22,7 @@ public class SimpleRotor : MonoBehaviour
     }
 
     public void StartRotor() => tgtRotorSpeed = rotSpeed;
+    public void FastStartRotor() => tgtRotorSpeed = currRotorSpeed = rotSpeed;
     public void StopRotor() => tgtRotorSpeed = 0f;
 
     public enum Axes

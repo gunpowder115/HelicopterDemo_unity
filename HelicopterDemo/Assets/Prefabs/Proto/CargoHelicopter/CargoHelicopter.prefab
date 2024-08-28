@@ -50,15 +50,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccd1886f00b802e47b90e3b8731c1cdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cargoPrefab: {fileID: 5817739379426018126, guid: 952e4893ad3ceb74181ca3dca789dff6, type: 3}
-  cargoType: 0
   speed: 17
-  minDistance: 80
-  maxDistance: 120
-  targetHeight: 15
-  minHeightRange: 4
-  maxHeightRange: 5
-  leavingTime: 10
+  distance: 80
+  dropDistCoef: 0.2
+  lowSpeedCoef: 0.6
+  leaveDistCoef: 1.1
+  dropDistDelta: 1
+  cableLength: 15
 --- !u!114 &1794934457109105179
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -19,6 +19,7 @@ public class NpcAir : Npc
     [SerializeField] private float maxHeight = 50f;
 
     private NpcTakeoff npcTakeoff;
+    private List<SimpleRotor> rotors;
     private LineRenderer lineToTarget;
 
     #region Properties
@@ -50,11 +51,13 @@ public class NpcAir : Npc
 
         npcTakeoff = GetComponent<NpcTakeoff>();
         thisItem = GetComponent<CargoItem>();
+        rotors = new List<SimpleRotor>();
+        rotors.AddRange(GetComponentsInChildren<SimpleRotor>());
 
         lineToTarget = gameObject.AddComponent<LineRenderer>();
         lineToTarget.enabled = false;
 
-        npcState = NpcState.Takeoff;
+        npcState = NpcState.Delivery;
     }
 
     void Update()
@@ -111,7 +114,18 @@ public class NpcAir : Npc
         switch (npcState)
         {
             case NpcState.Delivery:
-                npcState = NpcState.Takeoff;
+                if (transform.position.y <= thisItem.CargoPlatform.transform.position.y)
+                {
+                    transform.position = thisItem.CargoPlatform.transform.position;
+                    foreach (var rotor in rotors)
+                        rotor.StartRotor();
+                }
+                if (rotors[0].ReadyToTakeoff)
+                {
+                    npcState = NpcState.Takeoff;
+                    IsExplorer = false;
+                    IsPatroller = true;
+                }
                 break;
             case NpcState.Takeoff:
                 if (EndOfTakeoff)

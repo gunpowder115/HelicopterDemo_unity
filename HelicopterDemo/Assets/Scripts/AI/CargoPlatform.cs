@@ -30,10 +30,18 @@ public class CargoPlatform : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        SimpleCargoCall();
+        switch(cargoType)
+        {
+            case CargoType.Ground:
+                CallGroundCargo();
+                break;
+            case CargoType.Air:
+                CallAirCargo();
+                break;
+        }
     }
 
-    private void SimpleCargoCall()
+    private void CallGroundCargo()
     {
         switch (cargoState)
         {
@@ -44,7 +52,7 @@ public class CargoPlatform : MonoBehaviour
             case CargoState.Lost:
                 cargoHelicopterObject = Instantiate(cargoHelicopterPrefab, transform.position, transform.rotation);
                 cargoHelicopter = cargoHelicopterObject.GetComponent<CargoHelicopter>();
-                cargoHelicopter.Init(transform.position, dropHeight + parachuteHeight);
+                cargoHelicopter.InitForDrop(transform.position, dropHeight + parachuteHeight);
                 cargoState = CargoState.Expecting;
                 break;
             case CargoState.Expecting:
@@ -55,7 +63,43 @@ public class CargoPlatform : MonoBehaviour
                         npcController.Add(cargoObject);
                     CargoItem cargoItem = cargoObject.GetComponent<CargoItem>();
                     if (cargoItem)
-                        cargoItem.Init(building);
+                        cargoItem.Init(building, null);
+                    cargoState = CargoState.Works;
+                }
+                break;
+        }
+    }
+
+    private void CallAirCargo()
+    {
+        switch (cargoState)
+        {
+            case CargoState.Works:
+                if (cargoObject.gameObject == null)
+                    cargoState = CargoState.Lost;
+                break;
+            case CargoState.Lost:
+                cargoHelicopterObject = Instantiate(cargoHelicopterPrefab, transform.position, transform.rotation);
+                cargoHelicopter = cargoHelicopterObject.GetComponent<CargoHelicopter>();
+                cargoHelicopter.InitForDelivery(transform.position, dropHeight + parachuteHeight);
+
+                cargoObject = Instantiate(cargoPrefab, cargoHelicopter.transform.position - new Vector3(0f, cargoHelicopter.CableLength, 0f), 
+                    cargoHelicopter.transform.rotation, cargoHelicopter.transform);
+                CargoItem cargoItem_ = cargoObject.GetComponent<CargoItem>();
+                if (cargoItem_)
+                    cargoItem_.Init(building, cargoHelicopter);
+                cargoState = CargoState.Expecting;
+                break;
+            case CargoState.Expecting:
+                if (cargoHelicopter.NearDropPoint)
+                {
+                    Destroy(cargoObject);
+                    cargoObject = Instantiate(cargoPrefab, transform.position, transform.rotation);
+                    if (!cargoObject.GetComponent<NpcSquad>())
+                        npcController.Add(cargoObject);
+                    CargoItem cargoItem = cargoObject.GetComponent<CargoItem>();
+                    if (cargoItem)
+                        cargoItem.Init(building, cargoHelicopter);
                     cargoState = CargoState.Works;
                 }
                 break;
