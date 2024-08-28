@@ -45,7 +45,7 @@ public class NpcMoveToTgt : MonoBehaviour
     {
         targetSpeed = Vector3.ClampMagnitude(targetDirection * Speed, Speed);
         currSpeed = Vector3.Lerp(currSpeed, targetSpeed, Acceleration * Time.deltaTime);
-        Translation.SetGlobalTranslation(currSpeed);
+        Translation.SetHorizontalTranslation(currSpeed);
     }
 
     private void RotateAir()

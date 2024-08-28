@@ -151,7 +151,7 @@ public class Player : MonoBehaviour
                 targetSpeed = Vector3.ClampMagnitude(inputXYZ * speed, speed);
 
             currSpeed = Vector3.Lerp(currSpeed, targetSpeed, acceleration * Time.deltaTime);
-            translation.SetGlobalTranslation(currSpeed);
+            translation.SetHorizontalTranslation(currSpeed);
         }
 
         targetVerticalSpeed = inputY * verticalSpeed;

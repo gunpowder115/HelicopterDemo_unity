@@ -34,7 +34,7 @@ public class NpcGround : Npc
     public void Translate(Vector3 targetSpeed)
     {
         CurrentSpeed = Vector3.Lerp(CurrentSpeed, targetSpeed, Acceleration * Time.deltaTime);
-        translation.SetGlobalTranslation(CurrentSpeed);
+        translation.SetHorizontalTranslation(CurrentSpeed);
     }
 
     public void Drop(float speed) => translation.SetVerticalTranslation(speed);
