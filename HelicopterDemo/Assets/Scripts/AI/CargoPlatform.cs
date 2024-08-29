@@ -63,7 +63,7 @@ public class CargoPlatform : MonoBehaviour
                         npcController.Add(cargoObject);
                     CargoItem cargoItem = cargoObject.GetComponent<CargoItem>();
                     if (cargoItem)
-                        cargoItem.Init(building, null);
+                        cargoItem.Init(building);
                     cargoState = CargoState.Works;
                 }
                 break;
@@ -87,7 +87,7 @@ public class CargoPlatform : MonoBehaviour
                     cargoHelicopter.transform.rotation, cargoHelicopter.transform);
                 CargoItem cargoItem_ = cargoObject.GetComponent<CargoItem>();
                 if (cargoItem_)
-                    cargoItem_.Init(building, cargoHelicopter);
+                    cargoItem_.Init(building);
                 cargoState = CargoState.Expecting;
                 break;
             case CargoState.Expecting:
@@ -99,7 +99,7 @@ public class CargoPlatform : MonoBehaviour
                         npcController.Add(cargoObject);
                     CargoItem cargoItem = cargoObject.GetComponent<CargoItem>();
                     if (cargoItem)
-                        cargoItem.Init(building, cargoHelicopter);
+                        cargoItem.Init(building);
                     cargoState = CargoState.Works;
                 }
                 break;
