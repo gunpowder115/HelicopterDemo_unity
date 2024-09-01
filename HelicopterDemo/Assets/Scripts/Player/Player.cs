@@ -5,6 +5,7 @@ using static InputController;
 [RequireComponent(typeof(InputController))]
 [RequireComponent(typeof(Translation))]
 [RequireComponent(typeof(Shooter))]
+[RequireComponent(typeof(LineDrawer))]
 
 public class Player : MonoBehaviour
 {
@@ -18,7 +19,6 @@ public class Player : MonoBehaviour
     [SerializeField] float verticalSpeed = 30f;
     [SerializeField] float lateralMovingCoef = 0.1f;
     [SerializeField] float acceleration = 1f;
-    [SerializeField] LineRenderer lineRenderer;
     [SerializeField] Health health;
 
     bool rotateToDirection;
@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     PlatformController platformController;
     InputController inputController;
     Shooter shooter;
+    private LineDrawer lineDrawer;
     private List<SimpleRotor> rotors;
 
     public bool Aiming { get; private set; }
@@ -50,6 +51,7 @@ public class Player : MonoBehaviour
         rotors.AddRange(GetComponentsInChildren<SimpleRotor>());
         foreach (var rotor in rotors)
             rotor.StartRotor();
+        lineDrawer = GetComponent<LineDrawer>();
 
         npcController = NpcController.singleton;
         platformController = PlatformController.singleton;
@@ -69,7 +71,6 @@ public class Player : MonoBehaviour
         rotateToDirection = false;
         targetDirection = transform.forward;
         CurrentDirection = transform.forward;
-        lineRenderer.enabled = false;
 
         //hide cursor in center of screen
         Cursor.lockState = CursorLockMode.Locked;
@@ -101,7 +102,7 @@ public class Player : MonoBehaviour
         if (inputController.PlayerState == PlayerStates.Normal)
             DrawLineToTarget();
         else
-            lineRenderer.enabled = false;
+            lineDrawer.Enabled = false;
 
         if (inputController.PlayerState == PlayerStates.Aiming && !selectedTarget)
         {
@@ -188,7 +189,7 @@ public class Player : MonoBehaviour
     {
         Aiming = !Aiming;
         selectedTarget = Aiming ? possibleTarget : null;
-        if (Aiming) lineRenderer.enabled = false;
+        if (Aiming) lineDrawer.Enabled = false;
     }
 
     void DrawLineToTarget()
@@ -206,18 +207,16 @@ public class Player : MonoBehaviour
             var aimOrigin = nearest.Value.GetComponentInChildren<AimOrigin>();
             if (nearest.Key < minDistToAim)
             {
-                lineRenderer.enabled = true;
+                lineDrawer.Enabled = true;
                 Color lineColor = targetType == TargetTypes.Enemy ? Color.red : Color.blue;
-                lineRenderer.startColor = lineColor;
-                lineRenderer.endColor = lineColor;
-                lineRenderer.SetPosition(0, this.transform.position);
-                lineRenderer.SetPosition(1, aimOrigin ? aimOrigin.gameObject.transform.position : nearest.Value.transform.position);
+                lineDrawer.SetColor(lineColor);
+                lineDrawer.SetPosition(transform.position, aimOrigin ? aimOrigin.gameObject.transform.position : nearest.Value.transform.position);
                 possibleTarget = targetType == TargetTypes.Enemy ? nearest.Value : null;
                 possiblePlatform = targetType == TargetTypes.Platform ? nearest.Value : null;
             }
             else
             {
-                lineRenderer.enabled = false;
+                lineDrawer.Enabled = false;
                 possibleTarget = possiblePlatform = null;
             }
         }
@@ -254,7 +253,7 @@ public class Player : MonoBehaviour
     void StartBuildSelection()
     {
         selectedPlatform = possiblePlatform;
-        lineRenderer.enabled = false;
+        lineDrawer.Enabled = false;
     }
 
     void CancelBuildSelection() => selectedPlatform = null;
