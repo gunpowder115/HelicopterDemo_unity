@@ -195,29 +195,31 @@ public class Player : MonoBehaviour
     {
         KeyValuePair<float, GameObject> nearest;
         TargetTypes targetType;
-        var nearestNpc = npcController.FindNearestEnemy(transform.position);
-        var nearestPlatform = platformController.FindNearestPlatform(transform.position);
+        var nearestNpc = npcController ? npcController.FindNearestEnemy(transform.position) : default;
+        var nearestPlatform = platformController ? platformController.FindNearestPlatform(transform.position) : default;
 
         nearest = nearestNpc.Key < nearestPlatform.Key ? nearestNpc : nearestPlatform;
         targetType = nearestNpc.Key < nearestPlatform.Key ? TargetTypes.Enemy : TargetTypes.Platform;
 
-        var aimOrigin = nearest.Value.GetComponentInChildren<AimOrigin>();
-
-        if (nearest.Key < minDistToAim)
+        if (nearest.Value)
         {
-            lineRenderer.enabled = true;
-            Color lineColor = targetType == TargetTypes.Enemy ? Color.red : Color.blue;
-            lineRenderer.startColor = lineColor;
-            lineRenderer.endColor = lineColor;
-            lineRenderer.SetPosition(0, this.transform.position);
-            lineRenderer.SetPosition(1, aimOrigin ? aimOrigin.gameObject.transform.position : nearest.Value.transform.position);
-            possibleTarget = targetType == TargetTypes.Enemy ? nearest.Value : null;
-            possiblePlatform = targetType == TargetTypes.Platform ? nearest.Value : null;
-        }
-        else
-        {
-            lineRenderer.enabled = false;
-            possibleTarget = possiblePlatform = null;
+            var aimOrigin = nearest.Value.GetComponentInChildren<AimOrigin>();
+            if (nearest.Key < minDistToAim)
+            {
+                lineRenderer.enabled = true;
+                Color lineColor = targetType == TargetTypes.Enemy ? Color.red : Color.blue;
+                lineRenderer.startColor = lineColor;
+                lineRenderer.endColor = lineColor;
+                lineRenderer.SetPosition(0, this.transform.position);
+                lineRenderer.SetPosition(1, aimOrigin ? aimOrigin.gameObject.transform.position : nearest.Value.transform.position);
+                possibleTarget = targetType == TargetTypes.Enemy ? nearest.Value : null;
+                possiblePlatform = targetType == TargetTypes.Platform ? nearest.Value : null;
+            }
+            else
+            {
+                lineRenderer.enabled = false;
+                possibleTarget = possiblePlatform = null;
+            }
         }
     }
 
